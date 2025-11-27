@@ -7,31 +7,27 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 bg-orange-600 text-white shadow-xl z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
+          
           {/* Logo / Nombre */}
-          <div className="flex items-center">
+          <a href="/" className="flex items-center">
             <h1 className="text-xl md:text-2xl font-bold tracking-wide">
               Bazar Premium Essen
             </h1>
-          </div>
+          </a>
 
           {/* Menú Desktop */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8 text-lg">
             <a href="/" className="hover:text-orange-200 transition font-medium">
               Inicio
             </a>
             <a href="/catalogo" className="hover:text-orange-200 transition font-medium">
               Catálogo
             </a>
-            <a href="/promociones" className="hover:text-orange-200 transition font-medium">
-              Promociones
+            <a href="/faq" className="hover:text-orange-200 transition font-medium">
+              Preguntas frecuentes
             </a>
-            <a
-              href="https://wa.me/5492235012258"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded-lg font-bold text-sm transition shadow-md flex items-center gap-2"
-            >
-              WhatsApp
+            <a href="/about_me" className="hover:text-orange-200 transition font-medium">
+              Sobre mi
             </a>
           </div>
 

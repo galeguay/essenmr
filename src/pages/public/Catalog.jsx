@@ -36,6 +36,7 @@ export default function Catalog() {
         const records = await pb.collection('products').getFullList({
           expand: 'product_line',
           sort: 'name',
+          filter: 'is_visible = true'
         });
         setAllProducts(records);
         setProducts(records);

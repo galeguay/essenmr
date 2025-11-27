@@ -1,79 +1,111 @@
 import { useState, useEffect } from 'react';
 import HeroPromotions from "../../components/public/HeroPromotions";
 import NewProductsGrid from "../../components/public/NewProductsGrid";
+import NewDiscountCard from "../../components/public/NewDiscountCard";
+import ProductLineCard from '../../components/public/ProductLineCard';
+import ProductCard from '../../components/public/ProductCard';
 import { pb } from '../../lib/pocketbase';
+import BtnWpp from '../../components/public/BtnWpp';
 
 export default function Home() {
 
   const [productLines, setProductLines] = useState([]);
+  const [discounts, setDiscounts] = useState ([]);
+  const [loading, setLoading] = useState(true);
 
-const fetchProductLines = async () => {
-  // setLoading(true);  // descomenta si usas un estado de loading
-  try {
-    const result = await pb.collection('product_lines').getFullList({
-      sort: 'name',
-    });
+  const fetchDiscounts = async () => {
+    try{
+      const result = await pb.collection('products').getFullList({
+        expand: 'product_line',
+        sort: '-discount',
+        filter: 'discount > 0'
+      });
 
-    setProductLines(result); // getFullList ya devuelve el array directamente
-  } catch (err) {
-    console.error('Error fetching product lines:', err);
-    alert('Error al cargar las líneas de productos');
-  } finally {
-    // setLoading(false);
-  }
-};
+    setDiscounts(result);
+    } catch (err) {
+      console.error('Error fetching discounts:', err);
+      alert('Error al cargar los descuentos de productos');
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  const fetchProductLines = async () => {
+    // setLoading(true);
+    try {
+      const result = await pb.collection('product_lines').getFullList({
+        sort: 'name',
+        filter: 'is_visible = true'
+      });
+
+      setProductLines(result);
+    } catch (err) {
+      console.error('Error fetching product lines:', err);
+      alert('Error al cargar las líneas de productos');
+    } finally {
+      // setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetchProductLines();
+    Promise.all([fetchProductLines(), fetchDiscounts()]).finally(() => setLoading(false));
   }, []);
 
   return (
-    <div>
-      <HeroPromotions />
-      <div className="container mx-auto px-4 py-8">
-        <NewProductsGrid />
-      </div>
-      <section className="py-16 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center bg-gray-800 text-white py-4 mb-2">
-            Líneas de Productos
-          </h2>
-          <div className="h-2 bg-orange-500 mb-8"></div>
+    <div className="space-y-6">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {loading ? "" : ""}
+
+      {/* Descuentos */}
+      <section className="flex justify-around py-4">
+        {discounts.map((product) => (
+        <NewDiscountCard key={product.id} productName={product.name} productEssenID={product.essen_id} discount={product.discount} image={product.image} />
+        ))}
+      </section>
+
+      <section className="flex flex-wrap justify-center items-center bg-green-200 space-y-2 md:space-y-0 md:space-x-6 py-2">
+
+        <div className="md:flex items-center">
+          <i className="bi bi-credit-card me-2 text-2xl"></i>
+          Aceptamos todos los medios de pagos. 
+          <a 
+          href="/promociones"
+          className="flex ps-1 underline me-3">
+            Ver promociones financieras
+          </a>
+        </div>
+
+        <div className="flex items-center">
+          <i className="bi bi-box-seam me-2 text-2xl"></i>
+          Envíos a todo el país
+        </div>
+
+      </section>
+
+      {/* Lineas */}
+      <section className="flex justify-center bg-gray-100 my-6 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)] p-4">
+        <div className="container px-4">
+          <div className="flex gap-5 justify-around py-6">
             {productLines.map((line) => (
-              <a
-                key={line.string_id}
-                href={`/catalogo/${line.string_id}`}
-                className="block bg-white rounded-lg shadow hover:shadow-xl transition overflow-hidden"
-              >
-                <div className="flex items-center p-4">
-                  <img
-                    src={`/images/lineas/${line.name.toUpperCase()}.webp`}
-                    alt={line.name}
-                    className="w-24 h-24 object-contain rounded"
-                  />
-                  <h3 className="ml-6 text-2xl font-bold text-gray-700">{line.name}</h3>
-                </div>
-              </a>
+              <ProductLineCard key={line.id} productLine={line} />
             ))}
-          </div>
-
-          <div className="mt-12 bg-orange-100 border-2 border-orange-600 rounded-lg p-4 text-center">
-            <p className="text-xl md:text-2xl font-bold text-orange-700">
-              Si necesitás algún <span className="underline">REPUESTO</span> de una pieza Essen<span>&nbsp;</span>
-              <a
-                href="https://wa.me/5492235012258?text=Hola,%20necesito%20un%20repuesto"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block text-2xl font-bold text-orange-600 underline hover:text-orange-800"
-              >
-                ¡Contactame acá!
-              </a>
-            </p>
           </div>
         </div>
       </section>
+
+      <HeroPromotions />
+
+      <div className="container mx-auto px-4 py-8">
+        <NewProductsGrid />
+      </div>
+      
+      <div className="justify-center bg-orange-700 p-4 text-center mb-10">
+        <div className="text-xl font-bold text-white mb-4">
+          Si necesitás algún REPUESTO de piezas Essen ¡Escribime!
+        </div>
+          <BtnWpp />
+      </div>
+
     </div>
   );
 }

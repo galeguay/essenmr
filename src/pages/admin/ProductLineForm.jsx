@@ -41,6 +41,7 @@ export default function ProductLineForm({
         // Limpiar formulario después de crear
         setForm({
           name: "",
+          string_id: "",
           color: "#8b5cf6",
           is_visible: true,
           description: "",

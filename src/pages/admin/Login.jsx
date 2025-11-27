@@ -1,5 +1,6 @@
 import { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { pb } from '../../lib/pocketbase.js';
 
 export default function Login() {
@@ -36,7 +37,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
 
@@ -84,6 +85,7 @@ export default function Login() {
               />
             </div>
 
+            {/* 
             <div className="flex items-center justify-between">
               <label className="flex items-center">
                 <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
@@ -92,7 +94,7 @@ export default function Login() {
               <a href="#" className="text-sm text-blue-600 hover:text-blue-500 font-medium">
                 ¿Olvidaste tu contraseña?
               </a>
-            </div>
+            </div> */}
 
             <button
               type="submit"
@@ -108,6 +110,11 @@ export default function Login() {
           </form>
         </div>
       </div>
+      <a
+      href="/"
+      className="mt-16">
+         Volver al homepage
+      </a>
     </div>
   );
 }

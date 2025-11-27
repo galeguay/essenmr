@@ -17,12 +17,10 @@ export default function App() {
         
         {/* RUTAS PÚBLICAS */}
         <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
-
-
         <Route path="/catalogo" element={<Catalog />} />
-        <Route path="/products/:essen_id" element={<ProductDetail />} />
+        <Route path="/productos/:essen_id" element={<ProductDetail />} />
         <Route path="/promociones" element={<div className="py-20 min-h-screen text-center text-4xl">Promociones (próximamente)</div>} />
+        <Route path="/faq" element={<div className="py-20 min-h-screen text-center text-4xl">Preguntas frecuentes (próximamente)</div>} />
 
         {/* RUTAS ADMIN */}
         <Route path="/admin/*" element={<div className="text-4xl">Panel Admin</div>} />

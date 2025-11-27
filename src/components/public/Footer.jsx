@@ -6,30 +6,10 @@ import BtnLink from './BtnLink';
 export default function Footer() {
   const links = [
     { text: 'Inicio', to: '/' },
-    { text: 'Productos', to: '/products' },
+    { text: 'Catálogo', to: '/catalogo' },
     { text: 'Preguntas Frecuentes', to: '/faq' },
     { text: 'Sobre mi', to: '/about_me' },
   ];
-
-/*   const [lines, setLineas] = useState([]);
-
-  useEffect(() => {
-    const fetchLineas = async () => { 
-      try { 
-        const records = await pb.collection('product_lines').getFullList({ sort: 'name' }); 
-        setLineas(records); 
-      } catch (error) { 
-        console.error("Error cargando líneas:", error);
-        alert("No se pudieron cargar las líneas de productos"); 
-      }
-      finally { 
-        //setLoading(false); 
-      } 
-    };
-
-    fetchLineas();
-  },id);
-*/
 
   return (
     <footer className="bg-gray-900 text-white py-6 flex flex-col items-center justify-center">
