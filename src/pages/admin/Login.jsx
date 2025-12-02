@@ -1,7 +1,6 @@
 import { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { pb } from '../../lib/pocketbase.js';
+import { supabase } from '../../lib/supabase'; 
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -10,30 +9,35 @@ export default function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Si ya está logueado → redirigir directamente al admin
   useEffect(() => {
-    if (pb.authStore.isValid) {
-      navigate('/admin', { replace: true });
-    }
-  }, []);
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) navigate('/admin', { replace: true });
+    };
+    checkSession();
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    try {
-      await pb.collection('users').authWithPassword(email, password);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      // Login exitoso → redirigir al panel que tú quieras
-      navigate('/admin', { replace: true });
-
-    } catch (err) {
-      setError('Correo o contraseña incorrectos');
-      console.error(err);
-    } finally {
+    if (error) {
+      setError('Credenciales incorrectas');
       setLoading(false);
+      return;
     }
+
+    navigate('/admin', { replace: true }); // <-- acá
+
+    setEmail('');
+    setPassword('');
+    setLoading(false);
   };
 
   return (

@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import HeroPromotions from "../../components/public/HeroPromotions";
-import NewProductsGrid from "../../components/public/NewProductsGrid";
 import NewDiscountCard from "../../components/public/NewDiscountCard";
 import ProductLineCard from '../../components/public/ProductLineCard';
-import ProductCard from '../../components/public/ProductCard';
-import { pb } from '../../lib/pocketbase';
+import Promotions from '../../components/public/Promotions';
+import { supabase } from '../../lib/supabase';
 import BtnWpp from '../../components/public/BtnWpp';
+import NewReleaseCard from '../../components/public/NewReleaseCard';
 
 export default function Home() {
 
@@ -14,31 +13,40 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   const fetchDiscounts = async () => {
-    try{
-      const result = await pb.collection('products').getFullList({
-        expand: 'product_line',
-        sort: '-discount',
-        filter: 'discount > 0'
-      });
+    // setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          product_line (*)
+        `)
+        .gt('discount', 0)
+        .eq('is_visible', true)
+        .order('discount', { ascending: false });
 
-    setDiscounts(result);
+      if (error) throw error;
+
+      setDiscounts(data);
     } catch (err) {
       console.error('Error fetching discounts:', err);
-      alert('Error al cargar los descuentos de productos');
+      //alert('Error al cargar los descuentos de productos');
     } finally {
       // setLoading(false);
     }
   };
-
+    
   const fetchProductLines = async () => {
-    // setLoading(true);
     try {
-      const result = await pb.collection('product_lines').getFullList({
-        sort: 'name',
-        filter: 'is_visible = true'
-      });
+      const { data, error } = await supabase
+        .from('product_lines')
+        .select('*')
+        .eq('is_visible', true)
+        .order('name', { ascending: true });
 
-      setProductLines(result);
+      if (error) throw error;
+
+      setProductLines(data);
     } catch (err) {
       console.error('Error fetching product lines:', err);
       alert('Error al cargar las líneas de productos');
@@ -93,12 +101,26 @@ export default function Home() {
         </div>
       </section>
 
-      <HeroPromotions />
+      {/* Novedades */}
+      <section className="py-12">
+        <div className="container mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold bg-gray-700 text-white inline-block px-6 py-2 rounded-t-lg border-b-4 border-orange-500">
+            Novedades
+          </h2>
+          <div className="w-full h-5 bg-gray-700 mb-4">
+          </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <NewProductsGrid />
-      </div>
-      
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <NewReleaseCard />
+            <NewReleaseCard />
+            <NewReleaseCard />
+            <NewReleaseCard />
+          </div>
+        </div>
+      </section>
+
+      <Promotions />
+
       <div className="justify-center bg-orange-700 p-4 text-center mb-10">
         <div className="text-xl font-bold text-white mb-4">
           Si necesitás algún REPUESTO de piezas Essen ¡Escribime!
