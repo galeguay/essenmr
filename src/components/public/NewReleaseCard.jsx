@@ -19,7 +19,7 @@ export default function NewReleaseCard({
       </div>
 
       {/* Título superpuesto */}
-      <div className="absolute top-0 left-0 w-full p-4 bg-linear-to-b from-black/60 to-transparent">
+      <div className="absolute top-0 left-0 w-full p-4 bg-linear-to-b from-gray-700/60 to-transparent">
         <h2 className="text-white text-lg font-semibold drop-shadow">
           {title}
         </h2>

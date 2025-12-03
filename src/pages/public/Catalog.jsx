@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import ProductCard from '../../components/public/ProductCard';
-import { pb } from '../../lib/pocketbase';
+import { supabase } from '../../lib/supabase';
 
 // Pequeña función de debounce
 function useDebounce(value, delay) {
@@ -32,16 +32,22 @@ export default function Catalog() {
   // Cargar productos iniciales
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
-        const records = await pb.collection('products').getFullList({
-          expand: 'product_line',
-          sort: 'name',
-        });
-        setAllProducts(records);
-        setProducts(records);
+        const { data, error } = await supabase
+          .from('products')
+          .select(`
+            *,
+            product_line (*)
+          `)
+          .order('essen_id', { ascending: false });
+
+        if (error) throw error;
+
+        setAllProducts(data);
       } catch (err) {
-        console.error(err);
-        alert('Error al cargar los productos');
+        console.error('Error fetching discounts:', err);
+        //alert('Error al cargar los descuentos de productos');
       } finally {
         setLoading(false);
       }

@@ -1,6 +1,6 @@
 import { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { pb } from '../../lib/pocketbase.js';
+import { supabase } from '../../lib/supabase'; 
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -9,34 +9,39 @@ export default function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Si ya está logueado → redirigir directamente al admin
   useEffect(() => {
-    if (pb.authStore.isValid) {
-      navigate('/admin', { replace: true });
-    }
-  }, []);
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) navigate('/admin', { replace: true });
+    };
+    checkSession();
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    try {
-      await pb.collection('users').authWithPassword(email, password);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      // Login exitoso → redirigir al panel que tú quieras
-      navigate('/admin', { replace: true });
-
-    } catch (err) {
-      setError('Correo o contraseña incorrectos');
-      console.error(err);
-    } finally {
+    if (error) {
+      setError('Credenciales incorrectas');
       setLoading(false);
+      return;
     }
+
+    navigate('/admin', { replace: true }); // <-- acá
+
+    setEmail('');
+    setPassword('');
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
 
@@ -84,6 +89,7 @@ export default function Login() {
               />
             </div>
 
+            {/* 
             <div className="flex items-center justify-between">
               <label className="flex items-center">
                 <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
@@ -92,7 +98,7 @@ export default function Login() {
               <a href="#" className="text-sm text-blue-600 hover:text-blue-500 font-medium">
                 ¿Olvidaste tu contraseña?
               </a>
-            </div>
+            </div> */}
 
             <button
               type="submit"
@@ -108,6 +114,11 @@ export default function Login() {
           </form>
         </div>
       </div>
+      <a
+      href="/"
+      className="mt-16">
+         Volver al homepage
+      </a>
     </div>
   );
 }

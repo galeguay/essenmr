@@ -1,11 +1,12 @@
 // src/components/Sidebar.jsx
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { pb } from '../../lib/pocketbase.js';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase.js';
 
 export default function Sidebar({ title = "Admin" }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     if (window.innerWidth < 1024) {
@@ -13,10 +14,11 @@ export default function Sidebar({ title = "Admin" }) {
     }
   };
 
-  const handleLogout = () => {
-    pb.authStore.clear();
-    window.location.href = '/admin/login';
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/admin/login');
   };
+
 
   const links = [
     { text: 'Productos', to: '/admin/products', icon: 'bi-box' },
