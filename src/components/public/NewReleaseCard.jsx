@@ -3,7 +3,7 @@ export default function NewReleaseCard({
   image = null,
 }) {
   return (
-    <div className="relative w-full max-w-sm overflow-hidden rounded-s shadow-lg">
+    <a href="/producto/key" className="relative w-full max-w-sm overflow-hidden rounded-s shadow-lg">
 
       {/* Imagen (forzamos relación 4:3) */}
       <div className="aspect-4/3 w-full">
@@ -24,6 +24,6 @@ export default function NewReleaseCard({
           {title}
         </h2>
       </div>
-    </div>
+    </a>
   );
 }
