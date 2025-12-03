@@ -11,7 +11,7 @@ export default function Navbar() {
           {/* Logo / Nombre */}
           <a href="/" className="flex items-center">
             <h1 className="text-xl md:text-2xl font-bold tracking-wide">
-              Bazar Premium Essen
+              EssenMR
             </h1>
           </a>
 

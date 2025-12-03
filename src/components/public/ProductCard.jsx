@@ -21,7 +21,7 @@ export default function ProductCard({
     md: "w-70 h-13 md:w-94 md:h-300",
     lg: "w-70 h-15 md:w-110 md:h-20",
   }; */
-  const productLine = product.expand.product_line?.name;
+  const productLine = product.product_line?.name;
   const stockQuantity = product.stock_quantity ?? 0;
   const isOutOfStock = stockQuantity < 0;
   
