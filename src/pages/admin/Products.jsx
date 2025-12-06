@@ -27,10 +27,9 @@ export default function Products() {
                 .order('created_at', { ascending: false });
 
             // Filtro de búsqueda equivalente a PB
-            if (search.trim() !== '') {
-                query = query.or(
-                    `name.ilike.%${search}%,essen_id.ilike.%${search}%`
-                );
+            if (search.trim() !== "") {
+                const s = search.trim();
+                query = query.ilike("name", `%${s}%`);
             }
 
             const { data, count, error } = await query.range(from, to);
@@ -51,14 +50,13 @@ export default function Products() {
         fetchProducts();
     }, [page, search]);
 
-    // debounce búsqueda
     useEffect(() => {
         const timer = setTimeout(() => {
             setPage(1);
-        }, 300);
+        }, 400);
+
         return () => clearTimeout(timer);
     }, [search]);
-
 
     const updateField = async (id, field, value) => {
         try {
@@ -83,13 +81,13 @@ export default function Products() {
     };
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="p-6 mx-auto max-w-7xl">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <div className="flex flex-col items-start justify-between gap-4 mb-8 sm:flex-row sm:items-center">
                 <h1 className="text-3xl font-bold text-gray-800">Productos</h1>
                 <Link
                     to="/admin/products/new"
-                    className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition shadow-md"
+                    className="px-6 py-3 font-medium text-white transition bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700"
                 >
                     + Nuevo producto
                 </Link>
@@ -99,7 +97,7 @@ export default function Products() {
             <div className="mb-6">
                 <input
                     type="text"
-                    placeholder="Buscar por nombre o código..."
+                    placeholder="Buscar por nombre"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="w-full max-w-md px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -109,18 +107,18 @@ export default function Products() {
             {/* Loading */}
             {loading ? (
                 <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-indigo-600"></div>
+                    <div className="w-12 h-12 border-b-4 border-indigo-600 rounded-full animate-spin"></div>
                 </div>
             ) : (
                 <>
                     {/* Tabla */}
-                    <div className="bg-white shadow-lg rounded-xl overflow-hidden">
+                    <div className="overflow-hidden bg-white shadow-lg rounded-xl">
                         <div className="overflow-x-auto">
                             <table className="w-full text-center">
-                                <thead className="bg-gray-50 border-b border-gray-200">
+                                <thead className="border-b border-gray-200 bg-gray-50">
                                     <tr>
-                                        <th className="px-3 py-2">Essens ID</th>
                                         <th className="px-3 py-2">Nombre</th>
+                                        <th className="px-3 py-2">Essens ID</th>
                                         <th className="px-3 py-2">Diámetro (cm)</th>
                                         <th className="px-3 py-2">Capacidad (L)</th>
                                         <th className="px-6 py-4">Línea</th>
@@ -133,8 +131,8 @@ export default function Products() {
                                 <tbody className="divide-y divide-gray-200">
                                     {products.map((product) => (
                                         <tr key={product.id}>
-                                            <td className="px-3 py-2">{product.essen_id}</td>
                                             <td className="px-3 py-2">{product.name}</td>
+                                            <td className="px-3 py-2">{product.essen_id}</td>
                                             <td className="px-3 py-2">{product.diameter}</td>
                                             <td className="px-3 py-2">{product.capacity}</td>
                                             <td className="px-3 py-2">
@@ -164,8 +162,8 @@ export default function Products() {
                                             <td className="px-3 py-2">
                                                 <input
                                                     type="number"
-                                                    className="w-20 border rounded px-2 py-1"
-                                                    value={product.discount}
+                                                    className="w-20 px-2 py-1 border rounded"
+                                                    value={product.discount == null ? '' : product.discount}
                                                     step="0.01"
                                                     onChange={(e) =>
                                                         updateField(product.id, "discount", Number(e.target.value))

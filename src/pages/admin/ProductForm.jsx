@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from '../../lib/supabase';
+import { uploadImage } from "../../utils/uploadImage";
 
 export default function ProductForm({
     initialData = null,
@@ -10,6 +11,7 @@ export default function ProductForm({
     const { id } = useParams();
     const navigate = useNavigate();
     const isEdit = !!id;
+    const [imageFile, setImageFile] = useState(null);
 
     const [product, setProduct] = useState({
         name: initialData?.name || "",
@@ -88,11 +90,34 @@ export default function ProductForm({
         setLoading(true);
 
         try {
+            let imageUrl = product.image || null;
+
+            // Si el usuario seleccionó una imagen nueva, se sube
+            if (imageFile) {
+                imageUrl = await uploadImage("products", imageFile, product.essen_id);
+            }
+            const normalizeNumber = (value) =>
+                value === "" || value === undefined || value === null
+                    ? null
+                    : Number(value);
+
+            const productDataToSave = {
+                ...product,
+                image: imageUrl,
+                diameter: normalizeNumber(product.diameter),
+                capacity: normalizeNumber(product.capacity),
+                discount: normalizeNumber(product.discount),
+                product_line: normalizeNumber(product.product_line),
+                essen_id: normalizeNumber(product.essen_id),
+            };
+
+
             let response;
+
             if (isEdit) {
                 const { data, error } = await supabase
                     .from("products")
-                    .update(product)
+                    .update(productDataToSave)
                     .eq("id", id)
                     .single();
 
@@ -105,7 +130,7 @@ export default function ProductForm({
             } else {
                 const { data, error } = await supabase
                     .from("products")
-                    .insert(product)
+                    .insert(productDataToSave)
                     .single();
 
                 if (error) throw error;
@@ -124,10 +149,13 @@ export default function ProductForm({
 
                 navigate("/admin/products");
             }
+
             onSubmit(response);
+
         } catch (error) {
             console.error("Error guardando producto:", error);
             alert("Error: " + error.message);
+
         } finally {
             setLoading(false);
         }
@@ -262,6 +290,12 @@ export default function ProductForm({
                     className="mt-1 w-full px-4 py-2 border rounded-lg"
                 />
             </div>
+
+            <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImageFile(e.target.files[0])}
+            />
 
             {/* Botones */}
             <div className="flex gap-3">
