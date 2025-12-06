@@ -12,11 +12,11 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-900 text-white py-6 flex flex-col items-center justify-center">
-      <div className="flex flex-col sm:flex-col md:flex-row md:columns-2 gap-6 md:gap-16">
-        <ul className="list-none text-left columns md:columns-2 gap-4">
+    <footer className="flex flex-col items-center justify-center py-6 text-white bg-gray-900">
+      <div className="flex flex-col gap-6 sm:flex-col md:flex-row md:columns-2 md:gap-16">
+        <ul className="gap-4 text-left list-none">
           {links.map((link) => (
-            <li key={link.text} className="break-inside-avoid border-l ps-2">
+            <li key={link.text} className="border-l break-inside-avoid ps-2">
               <Link to={link.to}>
                 {link.text}
               </Link>
@@ -37,7 +37,7 @@ export default function Footer() {
             </BtnLink>
         </div>
       </div>
-      <p className="mt-6 text-gray-400 text-left">© 2026 - Todos los derechos reservados</p>
+      <p className="mt-6 text-left text-gray-400">© 2026 - Todos los derechos reservados</p>
     </footer>
   )
 }

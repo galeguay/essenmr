@@ -92,20 +92,26 @@ export default function Home() {
                 ))}
             </section>
 
-            <section className="flex flex-wrap justify-center items-center bg-green-200 space-y-2 md:space-y-0 md:space-x-6 py-2">
+            <section className="flex flex-wrap items-center justify-center py-2 space-y-2 bg-green-200 md:space-y-0 md:space-x-6">
 
-                <div className="md:flex items-center">
-                    <i className="bi bi-credit-card me-2 text-2xl"></i>
+                <div className="items-center md:flex">
+                    <i className="text-2xl bi bi-credit-card me-2"></i>
                     Aceptamos todos los medios de pagos.
-                    <a
-                        href="/promociones"
-                        className="flex ps-1 underline me-3">
+                    <a href="#promotions"
+                        className="flex underline ps-1 me-3"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById('promotions')?.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }}>
                         Ver promociones financieras
                     </a>
+
                 </div>
 
                 <div className="flex items-center">
-                    <i className="bi bi-box-seam me-2 text-2xl"></i>
+                    <i className="text-2xl bi bi-box-seam me-2"></i>
                     Envíos a todo el país
                 </div>
 
@@ -114,7 +120,7 @@ export default function Home() {
             {/* Lineas */}
             <section className="flex justify-center bg-gray-100 my-6 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)] p-4">
                 <div className="container px-4">
-                    <div className="flex gap-5 justify-around py-6">
+                    <div className="flex justify-around gap-5 py-6">
                         {productLines.map((line) => (
                             <ProductLineCard key={line.id} productLine={line} />
                         ))}
@@ -123,26 +129,28 @@ export default function Home() {
             </section>
 
             {/* Novedades */}
-            {newProducts > 0 ?<section className="py-12">
+            {newProducts > 0 ? <section className="py-12">
                 <div className="container mx-auto">
-                    <h2 className="text-2xl md:text-3xl font-bold bg-gray-700 text-white inline-block px-6 py-2 rounded-t-lg border-b-4 border-orange-500">
+                    <h2 className="inline-block px-6 py-2 text-2xl font-bold text-white bg-gray-700 border-b-4 border-orange-500 rounded-t-lg md:text-3xl">
                         Novedades
                     </h2>
-                    <div className="w-full h-5 bg-gray-700 mb-4">
+                    <div className="w-full h-5 mb-4 bg-gray-700">
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                         {newProducts.map((np) => (
                             <NewReleaseCard key={np.essen_id} title={np.name} image={np.image} />
                         ))}
                     </div>
                 </div>
-            </section>: ""}
+            </section> : ""}
 
-            <Promotions />
+            <div id="promotions">
+                <Promotions />
+            </div>
 
-            <div className="justify-center bg-orange-700 p-4 text-center mb-10">
-                <div className="text-xl font-bold text-white mb-4">
+            <div className="justify-center p-4 mb-10 text-center bg-orange-700">
+                <div className="mb-4 text-xl font-bold text-white">
                     Si necesitás algún REPUESTO de piezas Essen ¡Escribime!
                 </div>
                 <BtnWpp />
