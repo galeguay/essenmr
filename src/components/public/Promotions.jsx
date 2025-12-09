@@ -6,8 +6,7 @@ export default function Promotions() {
                 Promociones financieras
             </h2>
             <div className="w-full h-5 mb-4 bg-gray-700"></div>
-
-            <div className="mx-auto px-50">
+            <div className="px-4 mx-auto md:px-50">
                 <div className="w-full">
                     <img
                         src="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/public/images/tarjetas.webp"

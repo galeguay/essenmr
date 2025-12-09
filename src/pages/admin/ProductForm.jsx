@@ -47,25 +47,26 @@ export default function ProductForm({
         }
     };
 
+    // En loadProduct
     const loadProduct = async () => {
         if (!isEdit) return;
 
         try {
+            // ... (código de carga)
             const { data, error } = await supabase
                 .from("products")
                 .select("*")
                 .eq("id", id)
                 .single();
-
-            if (error) throw error;
+            // ...
 
             setProduct({
                 ...data,
+                // Aseguramos que sea string para que coincida con el <select>
                 product_line: String(data.product_line)
             });
         } catch (error) {
-            alert("No se pudo cargar el producto");
-            navigate("/admin/products");
+            // ...
         }
     };
 
@@ -110,7 +111,6 @@ export default function ProductForm({
                 product_line: normalizeNumber(product.product_line),
                 essen_id: normalizeNumber(product.essen_id),
             };
-
 
             let response;
 
@@ -164,75 +164,79 @@ export default function ProductForm({
     return (
         <form
             onSubmit={handleSubmit}
-            className="w-full max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-200"
+            className="w-full max-w-lg p-8 mx-auto space-y-8 bg-white border border-gray-200 shadow-lg rounded-xl"
         >
-            <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
+            <h2 className="mb-8 text-2xl font-bold text-center text-gray-800">
                 {isEdit ? "Editar producto" : "Registrar nuevo producto"}
             </h2>
 
             {/* Nombre */}
-            <div className="mb-5">
-                <label className="block text-gray-700 font-medium">Nombre *</label>
+            <label className="floating-label">
                 <input
                     type="text"
                     name="name"
                     value={product.name}
                     onChange={handleChange}
                     required
-                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                    placeholder="Ej: Sartén 28 cm"
+                    className="input"
+                    placeholder="Nombre"
+                    autocomplete="off"
                 />
-            </div>
+                <span>Nombre *</span>
+            </label>
 
             {/* Código Essen */}
-            <div className="mb-5">
-                <label className="block text-gray-700 font-medium">Código Essen</label>
+            <label className="floating-label">
+                <span>Código Essen</span>
                 <input
                     type="text"
                     name="essen_id"
                     value={product.essen_id}
                     onChange={handleChange}
-                    className="mt-1 w-full px-4 py-2 border rounded-lg"
-                    placeholder="Ej: E280"
+                    className="input"
+                    placeholder="Código Essen"
+                    autocomplete="off"
                 />
-            </div>
+            </label>
 
             {/* Línea de producto */}
-            <div className="mb-5">
-                <label className="block text-gray-700 font-medium">Línea *</label>
+            <label className="select">
+                <span className="label">Línea</span>
                 <select
                     name="product_line"
                     value={product.product_line}
                     onChange={handleChange}
                     required
                     disabled={loadingLineas}
-                    className="mt-1 w-full px-4 py-2 border rounded-lg disabled:bg-gray-100"
                 >
                     <option value="">{loadingLineas ? "Cargando..." : "Seleccionar línea..."}</option>
                     {lineas.map(linea => (
-                        <option key={linea.id} value={linea.id}>
+                        <option key={linea.id} value={linea.id}> {/* <-- ¡CAMBIO AQUÍ! Usar linea.id */}
                             {linea.name}
                         </option>
                     ))}
                 </select>
-            </div>
+            </label>
 
             {/* Diámetro y Capacidad */}
-            <div className="grid grid-cols-2 gap-4 mb-5">
-                <div>
-                    <label className="block text-gray-700 font-medium">Diámetro (cm)</label>
-                    <input
-                        type="number"
-                        name="diameter"
-                        value={product.diameter}
-                        onChange={handleChange}
-                        step="0.1"
-                        min="0"
-                        className="mt-1 w-full px-4 py-2 border rounded-lg"
-                    />
-                </div>
-                <div>
-                    <label className="block text-gray-700 font-medium">Capacidad (L)</label>
+            <label className="floating-label">
+                <span className="label">Diámetro (cm)</span>
+                <input
+                    type="number"
+                    name="diameter"
+                    value={product.diameter}
+                    onChange={handleChange}
+                    step="0.1"
+                    min="0"
+                    className="input"
+                    placeholder="Diámetro (cm)"
+                />
+            </label>
+
+            {/* Capacidad */}
+            <div>
+                <label className="floating-label">
+                    <span>Capacidad (L)</span>
                     <input
                         type="number"
                         name="capacity"
@@ -240,45 +244,40 @@ export default function ProductForm({
                         onChange={handleChange}
                         step="0.1"
                         min="0"
-                        className="mt-1 w-full px-4 py-2 border rounded-lg"
+                        className="input"
+                        placeholder="Capacidad (L)"
                     />
-                    <span className="text-xs text-gray-500">El valor decimal se debe ingresar con . (PUNTO)</span>
-                </div>
+                </label>
+                <div className="mt-1 text-xs text-gray-500">El valor decimal se debe ingresar con punto (Ej: 4.2)</div>
             </div>
 
             {/* Switch: Visible */}
-            <div className="flex items-center justify-between mb-5">
-                <span className="text-gray-700 font-medium">Visible en el catálogo</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                        type="checkbox"
-                        name="is_visible"
-                        checked={product.is_visible}
-                        onChange={handleChange}
-                        className="sr-only peer"
-                    />
-                    <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                </label>
+            <div className="flex items-center justify-between w-[50%]">
+                <span className="text-sm me-1">Visible en el catálogo</span>
+                <input
+                    type="checkbox"
+                    name="is_visible"
+                    checked={product.is_visible}
+                    onChange={handleChange}
+                    className="toggle toggle-success"
+                />
             </div>
 
             {/* Switch: Es nuevo */}
-            <div className="flex items-center justify-between mb-6">
-                <span className="text-gray-700 font-medium">¿Es producto nuevo?</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                        type="checkbox"
-                        name="is_new"
-                        checked={product.is_new}
-                        onChange={handleChange}
-                        className="sr-only peer"
-                    />
-                    <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                </label>
+            <div className="flex items-center justify-between w-[50%]">
+                <span className="text-sm me-1">¿Es producto nuevo?</span>
+                <input
+                    type="checkbox"
+                    name="is_new"
+                    checked={product.is_new}
+                    onChange={handleChange}
+                    className="toggle toggle-success"
+                />
             </div>
 
             {/* Descuento */}
-            <div className="mb-6">
-                <label className="block text-gray-700 font-medium">Descuento (%)</label>
+            <label className="mb-6 floating-label">
+                <span>Descuento (%)</span>
                 <input
                     type="number"
                     name="discount"
@@ -286,23 +285,47 @@ export default function ProductForm({
                     onChange={handleChange}
                     min="0"
                     max="90"
-                    placeholder="0"
-                    className="mt-1 w-full px-4 py-2 border rounded-lg"
+                    placeholder="Descuento (%)"
+                    className="input"
                 />
+            </label>
+
+            {/* Cargar imagen */}
+            <div>
+                <span className="text-sm">Imagen</span>
+                {isEdit && product.image && !imageFile && (
+                    <div className="mb-2">
+                        {/* Contenedor que define el espacio cuadrado */}
+                        <div className="w-48 h-48 mx-auto overflow-hidden border border-gray-200 rounded-lg shadow-sm">
+                            <img
+                                src={product.image}
+                                alt={`Imagen de ${product.name}`}
+                                className="object-cover w-full h-full" // La imagen cubre completamente el contenedor 1:1
+                            />
+                        </div>
+                        <div className="mt-1 text-xs text-center text-gray-500">
+                            Sube una nueva imagen para reemplazar la actual.
+                        </div>
+                    </div>
+                )}
+
+                <fieldset className="fieldset">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setImageFile(e.target.files[0])}
+                        className="w-full file-input file-input-md"
+                    />
+                </fieldset>
             </div>
 
-            <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImageFile(e.target.files[0])}
-            />
 
             {/* Botones */}
             <div className="flex gap-3">
                 <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 disabled:opacity-70 transition"
+                    className="flex-1 py-3 font-bold text-white transition bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-70"
                 >
                     {loading ? "Guardando..." : isEdit ? "Actualizar" : "Guardar producto"}
                 </button>
@@ -311,7 +334,7 @@ export default function ProductForm({
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="px-6 py-3 bg-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-400 transition"
+                        className="px-6 py-3 font-medium text-gray-700 transition bg-gray-300 rounded-lg hover:bg-gray-400"
                     >
                         Cancelar
                     </button>

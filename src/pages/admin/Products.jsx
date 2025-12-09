@@ -117,6 +117,8 @@ export default function Products() {
                             <table className="w-full text-center">
                                 <thead className="border-b border-gray-200 bg-gray-50">
                                     <tr>
+                                        {/* Nueva columna para la imagen */}
+                                        <th className="px-3 py-2">Imagen</th> 
                                         <th className="px-3 py-2">Nombre</th>
                                         <th className="px-3 py-2">Essens ID</th>
                                         <th className="px-3 py-2">Diámetro (cm)</th>
@@ -131,6 +133,15 @@ export default function Products() {
                                 <tbody className="divide-y divide-gray-200">
                                     {products.map((product) => (
                                         <tr key={product.id}>
+                                            {/* Celda de la imagen */}
+                                            <td className="px-3 py-2">
+                                                <img 
+                                                    src={product.image || 'url-por-defecto-o-placeholder'}
+                                                    alt={product.name}
+                                                    className="object-cover w-12 h-12 mx-auto rounded-md"
+                                                />
+                                            </td>
+
                                             <td className="px-3 py-2">{product.name}</td>
                                             <td className="px-3 py-2">{product.essen_id}</td>
                                             <td className="px-3 py-2">{product.diameter}</td>
@@ -139,6 +150,7 @@ export default function Products() {
                                                 {product.product_line?.name || '—'}
                                             </td>
 
+                                            {/* Toggle de DaisyUI para Visible */}
                                             <td className="px-3 py-2">
                                                 <input
                                                     type="checkbox"
@@ -146,9 +158,11 @@ export default function Products() {
                                                     onChange={() =>
                                                         toggleField(product.id, "is_visible", !product.is_visible)
                                                     }
+                                                    className="toggle toggle-success"
                                                 />
                                             </td>
 
+                                            {/* Toggle de DaisyUI para Nuevo */}
                                             <td className="px-3 py-2">
                                                 <input
                                                     type="checkbox"
@@ -156,6 +170,7 @@ export default function Products() {
                                                     onChange={() =>
                                                         toggleField(product.id, "is_new", !product.is_new)
                                                     }
+                                                    className="toggle toggle-success"
                                                 />
                                             </td>
 

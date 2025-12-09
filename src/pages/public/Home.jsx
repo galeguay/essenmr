@@ -86,15 +86,14 @@ export default function Home() {
             {loading ? "" : ""}
 
             {/* Descuentos */}
-            <section className="flex justify-around py-4">
+            <section className="flex flex-wrap justify-around gap-6 p-4">
                 {discounts.map((product) => (
                     <NewDiscountCard key={product.id} productName={product.name} productEssenID={product.essen_id} discount={product.discount} image={product.image} />
                 ))}
             </section>
 
             <section className="flex flex-wrap items-center justify-center py-2 space-y-2 bg-green-200 md:space-y-0 md:space-x-6">
-
-                <div className="items-center md:flex">
+                <div className="flex flex-wrap items-center justify-center mb-5 md:mb-0">
                     <i className="text-2xl bi bi-credit-card me-2"></i>
                     Aceptamos todos los medios de pagos.
                     <a href="#promotions"
@@ -107,26 +106,30 @@ export default function Home() {
                         }}>
                         Ver promociones financieras
                     </a>
-
                 </div>
 
                 <div className="flex items-center">
                     <i className="text-2xl bi bi-box-seam me-2"></i>
                     Envíos a todo el país
                 </div>
-
             </section>
 
             {/* Lineas */}
-            <section className="flex justify-center bg-gray-100 my-6 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)] p-4">
-                <div className="container px-4">
-                    <div className="flex justify-around gap-5 py-6">
+            <section className="flex justify-center bg-gray-100 my-6 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)] py-4 px-2">
+                <div className="container px-2">
+                    <div className="w-full p-4 mx-auto space-x-1 carousel rounded-box">
                         {productLines.map((line) => (
-                            <ProductLineCard key={line.id} productLine={line} />
+                            <div
+                                key={line.id}
+                                className="carousel-item shrink-0 w-[45%] sm:w-[30%] md:w-[22%] lg:w-[15%]"
+                            >
+                                <ProductLineCard productLine={line} />
+                            </div>
                         ))}
                     </div>
                 </div>
             </section>
+
 
             {/* Novedades */}
             {newProducts > 0 ? <section className="py-12">
@@ -156,6 +159,6 @@ export default function Home() {
                 <BtnWpp />
             </div>
 
-        </div>
+        </div >
     );
 }
