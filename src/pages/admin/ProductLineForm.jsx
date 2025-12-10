@@ -54,9 +54,9 @@ export default function ProductLineForm({
 
         let newValue = type === "checkbox" ? checked : value;
 
-        /* CAMPO STRING ID SIEMPRE EN MINUSCULAS */
+        /* CAMPO STRING ID SIEMPRE EN MINUSCULAS Y SIN ESPACIOS */
         if (name === "string_id") {
-            newValue = value.toLowerCase().replace(/\s/g, '-'); // Agrego reemplazar espacios por guiones
+            newValue = value.toLowerCase().replace(/\s/g, '-');
         }
 
         setForm(prev => ({
@@ -72,15 +72,13 @@ export default function ProductLineForm({
         try {
             let imageUrl = form.image || null;
 
-            // 1. Si el usuario seleccionó una imagen nueva, se sube
             if (imageFile) {
-                // Usamos el string_id como parte del nombre del archivo para mejor organización
                 imageUrl = await uploadImage("product_lines", imageFile, form.string_id);
             }
 
             const productLineDataToSave = {
                 ...form,
-                image: imageUrl, // Aseguramos que la URL final esté en el objeto a guardar
+                image: imageUrl,
             };
 
             let response;
@@ -96,7 +94,7 @@ export default function ProductLineForm({
                 dbOperation = supabase
                     .from("product_lines")
                     .insert(productLineDataToSave)
-                    .select() // Agregamos select() para obtener el registro insertado
+                    .select()
                     .single();
             }
 
