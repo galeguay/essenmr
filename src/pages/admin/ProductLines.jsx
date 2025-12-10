@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import Text from '../../components/public/Text';
 
 export default function ProductLines() {
 
@@ -10,13 +11,14 @@ export default function ProductLines() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const perPage = 15;
+    
     const fetchProductLines = async () => {
         setLoading(true);
         try {
             let query = supabase
                 .from("product_lines")
-                .select("*", { count: "exact" })  // ← importante para saber totalItems
-                .order("created_at", { ascending: false }); // PB: sort: "-created"
+                .select("*", { count: "exact" })
+                .order("created_at", { ascending: false });
 
             // Filtro por búsqueda
             if (search) {
@@ -80,15 +82,15 @@ export default function ProductLines() {
     };
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="p-6 mx-auto max-w-7xl">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                <h1 className="text-3xl font-bold text-gray-800">Lineas de productos</h1>
+            <div className="flex flex-col items-start justify-between gap-4 mb-8 sm:flex-row sm:items-center">
+                <h1 className="text-3xl font-bold text-gray-800">Líneas de productos</h1>
                 <Link
                     to="/admin/productLines/new"
-                    className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition shadow-md"
+                    className="px-6 py-3 font-medium text-white transition bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700"
                 >
-                    + Nuevo Línea
+                    + Nueva Línea
                 </Link>
             </div>
 
@@ -106,60 +108,84 @@ export default function ProductLines() {
             {/* Loading */}
             {loading ? (
                 <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-indigo-600"></div>
+                    <div className="w-12 h-12 border-b-4 border-indigo-600 rounded-full animate-spin"></div>
                 </div>
             ) : (
                 <>
                     {/* Tabla */}
-                    <div className="bg-white shadow-lg rounded-xl overflow-hidden">
+                    <div className="overflow-hidden bg-white shadow-lg rounded-xl">
                         <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 border-b border-gray-200">
+                            {/* Ajustamos la tabla para centrar el contenido estéticamente */}
+                            <table className="w-full text-center"> 
+                                <thead className="text-center text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visible</th>
-                                        <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                        {/* Centrar encabezados */}
+                                        <th className="px-3 py-2 font-medium tracking-wider"><Text> Imagen </Text></th>
+                                        <th className="px-3 py-2 font-medium tracking-wider"><Text> Nombre </Text></th>
+                                        <th className="px-3 py-2 font-medium tracking-wider"><Text> ID </Text></th>
+                                        {/* 💡 NUEVA COLUMNA DE COLOR */}
+                                        <th className="px-3 py-2 font-medium tracking-wider"><Text> Color </Text></th>
+                                        <th className="px-3 py-2 font-medium tracking-wider"><Text> Visible </Text></th>
+                                        <th className="px-3 py-2 font-medium tracking-wider"><Text> Acciones </Text></th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {productLines.map((pl) => (
-                                        <tr key={pl.id} className="hover:bg-gray-50 transition">
-                                            <td className="px-6 py-4">
-                                                {pl.image ? (
-                                                    <img
-                                                        src={pl.image}
-                                                        alt={pl.name}
-                                                        className="w-12 h-12 object-cover rounded-lg"
-                                                    />
-                                                ) : (
-                                                    <div className="w-12 h-12 bg-gray-200 border-2 border-dashed rounded-lg"></div>
-                                                )}
+                                        <tr key={pl.id} className="transition hover:bg-gray-50">
+                                            {/* Imagen */}
+                                            <td className="px-3 py-2">
+                                                <div className="flex justify-center">
+                                                    {pl.image ? (
+                                                        <img
+                                                            src={pl.image}
+                                                            alt={pl.name}
+                                                            className="object-cover w-12 h-12 rounded-md"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-12 h-12 bg-gray-200 border-2 border-dashed rounded-md"></div>
+                                                    )}
+                                                </div>
                                             </td>
 
                                             {/* NOMBRE */}
-                                            <td className="px-6 py-4 font-medium text-gray-900">{pl.name}</td>
+                                            <td className="px-3 py-2"><Text>{pl.name}</Text></td>
 
                                             {/* LINEA ID*/}
-                                            <td className="px-6 py-4 text-gray-600">{pl.id || '—'}</td>
+                                            <td className="px-3 py-2 text-gray-600">{pl.id || '—'}</td>
 
-                                            {/* VISIBILIDAD */}
-                                            <td className="px-10 py-4">
+                                            {/* 💡 CELDA DEL COLOR (Círculo + Código) */}
+                                            <td className="px-3 py-2">
+                                                <div className="flex items-center justify-center gap-2">
+                                                    {/* Círculo de color */}
+                                                    <div
+                                                        className="w-4 h-4 border border-gray-300 rounded-full shadow-sm"
+                                                        style={{ backgroundColor: pl.color || '#F0F0F0' }} // Usa el color o un gris por defecto
+                                                        title={`Color: ${pl.color || 'No definido'}`}
+                                                    ></div>
+                                                    {/* Código Hexadecimal */}
+                                                    <Text>
+                                                        {pl.color || '—'}
+                                                    </Text>
+                                                </div>
+                                            </td>
+
+                                            {/* VISIBILIDAD (Usando Toggle de DaisyUI para estética similar a Products) */}
+                                            <td className="px-3 py-2">
                                                 <input
                                                     type="checkbox"
                                                     checked={pl.is_visible}
                                                     onChange={() =>
                                                         toggleField(pl.id, "is_visible", !pl.is_visible)
                                                     }
+                                                    className="toggle toggle-success"
                                                 />
                                             </td>
 
                                             {/* ACCIONES */}
-                                            <td className="px-6 py-4">
+                                            <td className="px-3 py-2">
                                                 <Link
                                                     to={`/admin/productLines/${pl.id}`}
-                                                    className="text-indigo-600 hover:text-indigo-800 font-medium"
+                                                    className="font-medium text-indigo-600 hover:text-indigo-800"
                                                 >
                                                     Editar
                                                 </Link>

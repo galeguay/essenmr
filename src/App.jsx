@@ -48,7 +48,6 @@ export default function App() {
                 <Route path="/admin/productLines/:id" element={<ProductLineForm />} />
                 <Route path="/admin/settings" element={<Settings />} />
 
-
             </Route>
         </Routes>
     );

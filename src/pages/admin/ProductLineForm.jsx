@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from '../../lib/supabase';
+// ¡Importamos la utilidad de subida de imagen!
+import { uploadImage } from "../../utils/uploadImage";
 
 export default function ProductLineForm({
     initialData = null,
@@ -10,34 +12,40 @@ export default function ProductLineForm({
     const { id } = useParams();
     const navigate = useNavigate();
     const isEdit = !!id;
+    // Nuevo estado para manejar el archivo de imagen
+    const [imageFile, setImageFile] = useState(null);
+
     const [form, setForm] = useState({
         name: initialData?.name || "",
         string_id: initialData?.string_id || "",
         color: initialData?.color || "#8b5cf6",
         is_visible: initialData ? initialData.is_visible !== false : true,
         description: initialData?.description || "",
+        // Agregamos el campo 'image' para almacenar la URL actual
+        image: initialData?.image || null,
     });
     const [loading, setLoading] = useState(false);
 
+    const loadProductLine = async () => {
+        if (!isEdit) return;
+
+        try {
+            const { data, error } = await supabase
+                .from("product_lines")
+                .select("*")
+                .eq("id", id)
+                .single();
+
+            if (error) throw error;
+
+            setForm(data);
+        } catch (error) {
+            alert("No se pudo cargar la línea de producto");
+            navigate("/admin/productLines");
+        }
+    };
+
     useEffect(() => {
-        const loadProductLine = async () => {
-            if (!isEdit) return;
-
-            try {
-                const { data, error } = await supabase
-                    .from("product_lines")
-                    .select("*")
-                    .eq("id", id)
-                    .single();
-
-                if (error) throw error;
-
-                setForm(data);
-            } catch (error) {
-                alert("No se pudo cargar la línea");
-                navigate("/admin/productLines");
-            }
-        };
         loadProductLine();
     }, [id]);
 
@@ -48,7 +56,7 @@ export default function ProductLineForm({
 
         /* CAMPO STRING ID SIEMPRE EN MINUSCULAS */
         if (name === "string_id") {
-            newValue = newValue.toLowerCase();
+            newValue = value.toLowerCase().replace(/\s/g, '-'); // Agrego reemplazar espacios por guiones
         }
 
         setForm(prev => ({
@@ -62,40 +70,67 @@ export default function ProductLineForm({
         setLoading(true);
 
         try {
+            let imageUrl = form.image || null;
+
+            // 1. Si el usuario seleccionó una imagen nueva, se sube
+            if (imageFile) {
+                // Usamos el string_id como parte del nombre del archivo para mejor organización
+                imageUrl = await uploadImage("product_lines", imageFile, form.string_id);
+            }
+
+            const productLineDataToSave = {
+                ...form,
+                image: imageUrl, // Aseguramos que la URL final esté en el objeto a guardar
+            };
+
             let response;
+            let dbOperation;
+
             if (isEdit) {
-                const { data, error } = await supabase
+                dbOperation = supabase
                     .from("product_lines")
-                    .update(form)
+                    .update(productLineDataToSave)
                     .eq("id", id)
                     .single();
-
-                if (error) throw error;
-
-                alert("Línea actualizada correctamente");
-                navigate("/admin/productLines");
-                response = data;
             } else {
-                const { data, error } = await supabase
+                dbOperation = supabase
                     .from("product_lines")
-                    .insert(form)
+                    .insert(productLineDataToSave)
+                    .select() // Agregamos select() para obtener el registro insertado
                     .single();
+            }
 
-                if (error) throw error;
+            const { data, error } = await dbOperation;
 
+            if (error) throw error;
+
+            response = data;
+
+            if (isEdit) {
+                alert("Línea actualizada correctamente");
+            } else {
+                alert("Línea creada correctamente");
+            }
+
+            // Limpiamos el formulario en caso de inserción exitosa
+            if (!isEdit) {
                 setForm({
                     name: "",
                     string_id: "",
                     color: "#8b5cf6",
                     is_visible: true,
                     description: "",
+                    image: null,
                 });
-                navigate("/admin/productLines");
+                setImageFile(null);
             }
+
+            navigate("/admin/productLines");
             onSubmit(response);
+
         } catch (error) {
-            console.error("Error:", error);
-            alert("Error al guardar: " + (error.message || "Inténtalo de nuevo"));
+            console.error("Error guardando línea:", error);
+            alert("Error: " + (error.message || "Inténtalo de nuevo"));
         } finally {
             setLoading(false);
         }
@@ -104,93 +139,125 @@ export default function ProductLineForm({
     return (
         <form
             onSubmit={handleSubmit}
-            className="w-full max-w-lg mx-auto bg-white p-6 rounded-xl shadow-md border border-gray-200"
+            className="w-full max-w-lg p-8 mx-auto space-y-8 bg-white border border-gray-200 shadow-lg rounded-xl"
         >
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">
-                {isEdit ? "Editar línea de productos" : "Crear nueva línea"}
+            <h2 className="mb-8 text-2xl font-bold text-center text-gray-800">
+                {isEdit ? "Editar línea de producto" : "Crear nueva línea de producto"}
             </h2>
 
             {/* Nombre */}
-            <label className="block mb-4">
-                <span className="text-gray-700 font-medium">Nombre de la línea</span>
+            <label className="floating-label">
                 <input
                     type="text"
                     name="name"
                     value={form.name}
                     onChange={handleChange}
                     required
-                    placeholder="Ej: Clásica, Colors, Disney..."
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="input"
+                    placeholder="Nombre"
+                    autoComplete="off"
                 />
+                <span>Nombre *</span>
             </label>
 
             {/* String ID */}
-            <label className="block mb-4">
-                <span className="text-gray-700 font-medium">String ID</span>
+            <label className="floating-label">
                 <input
                     type="text"
                     name="string_id"
                     value={form.string_id}
                     onChange={handleChange}
                     required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="lowercase input"
+                    placeholder="ID Único (ej: clasica)"
+                    autoComplete="off"
                 />
+                <span>Palabra ID</span>
             </label>
+            <div className="mt-1 text-xs text-gray-500 -translate-y-6">
+                En minúsculas y sin espacios. Ej: Para Bazar Premium sería bazar-premium
+            </div>
 
             {/* Color */}
-            <label className="block mb-4">
-                <span className="text-gray-700 font-medium">Color representativo</span>
-                <div className="flex gap-3 mt-1">
+            <div className="flex flex-col justify-center gap-4">
+                <label className="font-medium text-gray-700 whitespace-nowrap">Color representativo:</label>
+                <div className="flex flex-1 gap-3">
                     <input
                         type="color"
                         name="color"
                         value={form.color}
                         onChange={handleChange}
-                        className="h-12 w-24 border rounded cursor-pointer"
+                        className="w-20 h-10 p-0 border rounded cursor-pointer"
                     />
                     <input
                         type="text"
                         value={form.color}
                         readOnly
-                        className="flex-1 px-3 py-2 border rounded-lg bg-gray-50 font-mono text-sm"
+                        className="flex-1 px-3 py-2 font-mono text-sm border rounded-lg bg-gray-50"
                     />
                 </div>
-            </label>
-
-            {/* Switch: Visible */}
-            <div className="flex items-center justify-between mb-5">
-                <span className="text-gray-700 font-medium">Linea visible en el catálogo</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                        type="checkbox"
-                        name="is_visible"
-                        checked={form.is_visible}
-                        onChange={handleChange}
-                        className="sr-only peer"
-                    />
-                    <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                </label>
             </div>
 
             {/* Descripción */}
-            <label className="block mb-6">
-                <span className="text-gray-700 font-medium">Descripción (opcional)</span>
+            <label className="block">
+                <span className="block mb-1 text-sm text-gray-600">Descripción (opcional)</span>
                 <textarea
                     name="description"
                     value={form.description}
                     onChange={handleChange}
                     rows={3}
                     placeholder="Información adicional sobre esta línea..."
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
             </label>
 
+            {/* Switch: Visible */}
+            <div className="flex items-center justify-between w-[60%]">
+                <span className="text-sm me-1">Visible en el catálogo</span>
+                <input
+                    type="checkbox"
+                    name="is_visible"
+                    checked={form.is_visible}
+                    onChange={handleChange}
+                    className="toggle toggle-success"
+                />
+            </div>
+
+            {/* Cargar imagen */}
+            <div>
+                <span className="text-sm">Imagen de cabecera / ícono</span>
+                {(isEdit && form.image && !imageFile) && (
+                    <div className="mb-2">
+                        <div className="w-full h-32 mx-auto overflow-hidden border border-gray-200 rounded-lg shadow-sm">
+                            <img
+                                src={form.image}
+                                alt={`Imagen de ${form.name}`}
+                                className="object-cover w-full h-full"
+                            />
+                        </div>
+                        <div className="mt-1 text-xs text-center text-gray-500">
+                            Sube una nueva imagen para reemplazar la actual.
+                        </div>
+                    </div>
+                )}
+
+                <fieldset className="fieldset">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setImageFile(e.target.files[0])}
+                        className="w-full file-input file-input-md"
+                    />
+                </fieldset>
+            </div>
+
+
             {/* Botones */}
-            <div className="flex gap-4">
+            <div className="flex gap-3 pt-4">
                 <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 disabled:opacity-70 transition"
+                    className="flex-1 py-3 font-bold text-white transition bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-70"
                 >
                     {loading ? "Guardando..." : isEdit ? "Actualizar línea" : "Crear línea"}
                 </button>
@@ -199,7 +266,7 @@ export default function ProductLineForm({
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="px-6 py-3 bg-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-400 transition"
+                        className="px-6 py-3 font-medium text-gray-700 transition bg-gray-300 rounded-lg hover:bg-gray-400"
                     >
                         Cancelar
                     </button>

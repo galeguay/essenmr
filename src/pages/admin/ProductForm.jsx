@@ -17,12 +17,13 @@ export default function ProductForm({
         name: initialData?.name || "",
         essen_id: initialData?.essen_id || "",
         product_line: initialData?.product_line || "",
-        description: initialData?.description || "",
+        description: initialData?.description || "", // <-- ¡Aquí está!
         diameter: initialData?.diameter || "",
         capacity: initialData?.capacity || "",
         is_visible: initialData?.is_visible ?? false,
         is_new: initialData?.is_new ?? false,
         discount: initialData?.discount || "",
+        image: initialData?.image || null, // Aseguramos el campo de imagen para edición
     });
 
     const [lineas, setLineas] = useState([]);
@@ -47,18 +48,17 @@ export default function ProductForm({
         }
     };
 
-    // En loadProduct
     const loadProduct = async () => {
         if (!isEdit) return;
 
         try {
-            // ... (código de carga)
             const { data, error } = await supabase
                 .from("products")
                 .select("*")
                 .eq("id", id)
                 .single();
-            // ...
+
+            if (error) throw error;
 
             setProduct({
                 ...data,
@@ -66,7 +66,8 @@ export default function ProductForm({
                 product_line: String(data.product_line)
             });
         } catch (error) {
-            // ...
+            console.error("Error cargando producto:", error);
+            alert("No se pudo cargar el producto para edición.");
         }
     };
 
@@ -95,7 +96,8 @@ export default function ProductForm({
 
             // Si el usuario seleccionó una imagen nueva, se sube
             if (imageFile) {
-                imageUrl = await uploadImage("products", imageFile, product.essen_id);
+                // Usamos el id Essen para nombrar la imagen
+                imageUrl = await uploadImage("products", imageFile, product.essen_id); 
             }
             const normalizeNumber = (value) =>
                 value === "" || value === undefined || value === null
@@ -113,29 +115,34 @@ export default function ProductForm({
             };
 
             let response;
+            let dbOperation;
 
             if (isEdit) {
-                const { data, error } = await supabase
+                dbOperation = supabase
                     .from("products")
                     .update(productDataToSave)
                     .eq("id", id)
+                    .select() // Agregamos select() para obtener el registro actualizado
                     .single();
-
-                if (error) throw error;
-
-                alert("Producto actualizado correctamente");
-                navigate("/admin/products");
-                response = data;
-
             } else {
-                const { data, error } = await supabase
+                dbOperation = supabase
                     .from("products")
                     .insert(productDataToSave)
+                    .select() // Agregamos select() para obtener el registro insertado
                     .single();
+            }
+            
+            const { data, error } = await dbOperation;
 
-                if (error) throw error;
-
-                setProduct({
+            if (error) throw error;
+            
+            response = data;
+            
+            if (isEdit) {
+                 alert("Producto actualizado correctamente");
+            } else {
+                 // Limpiar estado en inserción
+                 setProduct({
                     name: "",
                     essen_id: "",
                     product_line: "",
@@ -145,16 +152,16 @@ export default function ProductForm({
                     is_visible: false,
                     is_new: false,
                     discount: "",
-                });
-
-                navigate("/admin/products");
+                    image: null,
+                 });
             }
 
+            navigate("/admin/products");
             onSubmit(response);
 
         } catch (error) {
             console.error("Error guardando producto:", error);
-            alert("Error: " + error.message);
+            alert("Error: " + (error.message || "Error desconocido al guardar"));
 
         } finally {
             setLoading(false);
@@ -187,7 +194,6 @@ export default function ProductForm({
 
             {/* Código Essen */}
             <label className="floating-label">
-                <span>Código Essen</span>
                 <input
                     type="text"
                     name="essen_id"
@@ -197,6 +203,7 @@ export default function ProductForm({
                     placeholder="Código Essen"
                     autocomplete="off"
                 />
+                <span>Código Essen</span>
             </label>
 
             {/* Línea de producto */}
@@ -211,16 +218,15 @@ export default function ProductForm({
                 >
                     <option value="">{loadingLineas ? "Cargando..." : "Seleccionar línea..."}</option>
                     {lineas.map(linea => (
-                        <option key={linea.id} value={linea.id}> {/* <-- ¡CAMBIO AQUÍ! Usar linea.id */}
+                        <option key={linea.id} value={linea.id}>
                             {linea.name}
                         </option>
                     ))}
                 </select>
             </label>
 
-            {/* Diámetro y Capacidad */}
+            {/* Diámetro (cm) */}
             <label className="floating-label">
-                <span className="label">Diámetro (cm)</span>
                 <input
                     type="number"
                     name="diameter"
@@ -231,12 +237,12 @@ export default function ProductForm({
                     className="input"
                     placeholder="Diámetro (cm)"
                 />
+                <span>Diámetro (cm)</span>
             </label>
 
-            {/* Capacidad */}
+            {/* Capacidad (L) */}
             <div>
                 <label className="floating-label">
-                    <span>Capacidad (L)</span>
                     <input
                         type="number"
                         name="capacity"
@@ -247,9 +253,23 @@ export default function ProductForm({
                         className="input"
                         placeholder="Capacidad (L)"
                     />
+                    <span>Capacidad (L)</span>
                 </label>
                 <div className="mt-1 text-xs text-gray-500">El valor decimal se debe ingresar con punto (Ej: 4.2)</div>
             </div>
+
+            {/* 🛑 DESCRIPCIÓN 🛑 */}
+            <label className="block">
+                <span className="block mb-1 text-sm text-gray-600">Descripción (opcional)</span>
+                <textarea
+                    name="description"
+                    value={product.description}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="Detalles, materiales, y características del producto..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+            </label>
 
             {/* Switch: Visible */}
             <div className="flex items-center justify-between w-[50%]">
@@ -277,7 +297,6 @@ export default function ProductForm({
 
             {/* Descuento */}
             <label className="mb-6 floating-label">
-                <span>Descuento (%)</span>
                 <input
                     type="number"
                     name="discount"
@@ -288,6 +307,7 @@ export default function ProductForm({
                     placeholder="Descuento (%)"
                     className="input"
                 />
+                 <span>Descuento (%)</span>
             </label>
 
             {/* Cargar imagen */}
@@ -300,7 +320,7 @@ export default function ProductForm({
                             <img
                                 src={product.image}
                                 alt={`Imagen de ${product.name}`}
-                                className="object-cover w-full h-full" // La imagen cubre completamente el contenedor 1:1
+                                className="object-cover w-full h-full"
                             />
                         </div>
                         <div className="mt-1 text-xs text-center text-gray-500">
