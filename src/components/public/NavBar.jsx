@@ -13,7 +13,7 @@ export default function Navbar() {
             <h1 className="text-xl font-bold tracking-wide md:text-2xl">
               EssenMR
             </h1>
-            <img src="/logo.png" alt="Logo" className="w-10 h-10 ml-2" />
+            <img src="/https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/public/images/logo_blanco.webp" alt="Logo" className="w-10 h-10 ml-2" />
           </a>
 
           {/* Menú Desktop */}
