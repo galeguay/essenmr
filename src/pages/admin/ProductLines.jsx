@@ -90,7 +90,7 @@ export default function ProductLines() {
                     to="/admin/productLines/new"
                     className="px-6 py-3 font-medium text-white transition bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700"
                 >
-                    + Nueva Línea
+                    Agregar Línea
                 </Link>
             </div>
 

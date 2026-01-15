@@ -48,6 +48,7 @@ export default function Catalog() {
                         *,
                         product_line (*)
                     `)
+                    .eq('is_visible', true)
                     .order('essen_id', { ascending: false });
 
                 if (error) throw error;

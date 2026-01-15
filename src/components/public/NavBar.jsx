@@ -4,29 +4,30 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-orange-600 text-white shadow-xl z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+    <nav className="fixed top-0 left-0 right-0 z-50 text-white bg-orange-600 shadow-xl">
+      <div className="container px-4 mx-auto">
+        <div className="flex items-center justify-between h-16">
           
           {/* Logo / Nombre */}
           <a href="/" className="flex items-center">
-            <h1 className="text-xl md:text-2xl font-bold tracking-wide">
+            <h1 className="text-xl font-bold tracking-wide md:text-2xl">
               EssenMR
             </h1>
+            <img src="/logo.png" alt="Logo" className="w-10 h-10 ml-2" />
           </a>
 
           {/* Menú Desktop */}
-          <div className="hidden md:flex items-center gap-8 text-lg">
-            <a href="/" className="hover:text-orange-200 transition font-medium">
+          <div className="items-center hidden gap-8 text-lg md:flex">
+            <a href="/" className="font-medium transition hover:text-orange-200">
               Inicio
             </a>
-            <a href="/catalogo" className="hover:text-orange-200 transition font-medium">
+            <a href="/catalogo" className="font-medium transition hover:text-orange-200">
               Catálogo
             </a>
-            <a href="/faq" className="hover:text-orange-200 transition font-medium">
+            <a href="/faq" className="font-medium transition hover:text-orange-200">
               Preguntas frecuentes
             </a>
-            <a href="/about_me" className="hover:text-orange-200 transition font-medium">
+            <a href="/about_me" className="font-medium transition hover:text-orange-200">
               Sobre mi
             </a>
           </div>
@@ -34,7 +35,7 @@ export default function Navbar() {
           {/* Botón Hamburguesa (móvil) */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white focus:outline-none"
+            className="text-white md:hidden focus:outline-none"
           >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -49,22 +50,22 @@ export default function Navbar() {
 
         {/* Menú Móvil */}
         {isOpen && (
-          <div className="md:hidden pb-4">
+          <div className="pb-4 md:hidden">
             <div className="flex flex-col gap-4 mt-4">
-              <a href="/" className="hover:bg-orange-700 px-4 py-2 rounded transition">
+              <a href="/" className="px-4 py-2 transition rounded hover:bg-orange-700">
                 Inicio
               </a>
-              <a href="/catalogo" className="hover:bg-orange-700 px-4 py-2 rounded transition">
+              <a href="/catalogo" className="px-4 py-2 transition rounded hover:bg-orange-700">
                 Catálogo
               </a>
-              <a href="/promociones" className="hover:bg-orange-700 px-4 py-2 rounded transition">
+              <a href="/promociones" className="px-4 py-2 transition rounded hover:bg-orange-700">
                 Promociones
               </a>
               <a
                 href="https://wa.me/5492235012258"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg font-bold text-center shadow-md"
+                className="px-6 py-3 font-bold text-center bg-green-500 rounded-lg shadow-md hover:bg-green-600"
               >
                 WhatsApp
               </a>

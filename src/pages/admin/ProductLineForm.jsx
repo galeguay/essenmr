@@ -21,7 +21,6 @@ export default function ProductLineForm({
         color: initialData?.color || "#8b5cf6",
         is_visible: initialData ? initialData.is_visible !== false : true,
         description: initialData?.description || "",
-        // Agregamos el campo 'image' para almacenar la URL actual
         image: initialData?.image || null,
     });
     const [loading, setLoading] = useState(false);

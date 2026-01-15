@@ -154,7 +154,7 @@ export default function Home() {
 
             <div className="justify-center p-4 mb-10 text-center bg-orange-700">
                 <div className="mb-4 text-xl font-bold text-white">
-                    Si necesitás algún REPUESTO de piezas Essen ¡Escribime!
+                    Si necesitás algún REPUESTO ¡Escribime!
                 </div>
                 <BtnWpp />
             </div>

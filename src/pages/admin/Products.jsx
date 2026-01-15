@@ -145,7 +145,7 @@ export default function Products() {
                     to="/admin/products/new"
                     className="px-6 py-3 font-medium text-white transition bg-indigo-600 rounded-lg shadow-md hover:bg-indigo-700"
                 >
-                    + Nuevo producto25
+                    Agregar producto
                 </Link>
             </div>
 
@@ -176,10 +176,10 @@ export default function Products() {
                                         {/* Nueva columna para la imagen */}
                                         <th className="px-3 py-2">Imagen</th>
                                         <th className="px-3 py-2">Nombre</th>
+                                        <th className="px-6 py-4">Línea</th>
                                         <th className="px-3 py-2">Essen ID</th>
                                         <th className="px-3 py-2">Diámetro (cm)</th>
                                         <th className="px-3 py-2">Capacidad (L)</th>
-                                        <th className="px-6 py-4">Línea</th>
                                         <th className="px-3 py-2">Visible</th>
                                         <th className="px-3 py-2">Nuevo</th>
                                         <th className="px-3 py-2">Descuento (%)</th>
@@ -193,18 +193,17 @@ export default function Products() {
                                             <td className="px-3 py-2">
                                                 <img
                                                     src={product.image || 'url-por-defecto-o-placeholder'}
-                                                    alt={product.name}
                                                     className="object-cover w-12 h-12 mx-auto rounded-md"
                                                 />
                                             </td>
-
                                             <td className="px-3 py-2">{product.name}</td>
-                                            <td className="px-3 py-2">{product.essen_id}</td>
-                                            <td className="px-3 py-2">{product.diameter}</td>
-                                            <td className="px-3 py-2">{product.capacity}</td>
                                             <td className="px-3 py-2">
                                                 {product.product_line?.name || '—'}
                                             </td>
+                                            <td className="px-3 py-2">{product.essen_id}</td>
+                                            <td className="px-3 py-2">{product.diameter}</td>
+                                            <td className="px-3 py-2">{product.capacity}</td>
+
 
                                             {/* Toggle de DaisyUI para Visible */}
                                             <td className="px-3 py-2">
