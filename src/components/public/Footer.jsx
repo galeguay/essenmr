@@ -24,15 +24,15 @@ export default function Footer() {
           ))}
         </ul>
         <div className="flex flex-col items-start gap-2">
-            <BtnLink href="https://g.co/kgs/NuUKntR">
+            <BtnLink href="https://g.co/kgs/NuUKntR" className="btn-sm">
               <i className="bi bi-google"></i> Perfil Google
             </BtnLink>
 
-            <BtnLink href="tel:+5492235012258">
+            <BtnLink href="tel:+5492235012258" className="btn-sm">
               <i className="bi bi-telephone-fill"></i> Llamar (+54 9 223 501-2258)
             </BtnLink>
 
-            <BtnLink href="https://wa.me/5492235012258">
+            <BtnLink href="https://wa.me/5492235012258" className="btn-sm">
               <i className="bi bi-whatsapp"></i> Enviar Whatsapp
             </BtnLink>
         </div>
