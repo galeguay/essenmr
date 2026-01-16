@@ -8,10 +8,10 @@ export default function Promotions() {
                 Promociones financieras {currentMonth}
             </h2>
             
-            <div className="p-4 bg-gray-700 xl:mx-20">
+            <div className="flex justify-center ">
                     <img
                         src="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/public/images/tarjetas.webp"
-                        className="object-contain w-full h-auto"
+                        className="object-contain h-auto p-6 bg-gray-700 w-250"
                         alt="Promociones"
                     />
             </div>

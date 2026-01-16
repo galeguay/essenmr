@@ -12,13 +12,14 @@ export default function AdminLayout({ title = "Admin" }) {
     }, [title]);
 
     useEffect(() => {
-        const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
             setLoggedIn(!!session);
             setLoading(false);
-        };
+        });
 
-        checkSession();
+        return () => subscription.unsubscribe();
     }, []);
 
     if (loading) return null; // o un spinner si querés
@@ -30,7 +31,7 @@ export default function AdminLayout({ title = "Admin" }) {
     return (
         <div className="min-h-screen bg-gray-100">
             <Sidebar title={title}>
-                <div className="bg-gray-100 text-black lg:ms-14">
+                <div className="text-black bg-gray-100 lg:ms-14">
                     <Outlet />
                 </div>
             </Sidebar>

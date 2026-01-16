@@ -9,14 +9,6 @@ export default function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) navigate('/admin', { replace: true });
-    };
-    checkSession();
-  }, [navigate]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -41,9 +33,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-lg p-8 space-y-8">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-gray-50">
+      <div className="w-full max-w-md">
+        <div className="p-8 space-y-8 bg-white shadow-lg rounded-2xl">
 
           <div className="text-center">
             <p className="mt-2 text-gray-600">
@@ -53,7 +45,7 @@ export default function Login() {
 
           {/* Mostrar error */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className="px-4 py-3 text-sm text-red-700 border border-red-200 rounded-lg bg-red-50">
               {error}
             </div>
           )}
@@ -69,7 +61,7 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="block w-full px-4 py-3 mt-1 text-gray-900 placeholder-gray-400 transition border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="tu@ejemplo.com"
               />
             </div>
@@ -84,7 +76,7 @@ export default function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="block w-full px-4 py-3 mt-1 text-gray-900 placeholder-gray-400 transition border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="••••••••"
               />
             </div>
@@ -95,7 +87,7 @@ export default function Login() {
                 <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                 <span className="ml-2 text-sm text-gray-600">Recordarme</span>
               </label>
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-500 font-medium">
+              <a href="#" className="text-sm font-medium text-blue-600 hover:text-blue-500">
                 ¿Olvidaste tu contraseña?
               </a>
             </div> */}

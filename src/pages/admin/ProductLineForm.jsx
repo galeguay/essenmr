@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from '../../lib/supabase';
 // ¡Importamos la utilidad de subida de imagen!
 import { uploadImage } from "../../utils/uploadImage";
@@ -12,8 +12,8 @@ export default function ProductLineForm({
     const { id } = useParams();
     const navigate = useNavigate();
     const isEdit = !!id;
-    // Nuevo estado para manejar el archivo de imagen
     const [imageFile, setImageFile] = useState(null);
+
 
     const [form, setForm] = useState({
         name: initialData?.name || "",
@@ -25,7 +25,7 @@ export default function ProductLineForm({
     });
     const [loading, setLoading] = useState(false);
 
-    const loadProductLine = async () => {
+    const loadProductLine = useCallback(async () => {
         if (!isEdit) return;
 
         try {
@@ -38,15 +38,15 @@ export default function ProductLineForm({
             if (error) throw error;
 
             setForm(data);
-        } catch (error) {
-            alert("No se pudo cargar la línea de producto");
+        } catch {
+            alert("No se pude cargar la línea de producto");
             navigate("/admin/productLines");
         }
-    };
+    }, [isEdit, id, navigate]);
 
     useEffect(() => {
-        loadProductLine();
-    }, [id]);
+        if (isEdit) loadProductLine();
+    }, [isEdit, loadProductLine]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -66,6 +66,10 @@ export default function ProductLineForm({
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const { data } = await supabase.auth.getUser();
+        console.log("USER:", data.user);
+
         setLoading(true);
 
         try {
@@ -112,12 +116,12 @@ export default function ProductLineForm({
             // Limpiamos el formulario en caso de inserción exitosa
             if (!isEdit) {
                 setForm({
-                    name: "",
-                    string_id: "",
-                    color: "#8b5cf6",
-                    is_visible: true,
-                    description: "",
-                    image: null,
+                    name: data.name ?? "",
+                    string_id: data.string_id ?? "",
+                    color: data.color ?? "#8b5cf6",
+                    is_visible: data.is_visible ?? true,
+                    description: data.description ?? "",
+                    image: data.image ?? null,
                 });
                 setImageFile(null);
             }

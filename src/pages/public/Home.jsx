@@ -116,19 +116,19 @@ export default function Home() {
 
             {/* Lineas */}
             <section className="flex justify-center bg-gray-100 my-6 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)] py-4 px-2">
-                <div className="container px-2">
-                    <div className="w-full p-4 mx-auto space-x-1 carousel rounded-box">
+                <div className="container px-2 lg:flex lg:justify-center ">
+                    <div
+                        className="justify-around gap-2 overflow-x-auto flex lg:overflow-x-visible xl:w-[80%]"
+                    >
                         {productLines.map((line) => (
-                            <div
-                                key={line.id}
-                                className="carousel-item shrink-0 w-[45%] sm:w-[30%] md:w-[22%] lg:w-[15%]"
-                            >
+                            <div key={line.id} className="min-w-[45%] sm:min-w-[30%] md:min-w-[22%] lg:min-w-0">
                                 <ProductLineCard productLine={line} />
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
+
 
 
             {/* Novedades */}

@@ -30,7 +30,7 @@ export default function Products() {
 
     const perPage = 15;
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         setLoading(true);
 
         try {
@@ -63,11 +63,11 @@ export default function Products() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, search]);
 
     useEffect(() => {
         fetchProducts();
-    }, [page, search]);
+    }, [page, search, fetchProducts]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -159,6 +159,29 @@ export default function Products() {
                     className="w-full max-w-md px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
             </div>
+
+            {/* Paginación */}
+            {totalPages > 1 && (
+                <div className="flex justify-center gap-2 mb-4">
+                    <button
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="btn btn-soft btn-sm"
+                    >
+                        Anterior
+                    </button>
+                    <span className="px-4 py-2">
+                        Página {page} de {totalPages}
+                    </span>
+                    <button
+                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        className="btn btn-soft btn-sm"
+                    >
+                        Siguiente
+                    </button>
+                </div>
+            )}
 
             {/* Loading */}
             {loading ? (
@@ -268,11 +291,11 @@ export default function Products() {
 
                     {/* Paginación */}
                     {totalPages > 1 && (
-                        <div className="flex justify-center gap-2 mt-8">
+                        <div className="flex justify-center gap-2 mt-6">
                             <button
                                 onClick={() => setPage(p => Math.max(1, p - 1))}
                                 disabled={page === 1}
-                                className="px-4 py-2 border rounded-lg disabled:opacity-50"
+                                className="btn btn-soft btn-sm"
                             >
                                 Anterior
                             </button>
@@ -282,7 +305,7 @@ export default function Products() {
                             <button
                                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                 disabled={page === totalPages}
-                                className="px-4 py-2 border rounded-lg disabled:opacity-50"
+                                className="btn btn-soft btn-sm"
                             >
                                 Siguiente
                             </button>

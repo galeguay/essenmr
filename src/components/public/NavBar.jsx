@@ -6,7 +6,7 @@ export default function Navbar() {
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 text-white bg-orange-600 shadow-xl">
             <div className="container px-4 mx-auto">
-                <div className="flex items-center justify-between h-16">
+                <div className="flex justify-between h-16">
 
                     {/* Logo / Nombre */}
                     <a href="/" className="flex items-center">
@@ -14,7 +14,7 @@ export default function Navbar() {
                     </a>
 
                     {/* Menú Desktop */}
-                    <div className="items-center hidden gap-8 text-lg md:flex">
+                    <div className="items-center hidden gap-8 text-lg md:py-2 md:flex md:self-end">
                         <a href="/" className="font-medium transition hover:text-orange-200">
                             Inicio
                         </a>

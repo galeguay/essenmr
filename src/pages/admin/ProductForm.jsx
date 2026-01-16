@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from '../../lib/supabase';
 import { uploadImage } from "../../utils/uploadImage";
 
@@ -48,7 +48,7 @@ export default function ProductForm({
         }
     };
 
-    const loadProduct = async () => {
+    const loadProduct = useCallback(async () => {
         if (!isEdit) return;
 
         try {
@@ -69,7 +69,7 @@ export default function ProductForm({
             console.error("Error cargando producto:", error);
             alert("No se pudo cargar el producto para edición.");
         }
-    };
+    }, [id, isEdit]);
 
     useEffect(() => {
         const loadAll = async () => {
@@ -77,7 +77,7 @@ export default function ProductForm({
             await loadProduct();
         };
         loadAll();
-    }, [id]);
+    }, [id, loadProduct]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
