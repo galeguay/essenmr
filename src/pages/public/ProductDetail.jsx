@@ -41,30 +41,25 @@ export default function ProductDetail() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
+            <div className="flex items-center justify-center min-h-screen bg-gray-50">
+                <div className="w-16 h-16 border-t-4 border-b-4 border-blue-600 rounded-full animate-spin"></div>
             </div>
         );
     }
 
     if (!product) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="flex items-center justify-center min-h-screen bg-gray-50">
                 <p className="text-2xl text-gray-600">Producto no encontrado</p>
             </div>
         );
     }
 
-    // Ajustá esto según cómo guardes la imagen
-    const imageUrl = product.image
-        ? product.image    // si guardás URL directo
-        : '/placeholder.jpg';
-
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4">
-            <div className="max-w-7xl mx-auto mb-20 md:mb-40">
+        <div className="min-h-screen px-4 py-8 bg-gray-50">
+            <div className="mx-auto mb-20 max-w-7xl md:mb-40">
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-1">
+                <div className="grid grid-cols-1 gap-1 lg:grid-cols-2">
 
                     <div className="relative aspect-square lg:aspect-auto">
                         {product.image ?
@@ -72,7 +67,7 @@ export default function ProductDetail() {
                                 loading="lazy"
                                 src={product.image}
                                 alt={product.name}
-                                className="w-full h-full object-cover"
+                                className="object-contain w-full h-full"
                                 onError={(e) => {
                                     e.currentTarget.src = "../../cacerola.webp";
                                 }}
@@ -82,40 +77,41 @@ export default function ProductDetail() {
                                 loading="lazy"
                                 src="../cacerola.webp"
                                 alt={product.name}
-                                className="absolute inset-0 w-full h-full object-cover"
+                                className="absolute inset-0 object-cover w-full h-full"
                             />
                         }
 
                     </div>
 
-                    <div className="p-8 lg:p-12 flex flex-col justify-between">
+                    <div className="flex flex-col justify-between p-8 lg:p-12">
 
                         <div>
                             {product.product_line && (
-                                <p className="text-sm text-gray-500 uppercase tracking-wider">
+                                <p className="text-sm tracking-wider text-gray-500 uppercase">
                                     {product.product_line.name}
                                 </p>
                             )}
 
-                            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 my-2">
+                            <h1 className="my-2 text-4xl font-bold text-gray-900 lg:text-5xl">
                                 {product.name}
                             </h1>
 
-                            <div className="flex space-x-1 mb-4">
+                            <div className="flex mb-4 space-x-1">
                                 {product.is_new && (
-                                    <div className="px-3 text-sm text-center uppercase bg-blue-200 text-blue-700">
+                                    <div className="px-3 text-sm text-center text-blue-700 uppercase bg-blue-200">
                                         nuevo
                                     </div>
                                 )}
                             </div>
 
                             {product.description && (
-                                <div className="prose prose-lg text-gray-700 mb-8">
-                                    <p>{product.description}</p>
+                                <div className="mb-8 prose prose-lg text-gray-700">
+                                    {/* Agregamos la clase aquí */}
+                                    <p className="whitespace-pre-wrap">{product.description}</p>
                                 </div>
                             )}
 
-                            <div className="flex justify-around font-bold text-2xl mb-8">
+                            <div className="flex justify-around mb-8 text-2xl font-bold">
                                 {product.diameter && (
                                     <div className="flex flex-col items-center">
                                         <span>{product.diameter} CM</span>
@@ -139,9 +135,9 @@ export default function ProductDetail() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col justify-center items-center">
+                        <div className="flex flex-col items-center justify-center">
                             {product.discount > 0 ? (
-                                <div className="py-1 px-3 text-center uppercase font-bold rounded-t-lg bg-green-200 text-green-700">
+                                <div className="px-3 py-1 font-bold text-center text-green-700 uppercase bg-green-200 rounded-t-lg">
                                     {product.discount}% de descuento
                                 </div>
                             ) : (

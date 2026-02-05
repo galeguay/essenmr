@@ -12,6 +12,7 @@ export default function ProductForm({
     const navigate = useNavigate();
     const isEdit = !!id;
     const [imageFile, setImageFile] = useState(null);
+    const [imageVersion, setImageVersion] = useState(Date.now());
 
     const [product, setProduct] = useState({
         name: initialData?.name || "",
@@ -97,7 +98,7 @@ export default function ProductForm({
             // Si el usuario seleccionó una imagen nueva, se sube
             if (imageFile) {
                 // Usamos el id Essen para nombrar la imagen
-                imageUrl = await uploadImage("products", imageFile, product.essen_id); 
+                imageUrl = await uploadImage("products", imageFile, product.essen_id);
             }
             const normalizeNumber = (value) =>
                 value === "" || value === undefined || value === null
@@ -128,21 +129,22 @@ export default function ProductForm({
                 dbOperation = supabase
                     .from("products")
                     .insert(productDataToSave)
-                    .select() // Agregamos select() para obtener el registro insertado
+                    .select()
                     .single();
             }
-            
+
             const { data, error } = await dbOperation;
 
             if (error) throw error;
-            
+
             response = data;
-            
+
             if (isEdit) {
-                 alert("Producto actualizado correctamente");
+                setImageVersion(Date.now());
+                alert("Producto actualizado correctamente");
             } else {
-                 // Limpiar estado en inserción
-                 setProduct({
+                // Limpiar estado en inserción
+                setProduct({
                     name: "",
                     essen_id: "",
                     product_line: "",
@@ -153,7 +155,7 @@ export default function ProductForm({
                     is_new: false,
                     discount: "",
                     image: null,
-                 });
+                });
             }
 
             navigate("/admin/products");
@@ -307,7 +309,7 @@ export default function ProductForm({
                     placeholder="Descuento (%)"
                     className="input"
                 />
-                 <span>Descuento (%)</span>
+                <span>Descuento (%)</span>
             </label>
 
             {/* Cargar imagen */}
@@ -315,13 +317,11 @@ export default function ProductForm({
                 <span className="text-sm">Imagen</span>
                 {isEdit && product.image && !imageFile && (
                     <div className="mb-2">
-                        {/* Contenedor que define el espacio cuadrado */}
-                        <div className="w-48 h-48 mx-auto overflow-hidden border border-gray-200 rounded-lg shadow-sm">
-                            <img
-                                src={product.image}
-                                alt={`Imagen de ${product.name}`}
-                                className="object-cover w-full h-full"
-                            />
+                        <div className="w-48 h-48 mx-auto overflow-hidden border border-gray-200 rounded-lg shadow-sm">                            <img
+                            src={`${product.image}?v=${imageVersion}`}
+                            alt={`Imagen de ${product.name}`}
+                            className="object-cover w-full h-full"
+                        />
                         </div>
                         <div className="mt-1 text-xs text-center text-gray-500">
                             Sube una nueva imagen para reemplazar la actual.
