@@ -5,6 +5,7 @@ export default function NewDiscountCard({
     productName,
     productEssenID,
     discount,
+    discountText,
     image = null,
 }) {
     return (
@@ -23,10 +24,10 @@ export default function NewDiscountCard({
                 </div>
 
                 {/* Etiqueta */}
-                <div className="absolute top-0 left-0 w-full px-4 pt-4 pb-6 bg-gradient-to-t from-transparent to-green-400/60">
-                    <h2 className="text-xl font-semibold text-green-600 uppercase drop-shadow">
-                        {discount}
-                    </h2>
+                <div className="absolute top-0 left-0 flex w-full px-4 pt-4 pb-6 bg-gradient-to-t from-transparent to-green-400/60">
+                    <div className="flex items-center px-5 py-1 text-2xl font-bold text-green-600 uppercase bg-white rounded-full drop-shadow">
+                        {discount}<span className="text-lg ms-2">{discountText}</span>
+                    </div>
                 </div>
             </a>
 

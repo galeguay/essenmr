@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from "react-router-dom";
 import ProductCard from '../../components/public/ProductCard';
 import { supabase } from '../../lib/supabase';
+import PageTitle from '../../components/public/PageTitle';
 
 /* Debounce Hook */
 function useDebounce(value, delay) {
@@ -123,10 +124,7 @@ export default function Catalog() {
         <div className="min-h-screen px-4 py-8 bg-gray-50">
             <div className="mx-auto max-w-7xl">
 
-                {/* Título */}
-                <h1 className="mb-8 text-4xl font-bold text-center text-gray-800">
-                    Catálogo de Productos
-                </h1>
+                <PageTitle title="Catálogo de Productos" />
 
                 {/* Filtros */}
                 <div className="p-6 mb-8 bg-white rounded-lg shadow-md">

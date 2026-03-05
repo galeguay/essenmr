@@ -106,8 +106,9 @@ export default function Home() {
                     <NewDiscountCard 
                         key={product.id} 
                         productName={product.name.toLowerCase().includes('combo') ? '' : product.name}
-                        productEssenID={product.essen_id} 
-                        discount={product.name.toLowerCase().includes('combo') ? product.name : `${product.discount}% DE DESCUENTO`} 
+                        productEssenID={product.essen_id}
+                        discount={product.name.toLowerCase().includes('combo') ? '' : `${product.discount}%`}
+                        discountText={product.name.toLowerCase().includes('combo') ? product.name : `DESCUENTO`}
                         image={product.image} 
                     />
                 ))}

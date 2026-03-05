@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import PageTitle from "../../components/public/PageTitle";
 
 export default function FaqList() {
     const [faqs, setFaqs] = useState([]);
@@ -29,6 +30,7 @@ export default function FaqList() {
     return (
         <div className="min-h-screen px-4 py-8 bg-gray-50">
             <div className="mx-auto max-w-7xl">
+                <PageTitle title="Preguntas frecuentes" />
                 <div className="space-y-4">
                     {faqs.map((item) => (
                         <div key={item.id} className="shadow collapse collapse-arrow bg-base-300">
