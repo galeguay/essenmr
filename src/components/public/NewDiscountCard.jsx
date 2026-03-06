@@ -9,37 +9,42 @@ export default function NewDiscountCard({
     image = null,
 }) {
     return (
-        <div className="relative w-full max-w-sm pb-10 overflow-hidden shadow-lg rounded-s">
+        <div className="relative w-full max-w-sm overflow-hidden border shadow-xl card bg-base-100 border-base-200 group">
+            
+            <a 
+                href={`/productos/${productEssenID}`} 
+                className="absolute inset-0 z-10 cursor-pointer"
+                aria-label={`Ver detalles de ${productName}`}
+            ></a>
 
-            <a href={`/productos/${productEssenID}`} className="block">
-                {/* Imagen */}
-                <div className="w-full p-5 aspect-4/4">
-                    {image && (
-                        <img
-                            src={image}
-                            alt="Imagen ilustrativa del descuento"
-                            className="object-cover w-full h-full"
-                        />
-                    )}
+            <div className="relative block p-5 overflow-hidden aspect-square bg-amber-200">
+                {image && (
+                    <img
+                        src={image}
+                        alt={productName}
+                        className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-120"
+                    />
+                )}
+                
+                <div className="absolute left-0 flex items-baseline gap-1 px-6 py-1 italic font-bold text-white shadow-lg top-5 bg-gradient-to-r from-green-500 to-emerald-400">
+                    <span className="text-3xl">{discount}</span>
+                    <span className="text-sm uppercase">{discountText}</span>
                 </div>
 
-                {/* Etiqueta */}
-                <div className="absolute top-0 left-0 flex w-full px-4 pt-4 pb-6 bg-gradient-to-t from-transparent to-green-400/60">
-                    <div className="flex items-center px-5 py-1 text-2xl font-bold text-green-600 uppercase bg-white rounded-full drop-shadow">
-                        {discount}<span className="text-lg ms-2">{discountText}</span>
-                    </div>
-                </div>
-            </a>
+            </div>
 
-            {/* Footer */}
-            <div className="absolute bottom-0 flex flex-col w-full px-4 pb-4">
-                <p className="mb-2 text-lg font-semibold text-center text-gray-500">
-                    {text ?? productName}
+            <div className="gap-4 p-5 pt-0 card-body">
+                <p className="text-lg font-semibold leading-tight text-center text-gray-500">
+                    {text || productName}
                 </p>
 
-                <BtnWpp message={`Hola, quiero saber sobre el descuento del ${discount}% en ${productName}`} />
+                <div className="relative z-10 flex justify-center card-actions">
+                    <BtnWpp 
+                        className="btn-block"
+                        message={`Hola, quiero saber sobre el descuento del ${discount}% en ${productName}`} 
+                    />
+                </div>
             </div>
         </div>
-
     );
 }

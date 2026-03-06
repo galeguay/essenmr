@@ -5,6 +5,7 @@ import Promotions from '../../components/public/Promotions';
 import { supabase } from '../../lib/supabase';
 import BtnWpp from '../../components/public/BtnWpp';
 import NewReleaseCard from '../../components/public/NewReleaseCard';
+import ProductCard from '../../components/public/ProductCard';
 
 export default function Home() {
 
@@ -101,15 +102,12 @@ export default function Home() {
             {loading ? "" : ""}
 
             {/* Descuentos y Combos */}
-            <section className="flex flex-wrap justify-center gap-6 p-4">
+            <section className="flex flex-wrap justify-center gap-3 p-4">
                 {discounts.map((product) => (
-                    <NewDiscountCard 
+                    <ProductCard 
                         key={product.id} 
-                        productName={product.name.toLowerCase().includes('combo') ? '' : product.name}
-                        productEssenID={product.essen_id}
-                        discount={product.name.toLowerCase().includes('combo') ? '' : `${product.discount}%`}
-                        discountText={product.name.toLowerCase().includes('combo') ? product.name : `DESCUENTO`}
-                        image={product.image} 
+                        product={product}
+                        className="lg:w-1/5"
                     />
                 ))}
             </section>
@@ -140,7 +138,7 @@ export default function Home() {
             <section className="flex justify-center bg-gray-100 my-6 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)] py-4 px-2">
                 <div className="container px-2 lg:flex lg:justify-center ">
                     <div
-                        className="justify-around gap-2 overflow-x-auto flex lg:overflow-x-visible xl:w-[80%]"
+                        className="flex justify-around gap-2 overflow-x-auto lg:overflow-x-visible xl:w-full"
                     >
                         {productLines.map((line) => (
                             <div key={line.id} className="min-w-[40%] sm:min-w-[35%] md:min-w-[18%] lg:min-w-0">
