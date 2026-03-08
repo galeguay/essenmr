@@ -61,10 +61,10 @@ export default function ProductCard({
             </figure>
 
             {/* Contenido */}
-            <div className="z-10 p-6 pt-0 card-body">
+            <div className="z-10 p-6 pt-0 card-body gap-0">
                 <div className="font-semibold text-gray-900 card-title">{product.name}</div>
-                <p className="font-semibold text-gray-400">
-                    {productLine ? `Línea ${productLine}` : ""}
+                <p className="font-semibold text-lg text-gray-400">
+                    {productLine ? `${productLine}` : ""}
                 </p>
 
                 <div className="justify-center mt-3 card-actions">

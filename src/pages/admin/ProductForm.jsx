@@ -18,13 +18,13 @@ export default function ProductForm({
         name: initialData?.name || "",
         essen_id: initialData?.essen_id || "",
         product_line: initialData?.product_line || "",
-        description: initialData?.description || "", // <-- ¡Aquí está!
+        description: initialData?.description || "",
         diameter: initialData?.diameter || "",
         capacity: initialData?.capacity || "",
         is_visible: initialData?.is_visible ?? false,
         is_new: initialData?.is_new ?? false,
         discount: initialData?.discount || "",
-        image: initialData?.image || null, // Aseguramos el campo de imagen para edición
+        image: initialData?.image || null,
     });
 
     const [lineas, setLineas] = useState([]);
@@ -97,8 +97,24 @@ export default function ProductForm({
 
             // Si el usuario seleccionó una imagen nueva, se sube
             if (imageFile) {
-                // Usamos el id Essen para nombrar la imagen
-                imageUrl = await uploadImage("products", imageFile, product.essen_id);
+                // 1. Obtener la fecha actual
+                const hoy = new Date();
+
+                // 2. Extraer Año (últimos 2), Mes (0-11, sumamos 1) y Día, asegurando 2 dígitos
+                const yy = String(hoy.getFullYear()).slice(-2);
+                const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dd = String(hoy.getDate()).padStart(2, '0');
+
+                // 3. Crear el string con el formato YYMMDD (Ej: 260306)
+                const dateSuffix = `${yy}${mm}${dd}`;
+
+                // 4. Combinar el ID de Essen con la fecha (ej: 12345_260306)
+                // Agregamos un fallback a "nuevo" por si el usuario no ingresó un essen_id
+                const baseId = product.essen_id || 'nuevo';
+                const newFileName = `${baseId}_${dateSuffix}`;
+
+                // 5. Subir la imagen usando el nuevo nombre
+                imageUrl = await uploadImage("products", imageFile, newFileName);
             }
             const normalizeNumber = (value) =>
                 value === "" || value === undefined || value === null
@@ -108,7 +124,7 @@ export default function ProductForm({
             const productDataToSave = {
                 ...product,
                 image: imageUrl,
-                diameter: normalizeNumber(product.diameter),
+                diameter: product.diameter === "" ? null : product.diameter, // Ya no se pasa por normalizeNumber
                 capacity: normalizeNumber(product.capacity),
                 discount: normalizeNumber(product.discount),
                 product_line: normalizeNumber(product.product_line),
@@ -123,7 +139,7 @@ export default function ProductForm({
                     .from("products")
                     .update(productDataToSave)
                     .eq("id", id)
-                    .select() // Agregamos select() para obtener el registro actualizado
+                    .select()
                     .single();
             } else {
                 dbOperation = supabase
@@ -134,16 +150,13 @@ export default function ProductForm({
             }
 
             const { data, error } = await dbOperation;
-
             if (error) throw error;
-
             response = data;
 
             if (isEdit) {
                 setImageVersion(Date.now());
                 alert("Producto actualizado correctamente");
             } else {
-                // Limpiar estado en inserción
                 setProduct({
                     name: "",
                     essen_id: "",
@@ -189,7 +202,7 @@ export default function ProductForm({
                     required
                     className="input"
                     placeholder="Nombre"
-                    autocomplete="off"
+                    autoComplete="off"
                 />
                 <span>Nombre *</span>
             </label>
@@ -203,7 +216,7 @@ export default function ProductForm({
                     onChange={handleChange}
                     className="input"
                     placeholder="Código Essen"
-                    autocomplete="off"
+                    autoComplete="off"
                 />
                 <span>Código Essen</span>
             </label>
@@ -227,19 +240,18 @@ export default function ProductForm({
                 </select>
             </label>
 
-            {/* Diámetro (cm) */}
+            {/* Diámetro */}
             <label className="floating-label">
                 <input
-                    type="number"
+                    type="text" // Cambiado a text para aceptar varchar
                     name="diameter"
                     value={product.diameter}
                     onChange={handleChange}
-                    step="0.1"
-                    min="0"
                     className="input"
-                    placeholder="Diámetro (cm)"
+                    placeholder="Diámetro"
+                    autoComplete="off"
                 />
-                <span>Diámetro (cm)</span>
+                <span>Diámetro</span>
             </label>
 
             {/* Capacidad (L) */}
@@ -338,7 +350,6 @@ export default function ProductForm({
                     />
                 </fieldset>
             </div>
-
 
             {/* Botones */}
             <div className="flex gap-3">
