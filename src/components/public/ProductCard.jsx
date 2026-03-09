@@ -62,8 +62,8 @@ export default function ProductCard({
 
             {/* Contenido */}
             <div className="z-10 p-6 pt-0 card-body gap-0">
-                <div className="font-semibold text-gray-900 card-title">{product.name}</div>
-                <p className="font-semibold text-lg text-gray-400">
+                <div className="capitalize font-semibold text-gray-900 card-title">{product.name.toLowerCase()}</div>
+                <p className="font-semibold text-gray-400">
                     {productLine ? `${productLine}` : ""}
                 </p>
 
