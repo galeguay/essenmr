@@ -12,7 +12,7 @@ export default function NewDiscountCard({
         <div className="relative w-full max-w-sm overflow-hidden border shadow-xl card bg-base-100 border-base-200 group">
             
             <a 
-                href={`/productos/${productEssenID}`} 
+                href={`/producto/${productEssenID}`} 
                 className="absolute inset-0 z-10 cursor-pointer"
                 aria-label={`Ver detalles de ${productName}`}
             ></a>

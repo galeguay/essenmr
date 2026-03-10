@@ -201,7 +201,7 @@ export default function Products() {
                                         <th className="px-3 py-2">Nombre</th>
                                         <th className="px-6 py-4">Línea</th>
                                         <th className="px-3 py-2">Essen ID</th>
-                                        <th className="px-3 py-2">Diámetro (cm)</th>
+                                        <th className="px-3 py-2">Diámetro (CM)</th>
                                         <th className="px-3 py-2">Capacidad (L)</th>
                                         <th className="px-3 py-2">Visible</th>
                                         <th className="px-3 py-2">Nuevo</th>
@@ -226,8 +226,6 @@ export default function Products() {
                                             <td className="px-3 py-2">{product.essen_id}</td>
                                             <td className="px-3 py-2">{product.diameter}</td>
                                             <td className="px-3 py-2">{product.capacity}</td>
-
-
                                             {/* Toggle de DaisyUI para Visible */}
                                             <td className="px-3 py-2">
                                                 <input

@@ -64,19 +64,29 @@ export default function ProductLineForm({
         }));
     };
 
-    const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { data } = await supabase.auth.getUser();
-        console.log("USER:", data.user);
+        const { data: userData } = await supabase.auth.getUser();
+        console.log("USER:", userData.user);
 
         setLoading(true);
 
         try {
             let imageUrl = form.image || null;
 
+            // Si el usuario seleccionó una imagen nueva, se sube con el formato YYMMDD
             if (imageFile) {
-                imageUrl = await uploadImage("product_lines", imageFile, form.string_id);
+                const hoy = new Date();
+                const yy = String(hoy.getFullYear()).slice(-2);
+                const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dd = String(hoy.getDate()).padStart(2, '0');
+                
+                const dateSuffix = `${yy}${mm}${dd}`;
+                const baseId = form.string_id || 'nueva-linea';
+                const newFileName = `${baseId}_${dateSuffix}`;
+
+                imageUrl = await uploadImage("product_lines", imageFile, newFileName);
             }
 
             const productLineDataToSave = {
@@ -92,6 +102,7 @@ export default function ProductLineForm({
                     .from("product_lines")
                     .update(productLineDataToSave)
                     .eq("id", id)
+                    .select()
                     .single();
             } else {
                 dbOperation = supabase
@@ -101,11 +112,12 @@ export default function ProductLineForm({
                     .single();
             }
 
-            const { data, error } = await dbOperation;
+            // Cambiamos 'data' a 'responseData' para evitar colisiones con el data del getUser
+            const { data: responseData, error } = await dbOperation;
 
             if (error) throw error;
 
-            response = data;
+            response = responseData;
 
             if (isEdit) {
                 alert("Línea actualizada correctamente");
@@ -116,12 +128,12 @@ export default function ProductLineForm({
             // Limpiamos el formulario en caso de inserción exitosa
             if (!isEdit) {
                 setForm({
-                    name: data.name ?? "",
-                    string_id: data.string_id ?? "",
-                    color: data.color ?? "#8b5cf6",
-                    is_visible: data.is_visible ?? true,
-                    description: data.description ?? "",
-                    image: data.image ?? null,
+                    name: responseData.name ?? "",
+                    string_id: responseData.string_id ?? "",
+                    color: responseData.color ?? "#8b5cf6",
+                    is_visible: responseData.is_visible ?? true,
+                    description: responseData.description ?? "",
+                    image: responseData.image ?? null,
                 });
                 setImageFile(null);
             }

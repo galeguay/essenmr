@@ -1,19 +1,22 @@
+import Title from "./Title";
+
 export default function Promotions() {
 
     const currentMonth = new Date().toLocaleString('es-ES', { month: 'long' });
-    
+
     return (
-        <div className="container flex flex-col justify-center mx-auto ">
-            <h2 className="inline-block px-6 py-2 mx-auto text-2xl font-bold text-white bg-gray-700 border-b-4 border-orange-500 rounded-t-lg md:text-3xl">
-                Promociones financieras {currentMonth}
-            </h2>
-            
-            <div className="flex justify-center ">
+        <div className="container flex flex-col md:mx-auto">
+            <Title className="text-center mb-1">
+                Promociones financieras en {currentMonth.toUpperCase()}
+            </Title>
+            <div className="flex justify-center">
+                <div className="w-fit md:bg-gray-100 p-3 md:shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35),inset_10px_10px_10px_-10px_rgba(0,0,0,0.35),inset_-10px_10px_10px_-10px_rgba(0,0,0,0.35)]">
                     <img
                         src="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/public/images/tarjetas.webp"
-                        className="object-contain h-auto p-6 bg-gray-700 w-250"
+                        className="object-contain p-3 md:p-6 h-auto w-250"
                         alt="Promociones"
                     />
+                </div>
             </div>
         </div>
     );

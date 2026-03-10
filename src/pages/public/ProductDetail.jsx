@@ -10,6 +10,7 @@ export default function ProductDetail() {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
 
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -39,6 +40,7 @@ export default function ProductDetail() {
         fetchProduct();
     }, [essen_id, navigate]);
 
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -61,51 +63,52 @@ export default function ProductDetail() {
 
                 <div className="grid grid-cols-1 gap-1 lg:grid-cols-2">
 
-                    <div className="relative aspect-square lg:aspect-auto">
-                        {product.image ?
-                            <img
-                                loading="lazy"
-                                src={product.image}
-                                alt={product.name}
-                                className="object-contain w-full h-full"
-                                onError={(e) => {
-                                    e.currentTarget.src = "../../cacerola.webp";
-                                }}
-                            />
-                            :
-                            <img
-                                loading="lazy"
-                                src="../cacerola.webp"
-                                alt={product.name}
-                                className="absolute inset-0 object-cover w-full h-full"
-                            />
-                        }
+                    <figure className="relative aspect-square lg:aspect-auto">
+                        <img
+                            loading="lazy"
+                            src={product.image || "../../cacerola.webp"}
+                            alt={product.name}
+                            className="object-contain w-full h-full"
+                            onError={(e) => {
+                                e.currentTarget.src = "../../cacerola.webp";
+                            }}
+                        />
+                    </figure>
 
-                    </div>
-
-                    <div className="flex flex-col justify-between p-8 lg:p-12">
-
+                    <div className="flex flex-col justify-between p-6 lg:p-12">
                         <div>
                             {product.product_line && (
-                                <p className="text-sm tracking-wider text-gray-500 uppercase">
+                                <p className="text-xl lg:text-2xl m-0 tracking-wider text-gray-500">
                                     {product.product_line.name}
                                 </p>
                             )}
 
-                            <h1 className="my-2 text-4xl font-bold text-gray-900 lg:text-5xl">
-                                {product.name}
-                            </h1>
+                            <h3 className="capitalize mb-3 font-bold text-gray-900 text-2xl lg:text-4xl">
+                                {product.name.toLowerCase()}
+                            </h3>
 
-                            <div className="flex mb-4 space-x-1">
-                                {product.is_new && (
-                                    <div className="px-3 text-sm text-center text-blue-700 uppercase bg-blue-200">
-                                        nuevo
-                                    </div>
-                                )}
+                            {/* Badges (Etiquetas) */}
+                            <div className="flex gap-1 mb-3 items-center text-xl">
+
+                                {!product.is_new &&
+                                    <div className="px-6 font-bold text-white uppercase bg-blue-500 w-fit">
+                                        Nuevo
+                                    </div>}
+
+                                {product.discount > 0 &&
+                                    <div className="px-6 font-bold text-white uppercase bg-green-500 w-fit to-emerald-300">
+                                        <span className="">{product.discount}</span>
+                                        <span className=" uppercase">% descuento</span>
+                                    </div>}
+
+                                {(product.stock_quantity < 1) &&
+                                    <div className="px-6 font-bold text-white uppercase bg-gray-400 w-fit">
+                                        Sin Stock
+                                    </div>}
                             </div>
 
                             {product.description && (
-                                <div className="mb-8 prose prose-lg text-gray-700">
+                                <div className="mb-8 prose prose-lg">
                                     {/* Agregamos la clase aquí */}
                                     <p className="whitespace-pre-wrap">{product.description}</p>
                                 </div>
@@ -136,14 +139,6 @@ export default function ProductDetail() {
                         </div>
 
                         <div className="flex flex-col items-center justify-center">
-                            {product.discount > 0 ? (
-                                <div className="px-3 py-1 font-bold text-center text-green-700 uppercase bg-green-200 rounded-t-lg">
-                                    {product.discount}% de descuento
-                                </div>
-                            ) : (
-                                <div className="h-7"></div>
-                            )}
-
                             {product.stock_quantity < 1 ? (
                                 <button
                                     className="w-full rounded-lg px-5 py-2.5 text-sm font-medium bg-gray-400 text-white cursor-not-allowed"

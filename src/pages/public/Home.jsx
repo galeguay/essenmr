@@ -6,6 +6,9 @@ import { supabase } from '../../lib/supabase';
 import BtnWpp from '../../components/public/BtnWpp';
 import NewReleaseCard from '../../components/public/NewReleaseCard';
 import ProductCard from '../../components/public/ProductCard';
+import AnnouncementBanner from '../../components/public/AnnouncementBanner';
+import DoubleImageBanner from '../../components/public/DoubleImageBanner';
+import Title from '../../components/public/Title';
 
 export default function Home() {
 
@@ -25,12 +28,11 @@ export default function Home() {
                 .order('discount', { ascending: false });
 
             // 2. Buscar productos de la categoría 'Combos'
-            // Usamos !inner para filtrar basándonos en la tabla relacionada
             const queryCombos = supabase
                 .from('products')
                 .select(`*, product_line!inner (*)`)
                 .eq('is_visible', true)
-                .ilike('product_line.name', '%Combos%'); // Busca que el nombre contenga "Combos"
+                .ilike('product_line.name', '%Combos%');
 
             // Ejecutar ambas consultas en paralelo
             const [resDiscounts, resCombos] = await Promise.all([queryDiscounts, queryCombos]);
@@ -41,7 +43,7 @@ export default function Home() {
             const discountsData = resDiscounts.data || [];
             const combosData = resCombos.data || [];
 
-            // 3. Combinar resultados y eliminar duplicados (por si un combo tiene descuento)
+            // 3. Combinar resultados y eliminar duplicados
             const combined = [...discountsData];
             const existingIds = new Set(combined.map(p => p.id));
 
@@ -96,23 +98,66 @@ export default function Home() {
             .finally(() => setLoading(false));
     }, []);
 
+    // Función para adaptar las columnas según la cantidad de productos
+    const getGridClasses = (length) => {
+        if (length === 1) return "grid-cols-1";
+        if (length === 2) return "grid-cols-1 md:grid-cols-2";
+        if (length === 3) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+        return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
+    };
+
     return (
-        <div className="space-y-6">
+        <div className="">
 
             {loading ? "" : ""}
 
+            {/* Anuncio con imagen a la izquierda (por defecto) */}
+            <AnnouncementBanner
+                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje_X2.webp"
+                imageMobile="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje_X2_mobile.webp"
+                bgColor="#57282f"
+            />
+
+            <AnnouncementBanner
+                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje2.webp"
+            />
+
             {/* Descuentos y Combos */}
-            <section className="flex flex-wrap justify-center gap-3 p-4">
-                {discounts.map((product) => (
-                    <ProductCard 
-                        key={product.id} 
-                        product={product}
-                        className="lg:w-1/5"
-                    />
-                ))}
+            <section className="flex flex-col w-full items-center justify-center bg-green-200 py-12">
+                <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
+                    {discounts.map((product) => (
+                        <ProductCard
+                            key={product.id}
+                            product={product}
+                        />
+                    ))}
+                </div>
+
             </section>
 
-            <section className="flex flex-wrap items-center justify-center py-2 space-y-2 bg-green-200 md:space-y-0 md:space-x-6">
+
+            {/* Lineas */}
+            <section className="flex flex-col py-12 items-center">
+                <Title className="mb-1">
+                    Lineas de productos
+                </Title>
+                <div className="flex w-full justify-center bg-gray-100 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)]">
+                    <div className="container lg:flex lg:justify-center ">
+                        <div
+                            className="flex py-6 justify-around gap-2 overflow-x-auto lg:overflow-x-visible xl:w-full"
+                        >
+                            {productLines.map((line) => (
+                                <div key={line.id} className="min-w-[40%] sm:min-w-[35%] md:min-w-[18%] lg:min-w-0">
+                                    <ProductLineCard productLine={line} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section className="flex flex-wrap items-center justify-center pt-4 pb-16 space-y-2 md:space-y-0 md:space-x-6">
                 <div className="flex flex-wrap items-center justify-center mb-5 md:mb-0">
                     <i className="text-2xl bi bi-credit-card me-2"></i>
                     Aceptamos todos los medios de pagos.
@@ -134,50 +179,38 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Lineas */}
-            <section className="flex justify-center bg-gray-100 my-6 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)] py-4 px-2">
-                <div className="container px-2 lg:flex lg:justify-center ">
-                    <div
-                        className="flex justify-around gap-2 overflow-x-auto lg:overflow-x-visible xl:w-full"
-                    >
-                        {productLines.map((line) => (
-                            <div key={line.id} className="min-w-[40%] sm:min-w-[35%] md:min-w-[18%] lg:min-w-0">
-                                <ProductLineCard productLine={line} />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* Anuncio con imagen a la izquierda (por defecto) */}
 
-            {/* Novedades */}
+
+            {/* Lanzamientos */}
             {newProducts.length > 0 ? (
-                <section className="py-12">
+                <section className="py-12 bg-[#626164]">
+
+                    <DoubleImageBanner
+                        image1="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/banner_linea_rosa1.webp"
+                        image2="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/banner_linea_rosa2.webp"
+                        bgColor="#626164"
+                    />
+
                     <div className="container mx-auto">
-                        <h2 className="inline-block px-6 py-2 text-2xl font-bold text-white bg-gray-700 border-b-4 border-orange-500 rounded-t-lg md:text-3xl">
-                            Novedades
+                        {/*                         <h2 className="inline-block px-6 py-2 text-2xl font-bold text-white bg-gray-700 border-b-4 border-orange-500 rounded-t-lg md:text-3xl">
+                            Lanzamientos
                         </h2>
                         <div className="w-full h-5 mb-4 bg-gray-700">
-                        </div>
+                        </div> */}
 
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        <div className="px-6 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
                             {newProducts.map((np) => (
-                                <NewReleaseCard key={np.essen_id} title={np.name} image={np.image} />
+                                <NewReleaseCard key={np.essen_id} productId={np.essen_id} title={np.name} image={np.image} />
                             ))}
                         </div>
                     </div>
                 </section>
             ) : ""}
 
-            <div id="promotions" className="mb-12">
+            <div id="promotions" className="my-12">
                 <Promotions />
             </div>
-    {/* 
-                <div className="justify-center p-4 mb-10 text-center bg-orange-700">
-                    <div className="mb-4 text-xl font-bold text-white">
-                        Si necesitás algún REPUESTO ¡Escribime!
-                    </div>
-                    <BtnWpp />
-                </div> */}
 
         </div >
     );

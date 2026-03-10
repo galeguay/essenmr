@@ -1,29 +1,26 @@
 export default function NewReleaseCard({
-  title = "Nombre del producto",
-  image = null,
+    productId,
+    title = "Nombre del producto",
+    image = null,
 }) {
-  return (
-    <a href="/producto/key" className="relative w-full max-w-sm overflow-hidden rounded-s shadow-lg">
+    return (
+        <a href={`/producto/${productId}`} className="relative pt-10 w-full max-w-sm overflow-hidden rounded-3xl shadow-lg bg-white">
 
-      {/* Imagen (forzamos relación 4:3) */}
-      <div className="aspect-4/3 w-full">
-        {image ? (
-          <img
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-300"></div>
-        )}
-      </div>
+            {/* Imagen (forzamos relación 4:3) */}
+            <div className="aspect-4/3 w-full">
+                <img
+                    src={image}
+                    alt={title}
+                    className="w-full h-full object-cover p-4"
+                />
+            </div>
 
-      {/* Título superpuesto */}
-      <div className="absolute top-0 left-0 w-full p-4 bg-linear-to-b from-gray-700/60 to-transparent">
-        <h2 className="text-white text-lg font-semibold drop-shadow">
-          {title}
-        </h2>
-      </div>
-    </a>
-  );
+            {/* Título superpuesto */}
+            <div className="absolute top-0 left-0 w-full px-6 pb-6 pt-4 bg-linear-to-b from-gray-700/60 to-transparent">
+                <h2 className="text-white text-lg font-semibold drop-shadow">
+                    {title}
+                </h2>
+            </div>
+        </a>
+    );
 }

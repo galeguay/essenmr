@@ -20,10 +20,10 @@ export default function ProductCard({
     const productLine = product.product_line?.name;
     const stockQuantity = product.stock_quantity ?? 0;
     const isOutOfStock = stockQuantity < 0;
-    const productUrl = `/productos/${product.essen_id}`;
+    const productUrl = `/producto/${product.essen_id}`;
 
     return (
-        <div className={`overflow-hidden transition-all duration-300 shadow-lg card bg-base-100 ring-1 ring-gray-200 hover:shadow-2xl group ${className}`}>
+        <div className={`overflow-hidden transition-all duration-300 shadow-lg card bg-base-100 ring-1 ring-gray-200 hover:shadow-2xl group ${className} ${product.discount > 0 ? "border-green-500 border" : ''} `}>
 
             {/* Enlace invisible que cubre toda la tarjeta */}
             <Link to={productUrl} className="absolute inset-0 z-10" aria-label={`Ver producto ${product.name}`}>
@@ -36,12 +36,12 @@ export default function ProductCard({
                     loading="lazy"
                     src={product.image || "../../cacerola.webp"}
                     alt={product.name}
-                    className="object-cover w-full h-full transition-transform duration-500 rounded-xl group-hover:scale-110"
+                    className="object-cover w-full h-full transition-transform duration-500 rounded-xl group-hover:scale-108"
                     onError={(e) => (e.currentTarget.src = "../../cacerola.webp")}
                 />
 
                 {/* Badges (Etiquetas) */}
-                <div className="absolute left-0 flex flex-col gap-1 pt-3 w-80 top-2">
+                <div className="absolute left-0 flex flex-col gap-1 pt-2 w-80 top-2">
                     {product.discount > 0 &&
                         <div className="px-6 font-bold text-white uppercase bg-green-500 w-fit to-emerald-300">
                             <span className="text-2xl">{product.discount}</span>
@@ -58,16 +58,18 @@ export default function ProductCard({
                             Sin Stock
                         </div>}
                 </div>
+                <div className="absolute bottom-0 left-6 sm:left-4 z-10">
+                    <div className="capitalize font-semibold text-gray-900 card-title">{product.name.toLowerCase()}</div>
+                </div>
             </figure>
 
             {/* Contenido */}
-            <div className="z-10 p-6 pt-0 card-body gap-0">
-                <div className="capitalize font-semibold text-gray-900 card-title">{product.name.toLowerCase()}</div>
-                <p className="font-semibold text-gray-400">
+            <div className="z-10 px-6 md:px-4 pb-4 pt-0 card-body gap-0">
+                <p className="text-lg text-gray-400">
                     {productLine ? `${productLine}` : ""}
                 </p>
 
-                <div className="justify-center mt-3 card-actions">
+                <div className="justify-center mt-4 card-actions">
                     {isOutOfStock ? (
                         <button className="btn btn-disabled btn-block" disabled>No disponible</button>
                     ) : (

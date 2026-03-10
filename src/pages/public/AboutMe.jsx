@@ -8,13 +8,13 @@ export default function AboutMe() {
 
 
     return (
-        <div className="px-4 py-60">
-            <div className="mx-auto max-w-7xl">
-                <div class="text-center mb-12 text-3xl">
+        <div className="px-4 py-50">
+            <div className="mx-auto max-w-7xl flex flex-col items-center">
+                <div class="text-center mb-12 text-2xl max-w-[500px]">
                     Soy María Rosa, emprendedora oficial Essen EIE 106891, radicada en Mar del Plata
                     ¡Contactame por cualquier consulta!
                 </div>
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-4">
 
                     <BtnLink href="tel:+5492235012258">
                         <i className="bi bi-telephone-fill"></i> Llamar (+54 9 223 501-2258)

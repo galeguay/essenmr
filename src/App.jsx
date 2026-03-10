@@ -31,7 +31,7 @@ export default function App() {
                 {/* RUTAS PÚBLICAS */}
                 <Route path="/" element={<Home />} />
                 <Route path="/catalogo" element={<Catalog />} />
-                <Route path="/productos/:essen_id" element={<ProductDetail />} />
+                <Route path="/producto/:essen_id" element={<ProductDetail />} />
                 <Route path="/faq" element={<FaqList />} />
                 <Route path="/about_me" element={<AboutMe />} />
 

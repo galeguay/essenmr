@@ -4,7 +4,7 @@ export default function ProductLineCard({ productLine }) {
     return (
         <a
             href={`/catalogo?product_line=${productLine.name}`}
-            className="flex flex-col items-center h-40 gap-2 pt-4 bg-white rounded shadow-sm w-30 hover:shadow-lg">
+            className="flex flex-col items-center h-40 gap-2 pt-4 bg-white rounded shadow-sm w-30 hover:shadow-xl transition-all duration-300">
             <div className="w-20 h-20">
                 <div className="relative flex items-center justify-center aspect-square">
                 {productLine.image ? (
