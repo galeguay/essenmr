@@ -10,6 +10,9 @@ export default function ProductDetail() {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [essen_id]);
 
     useEffect(() => {
         const fetchProduct = async () => {
