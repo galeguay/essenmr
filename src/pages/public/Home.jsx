@@ -98,7 +98,18 @@ export default function Home() {
             .finally(() => setLoading(false));
     }, []);
 
-    // Función para adaptar las columnas según la cantidad de productos
+    useEffect(() => {
+        const hash = window.location.hash;
+        if (hash) {
+            setTimeout(() => {
+                const element = document.querySelector(hash);
+                if (element) {
+                    element.scrollIntoView({ behavior: "smooth" });
+                }
+            }, 150); 
+        }
+    }, []);
+
     const getGridClasses = (length) => {
         if (length === 1) return "grid-cols-1";
         if (length === 2) return "grid-cols-1 md:grid-cols-2";
