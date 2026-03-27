@@ -5,7 +5,7 @@ export default function Promotions() {
     const currentMonth = new Date().toLocaleString('es-ES', { month: 'long' });
 
     return (
-        <div className="container flex flex-col md:mx-auto">
+        <div id="promociones" className="container flex flex-col md:mx-auto">
             <Title className="text-center mb-1">
                 Promociones financieras en {currentMonth.toUpperCase()}
             </Title>

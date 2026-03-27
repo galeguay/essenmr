@@ -21,6 +21,9 @@ export default function Navbar() {
                         <a href="/catalogo" className="font-medium transition hover:text-orange-200">
                             Catálogo
                         </a>
+                        <a href="/#promociones" className="font-medium transition hover:text-orange-200">
+                            Promociones
+                        </a>
                         <a href="/faq" className="font-medium transition hover:text-orange-200">
                             Preguntas frecuentes
                         </a>
@@ -55,8 +58,14 @@ export default function Navbar() {
                             <a href="/catalogo" className="px-4 py-2 transition rounded hover:bg-orange-700">
                                 Catálogo
                             </a>
-                            <a href="/promociones" className="px-4 py-2 transition rounded hover:bg-orange-700">
+                            <a href="/#promociones" className="px-4 py-2 transition rounded hover:bg-orange-700">
                                 Promociones
+                            </a>
+                            <a href="/faq" className="px-4 py-2 transition rounded hover:bg-orange-700">
+                                Preguntas frecuentes
+                            </a>
+                            <a href="/about_me" className="px-4 py-2 transition rounded hover:bg-orange-700">
+                                Sobre mi
                             </a>
                             <a
                                 href="https://wa.me/5492235012258"
