@@ -106,7 +106,7 @@ export default function Home() {
                 if (element) {
                     element.scrollIntoView({ behavior: "smooth" });
                 }
-            }, 150); 
+            }, 300); 
         }
     }, []);
 
