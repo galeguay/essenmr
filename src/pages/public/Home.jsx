@@ -19,7 +19,6 @@ export default function Home() {
 
     const fetchDiscounts = async () => {
         try {
-            // 1. Buscar productos con descuento
             const queryDiscounts = supabase
                 .from('products')
                 .select(`*, product_line (*)`)
@@ -27,14 +26,12 @@ export default function Home() {
                 .eq('is_visible', true)
                 .order('discount', { ascending: false });
 
-            // 2. Buscar productos de la categoría 'Combos'
             const queryCombos = supabase
                 .from('products')
                 .select(`*, product_line!inner (*)`)
                 .eq('is_visible', true)
                 .ilike('product_line.name', '%Combos%');
 
-            // Ejecutar ambas consultas en paralelo
             const [resDiscounts, resCombos] = await Promise.all([queryDiscounts, queryCombos]);
 
             if (resDiscounts.error) throw resDiscounts.error;
@@ -43,7 +40,6 @@ export default function Home() {
             const discountsData = resDiscounts.data || [];
             const combosData = resCombos.data || [];
 
-            // 3. Combinar resultados y eliminar duplicados
             const combined = [...discountsData];
             const existingIds = new Set(combined.map(p => p.id));
 
@@ -93,22 +89,27 @@ export default function Home() {
         }
     };
 
+    // 1. Manejo de carga inicial de datos
     useEffect(() => {
+        setLoading(true);
         Promise.all([fetchProductLines(), fetchNewProducts(), fetchDiscounts()])
             .finally(() => setLoading(false));
     }, []);
 
+    // 2. Ejecutar el scroll SOLO cuando la carga haya terminado
     useEffect(() => {
-        const hash = window.location.hash;
-        if (hash) {
-            setTimeout(() => {
-                const element = document.querySelector(hash);
-                if (element) {
-                    element.scrollIntoView({ behavior: "smooth" });
-                }
-            }, 300); 
+        if (!loading) {
+            const hash = window.location.hash;
+            if (hash) {
+                setTimeout(() => {
+                    const element = document.querySelector(hash);
+                    if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                    }
+                }, 300); // Mantenemos un pequeño delay para el render final de imágenes
+            }
         }
-    }, []);
+    }, [loading]); // Agregamos 'loading' como dependencia
 
     const getGridClasses = (length) => {
         if (length === 1) return "grid-cols-1";
@@ -122,7 +123,6 @@ export default function Home() {
 
             {loading ? "" : ""}
 
-            {/* Anuncio con imagen a la izquierda (por defecto) */}
             <AnnouncementBanner
                 image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje_X2.webp"
                 imageMobile="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje_X2_mobile.webp"
@@ -133,8 +133,7 @@ export default function Home() {
                 image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje2.webp"
             />
 
-            {/* Descuentos y Combos */}
-            <section className="flex flex-col w-full items-center justify-center bg-green-200 py-12">
+            <section className="flex flex-col items-center justify-center w-full py-12 bg-green-200">
                 <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
                     {discounts.map((product) => (
                         <ProductCard
@@ -143,19 +142,16 @@ export default function Home() {
                         />
                     ))}
                 </div>
-
             </section>
 
-
-            {/* Lineas */}
-            <section className="flex flex-col py-12 items-center">
+            <section className="flex flex-col items-center py-12">
                 <Title className="mb-1">
                     Lineas de productos
                 </Title>
                 <div className="flex w-full justify-center bg-gray-100 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)]">
                     <div className="container lg:flex lg:justify-center ">
                         <div
-                            className="flex py-6 justify-around gap-2 overflow-x-auto lg:overflow-x-visible xl:w-full"
+                            className="flex justify-around gap-2 py-6 overflow-x-auto lg:overflow-x-visible xl:w-full"
                         >
                             {productLines.map((line) => (
                                 <div key={line.id} className="min-w-[40%] sm:min-w-[35%] md:min-w-[18%] lg:min-w-0">
@@ -167,16 +163,15 @@ export default function Home() {
                 </div>
             </section>
 
-
             <section className="flex flex-wrap items-center justify-center pt-4 pb-16 space-y-2 md:space-y-0 md:space-x-6">
                 <div className="flex flex-wrap items-center justify-center mb-5 md:mb-0">
                     <i className="text-2xl bi bi-credit-card me-2"></i>
                     Aceptamos todos los medios de pagos.
-                    <a href="#promotions"
+                    <a href="#promociones"
                         className="flex underline ps-1 me-3"
                         onClick={(e) => {
                             e.preventDefault();
-                            document.getElementById('promotions')?.scrollIntoView({
+                            document.getElementById('promociones')?.scrollIntoView({
                                 behavior: 'smooth'
                             });
                         }}>
@@ -190,10 +185,6 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Anuncio con imagen a la izquierda (por defecto) */}
-
-
-            {/* Lanzamientos */}
             {newProducts.length > 0 ? (
                 <section className="py-12 bg-[#626164]">
 
@@ -204,13 +195,7 @@ export default function Home() {
                     />
 
                     <div className="container mx-auto">
-                        {/*                         <h2 className="inline-block px-6 py-2 text-2xl font-bold text-white bg-gray-700 border-b-4 border-orange-500 rounded-t-lg md:text-3xl">
-                            Lanzamientos
-                        </h2>
-                        <div className="w-full h-5 mb-4 bg-gray-700">
-                        </div> */}
-
-                        <div className="px-6 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
+                        <div className="grid grid-cols-1 gap-6 px-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
                             {newProducts.map((np) => (
                                 <NewReleaseCard key={np.essen_id} productId={np.essen_id} title={np.name} image={np.image} />
                             ))}
@@ -219,7 +204,8 @@ export default function Home() {
                 </section>
             ) : ""}
 
-            <div id="promotions" className="my-12">
+            {/* ID actualizado a 'promociones' para coincidir con el Navbar */}
+            <div id="promociones" className="my-12">
                 <Promotions />
             </div>
 
