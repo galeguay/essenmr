@@ -124,13 +124,15 @@ export default function Home() {
             {loading ? "" : ""}
 
             <AnnouncementBanner
-                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje_X2.webp"
-                imageMobile="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje_X2_mobile.webp"
+                title="¡Felices Pascuas! 🤗"
                 bgColor="#57282f"
+                className='text-white'
+                expirationDate='00:00 24-05-2026'
             />
 
             <AnnouncementBanner
-                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje2.webp"
+                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje.webp"
+                className="pt-9 pb-8"
             />
 
             <section className="flex flex-col items-center justify-center w-full py-12 bg-green-200">

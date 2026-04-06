@@ -93,7 +93,7 @@ export default function ProductDetail() {
                             {/* Badges (Etiquetas) */}
                             <div className="flex gap-1 mb-3 items-center text-xl">
 
-                                {!product.is_new &&
+                                {product.is_new &&
                                     <div className="px-6 font-bold text-white uppercase bg-blue-500 w-fit">
                                         Nuevo
                                     </div>}
