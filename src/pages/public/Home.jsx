@@ -124,7 +124,7 @@ export default function Home() {
             {loading ? "" : ""}
 
             <AnnouncementBanner
-                title="¡Muy felices Pascuas! 🤗"
+                title="¡Felices Pascuas! 🤗"
                 bgColor="#57282f"
                 className='text-white'
                 expirationDate='00:00 24-05-2026'
