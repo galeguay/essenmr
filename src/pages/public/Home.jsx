@@ -124,22 +124,23 @@ export default function Home() {
             {loading ? "" : ""}
 
             <AnnouncementBanner
-                title="¡Felices Pascuas! 🤗"
-                bgColor="#57282f"
-                className='text-white'
-                expirationDate='00:00 24-05-2026'
-            />
+                title="¡LLegó el HOT 🔥 ESSEN"
+                titleClassName="text-white"
+                titleTop="true"
+                text="Consultame!"
+                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/hotsale.webp"
+                className="pt-9 pb-8"
+                bgColor="#3f2021"
+            >
+                <BtnWpp
+                    className="mt-4"
+                    message="¡Hola! Vi el anuncio del HOT ESSEN en la página y quiero saber más."
+                />
+            </AnnouncementBanner>
 
             <AnnouncementBanner
                 image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje.webp"
                 className="pt-9 pb-8"
-            />
-
-            <AnnouncementBanner
-                title="¡LLegó el HOT 🔥 ESSEN"
-                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/hotsale.webp"
-                className="pt-9 pb-8"
-                bgColor="#3f2021"
             />
 
             <section className="flex flex-col items-center justify-center w-full py-12 bg-green-200">

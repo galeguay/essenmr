@@ -6,13 +6,17 @@ export default function AnnouncementBanner({
     title,
     text,
     imageRight = false,
+    titleTop = false,
+    titleClassName = "",
     className = "",
     bgColor = "#ffffff",
     container = false,
-    expirationDate // Formato esperado: "HH:mm DD-MM-YYYY" (ej: "18:30 10-04-2026")
+    expirationDate, // Formato esperado: "HH:mm DD-MM-YYYY" (ej: "18:30 10-04-2026")
+    children // Nueva prop para recibir elementos hijos
 }) {
     const [isVisible, setIsVisible] = useState(true);
-    const onlyImage = !title && !text;
+    // Se actualiza la condición para que no oculte la caja de texto si hay children
+    const onlyImage = !title && !text && !children; 
     const noImage = !image && !imageMobile;
 
     useEffect(() => {
@@ -35,15 +39,32 @@ export default function AnnouncementBanner({
 
     if (!isVisible) return null;
 
+    // Determina la dirección del contenedor principal
+    const layoutDirection = titleTop
+        ? 'flex-col-reverse'
+        : imageRight
+            ? 'flex-col-reverse md:flex-row-reverse'
+            : 'flex-col md:flex-row';
+
+    // Determina el ancho y disposición del contenedor de la imagen
+    const imageWrapperClass = onlyImage || titleTop
+        ? "w-full flex justify-center"
+        : "w-full h-52 md:w-2/5 lg:w-1/3 md:h-auto";
+
+    // Determina el ancho y disposición del contenedor del texto
+    const textWrapperClass = `flex flex-col justify-center p-6 ${
+        (noImage || titleTop) ? 'w-full items-center text-center' : 'w-full md:w-fit lg:w-fit'
+    }`;
+
     return (
-        <section className={`${className} my-0`}>
+        <section className={`${className}`}>
             <div
-                className={`flex overflow-hidden md:justify-center md:items-center ${container ? "2xl:container" : ""} mx-auto ${imageRight ? 'flex-col-reverse md:flex-row-reverse' : 'flex-col md:flex-row'}`}
+                className={`flex overflow-hidden md:justify-center md:items-center py-6 ${container ? "2xl:container" : ""} mx-auto ${layoutDirection}`}
                 style={{ backgroundColor: bgColor }}
             >
                 {/* Contenedor de la imagen */}
                 {!noImage && (
-                    <div className={onlyImage ? "w-full flex justify-center" : "w-full h-52 md:w-2/5 lg:w-1/3 md:h-auto"}>
+                    <div className={imageWrapperClass}>
                         {imageMobile && (
                             <img
                                 src={imageMobile}
@@ -54,24 +75,26 @@ export default function AnnouncementBanner({
                         <img
                             src={image || "https://via.placeholder.com/400x300"}
                             alt={title || "Anuncio"}
-                            className={`w-full h-full ${imageMobile ? 'hidden md:block' : 'block'} ${onlyImage ? 'object-contain max-h-[500px]' : 'object-cover'}`}
+                            className={`2xl:container h-full ${imageMobile ? 'hidden md:block' : 'block'} ${onlyImage ? 'object-contain max-h-[500px]' : 'object-cover'}`}
                         />
                     </div>
                 )}
 
                 {/* Contenedor de texto */}
                 {!onlyImage && (
-                    <div className={`flex flex-col justify-center p-6 ${noImage ? 'w-full items-center text-center' : 'w-full md:w-fit lg:w-fit'}`}>
+                    <div className={textWrapperClass}>
                         {title && (
-                            <h3 className={`font-bold ${noImage ? 'text-4xl md:text-5xl' : 'text-2xl'}`}>
+                            <h3 className={`font-bold text-4xl md:text-5xl ${titleClassName}`}>
                                 {title}
                             </h3>
                         )}
                         {text && (
-                            <p className={`${noImage ? 'text-lg md:text-xl' : ''}`}>
+                            <p className={`text-lg md:text-xl`}>
                                 {text}
                             </p>
                         )}
+                        {/* Se renderizan los children debajo del texto */}
+                        {children}
                     </div>
                 )}
             </div>
