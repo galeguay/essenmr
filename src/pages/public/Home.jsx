@@ -127,7 +127,6 @@ export default function Home() {
                 title="¡LLegó el HOT 🔥 ESSEN"
                 titleClassName="text-white"
                 titleTop="true"
-                text="Consultame!"
                 image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/hotsale.webp"
                 className="pt-9 pb-8"
                 bgColor="#3f2021"
