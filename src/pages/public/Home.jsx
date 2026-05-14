@@ -135,6 +135,12 @@ export default function Home() {
                 className="pt-9 pb-8"
             />
 
+            <AnnouncementBanner
+                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/hotsale.webp"
+                className="pt-9 pb-8"
+                bgColor="#3f2021"
+            />
+
             <section className="flex flex-col items-center justify-center w-full py-12 bg-green-200">
                 <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
                     {discounts.map((product) => (
