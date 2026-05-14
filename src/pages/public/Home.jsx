@@ -136,6 +136,7 @@ export default function Home() {
             />
 
             <AnnouncementBanner
+                title="¡LLegó el HOT 🔥 ESSEN"
                 image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/hotsale.webp"
                 className="pt-9 pb-8"
                 bgColor="#3f2021"
