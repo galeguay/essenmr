@@ -15,7 +15,7 @@ export default function AnnouncementBanner({
     children // Nueva prop para recibir elementos hijos
 }) {
     const [isVisible, setIsVisible] = useState(true);
-    // Se actualiza la condición para que no oculte la caja de texto si hay children
+    // Se mantiene la lógica: si hay children, no se considera "solo imagen"
     const onlyImage = !title && !text && !children; 
     const noImage = !image && !imageMobile;
 
@@ -31,7 +31,7 @@ export default function AnnouncementBanner({
 
         if (timeRemaining <= 0) {
             setIsVisible(false);
-        } else if (timeRemaining <= 2147483647) { // Evita el límite de 24.8 días de setTimeout
+        } else if (timeRemaining <= 2147483647) { 
             const timer = setTimeout(() => setIsVisible(false), timeRemaining);
             return () => clearTimeout(timer);
         }
@@ -39,19 +39,16 @@ export default function AnnouncementBanner({
 
     if (!isVisible) return null;
 
-    // Determina la dirección del contenedor principal
     const layoutDirection = titleTop
         ? 'flex-col-reverse'
         : imageRight
             ? 'flex-col-reverse md:flex-row-reverse'
             : 'flex-col md:flex-row';
 
-    // Determina el ancho y disposición del contenedor de la imagen
     const imageWrapperClass = onlyImage || titleTop
         ? "w-full flex justify-center"
         : "w-full h-52 md:w-2/5 lg:w-1/3 md:h-auto";
 
-    // Determina el ancho y disposición del contenedor del texto
     const textWrapperClass = `flex flex-col justify-center p-6 ${
         (noImage || titleTop) ? 'w-full items-center text-center' : 'w-full md:w-fit lg:w-fit'
     }`;
@@ -80,7 +77,7 @@ export default function AnnouncementBanner({
                     </div>
                 )}
 
-                {/* Contenedor de texto */}
+                {/* Contenedor de contenido (Texto + Children) */}
                 {!onlyImage && (
                     <div className={textWrapperClass}>
                         {title && (
@@ -92,6 +89,12 @@ export default function AnnouncementBanner({
                             <p className={`text-lg md:text-xl`}>
                                 {text}
                             </p>
+                        )}
+                        {/* Renderizado de elementos adicionales */}
+                        {children && (
+                            <div className="mt-4 w-full">
+                                {children}
+                            </div>
                         )}
                     </div>
                 )}
