@@ -131,10 +131,11 @@ export default function Home() {
                 className="pt-9 pb-8"
                 bgColor="#3f2021"
             >
-                <BtnWpp
-                    className="mt-4"
-                    message="¡Hola! Vi el anuncio del HOT ESSEN en la página y quiero saber más."
-                />
+                <div className="mt-4">
+                    <BtnWpp
+                        message="¡Hola! Vi el anuncio del HOT ESSEN en la página y quiero saber más."
+                    />
+                </div>
             </AnnouncementBanner>
 
             <AnnouncementBanner

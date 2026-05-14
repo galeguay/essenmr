@@ -93,8 +93,6 @@ export default function AnnouncementBanner({
                                 {text}
                             </p>
                         )}
-                        {/* Se renderizan los children debajo del texto */}
-                        {children}
                     </div>
                 )}
             </div>
