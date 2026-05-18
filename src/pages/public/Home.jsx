@@ -130,6 +130,7 @@ export default function Home() {
                 image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/hotsale.webp"
                 className="pt-9 pb-8"
                 bgColor="#3f2021"
+                expirationDate="00:00 18-05-2026"
             >
                 <div className="mt-4">
                     <BtnWpp
