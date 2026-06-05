@@ -197,14 +197,8 @@ export default function Home() {
             </section>
 
             {newProducts.length > 0 ? (
-                <section className="py-12 bg-[#626164]">
-
-                    <DoubleImageBanner
-                        image1="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/banner_linea_rosa1.webp"
-                        image2="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/banner_linea_rosa2.webp"
-                        bgColor="#626164"
-                    />
-
+                <section className="py-12 bg-black">
+                    <div className="text-4xl font-bold text-center text-white mb-5">Nuevos productos</div>
                     <div className="container mx-auto">
                         <div className="grid grid-cols-1 gap-6 px-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
                             {newProducts.map((np) => (
