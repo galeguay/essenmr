@@ -198,11 +198,20 @@ export default function Home() {
 
             {newProducts.length > 0 ? (
                 <section className="py-12 bg-black">
-                    <div className="text-4xl font-bold text-center text-white mb-5">Nuevos productos</div>
+                    <div className="text-4xl font-bold text-center text-white mb-10">
+                        Nuevos productos
+                    </div>
                     <div className="container mx-auto">
-                        <div className="grid grid-cols-1 gap-6 px-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
+                        {/* Contenedor flex en columna y centrado */}
+                        <div className="flex flex-col items-center gap-8 px-6">
                             {newProducts.map((np) => (
-                                <NewReleaseCard key={np.essen_id} productId={np.essen_id} title={np.name} image={np.image} />
+                                <NewReleaseCard
+                                    key={np.essen_id}
+                                    productId={np.essen_id}
+                                    title={np.name}
+                                    image={np.image}
+                                    description={np.description}
+                                />
                             ))}
                         </div>
                     </div>
