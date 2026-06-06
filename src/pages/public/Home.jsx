@@ -9,6 +9,7 @@ import ProductCard from '../../components/public/ProductCard';
 import AnnouncementBanner from '../../components/public/AnnouncementBanner';
 import DoubleImageBanner from '../../components/public/DoubleImageBanner';
 import Title from '../../components/public/Title';
+import HeroFusionBanner from '../../components/public/HeroFusionBanner';
 
 export default function Home() {
 
@@ -123,21 +124,19 @@ export default function Home() {
 
             {loading ? "" : ""}
 
-            <AnnouncementBanner
-                title="¡LLegó el HOT 🔥 ESSEN"
-                titleClassName="text-white"
-                titleTop="true"
-                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/hotsale.webp"
-                className="pt-9 pb-8"
-                bgColor="#3f2021"
-                expirationDate="00:00 18-05-2026"
+            <HeroFusionBanner
+                title="Combos Mundiales 🇦🇷"
+                titleColor="text-white"
+                text="Con la compra de productos seleccionados podés acceder a la SARTÉN 18 CM ARGENTINA mundial."
+                textColor="text-white"
+                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/sarten_18_arg.webp"
+                link="http://localhost:5173/producto/38651903"
+                backgroundColor="bg-sky-500"
             >
-                <div className="mt-4">
-                    <BtnWpp
-                        message="¡Hola! Vi el anuncio del HOT ESSEN en la página y quiero saber más."
-                    />
-                </div>
-            </AnnouncementBanner>
+                <BtnWpp
+                    message="¡Hola! Vi el anuncio del HOT ESSEN en la página y quiero saber más."
+                />
+            </HeroFusionBanner>
 
             <AnnouncementBanner
                 image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje.webp"

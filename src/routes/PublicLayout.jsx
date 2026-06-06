@@ -19,7 +19,7 @@ export default function PublicLayout() {
     <>
       {!hideNavBar && <Navbar />}
 
-      <main className={`${!hideNavBar && "mt-20"} min-h-screen`}>
+      <main className={`${!hideNavBar && "mt-16"} min-h-screen`}>
           <Outlet />
       </main>
 
