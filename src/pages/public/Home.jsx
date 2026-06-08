@@ -130,7 +130,7 @@ export default function Home() {
                 text="Con la compra de productos seleccionados podés acceder a la SARTÉN 18 CM ARGENTINA mundial."
                 textColor="text-white"
                 image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/sarten_18_arg.webp"
-                link="http://localhost:5173/producto/38651903"
+                link="/producto/38651903"
                 backgroundColor="bg-sky-500"
             >
                 <BtnWpp
