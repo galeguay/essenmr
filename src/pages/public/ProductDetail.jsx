@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import Seo from '../../components/public/Seo';
 import BtnWpp from '../../components/public/BtnWpp';
 import { supabase } from '../../lib/supabase';
 import Promotions from '../../components/public/Promotions';
@@ -60,104 +61,131 @@ export default function ProductDetail() {
         );
     }
 
+    const productJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.name,
+        description: product.description || `${product.name} de EssenMR`,
+        image: product.image,
+        sku: product.essen_id,
+        brand: {
+            "@type": "Brand",
+            name: "EssenMR",
+        },
+        offers: {
+            "@type": "Offer",
+            availability: product.stock_quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        },
+    };
+
     return (
-        <div className="min-h-screen px-4 py-8 bg-gray-50">
-            <div className="mx-auto mb-20 max-w-7xl md:mb-40">
+        <>
+            <Seo
+                title={`${product.name} | EssenMR`}
+                description={product.description || `Producto ${product.name} disponible en EssenMR.`}
+                image={product.image}
+                canonical={`/producto/${essen_id}`}
+                keywords={`${product.product_line?.name || "Essen"}, ${product.name}, cocina`}
+                jsonLd={productJsonLd}
+            />
+            <div className="min-h-screen px-4 py-8 bg-gray-50">
+                <div className="mx-auto mb-20 max-w-7xl md:mb-40">
 
-                <div className="grid grid-cols-1 gap-1 lg:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-1 lg:grid-cols-2">
 
-                    <figure className="relative aspect-square lg:aspect-auto">
-                        <img
-                            loading="lazy"
-                            src={product.image || "../../cacerola.webp"}
-                            alt={product.name}
-                            className="object-contain w-full h-full"
-                            onError={(e) => {
-                                e.currentTarget.src = "../../cacerola.webp";
-                            }}
-                        />
-                    </figure>
+                        <figure className="relative aspect-square lg:aspect-auto">
+                            <img
+                                loading="lazy"
+                                src={product.image || "../../cacerola.webp"}
+                                alt={product.name}
+                                className="object-contain w-full h-full"
+                                onError={(e) => {
+                                    e.currentTarget.src = "../../cacerola.webp";
+                                }}
+                            />
+                        </figure>
 
-                    <div className="flex flex-col justify-between p-6 lg:p-12">
-                        <div>
-                            {product.product_line && (
-                                <p className="text-xl lg:text-2xl m-0 tracking-wider text-gray-500">
-                                    {product.product_line.name}
-                                </p>
-                            )}
+                        <div className="flex flex-col justify-between p-6 lg:p-12">
+                            <div>
+                                {product.product_line && (
+                                    <p className="text-xl lg:text-2xl m-0 tracking-wider text-gray-500">
+                                        {product.product_line.name}
+                                    </p>
+                                )}
 
-                            <h3 className="capitalize mb-3 font-bold text-gray-900 text-2xl lg:text-4xl">
-                                {product.name.toLowerCase()}
-                            </h3>
+                                <h3 className="capitalize mb-3 font-bold text-gray-900 text-2xl lg:text-4xl">
+                                    {product.name.toLowerCase()}
+                                </h3>
 
-                            {/* Badges (Etiquetas) */}
-                            <div className="flex gap-1 mb-3 items-center text-xl">
+                                {/* Badges (Etiquetas) */}
+                                <div className="flex gap-1 mb-3 items-center text-xl">
 
-                                {product.is_new &&
-                                    <div className="px-6 font-bold text-white uppercase bg-blue-500 w-fit">
-                                        Nuevo
-                                    </div>}
+                                    {product.is_new &&
+                                        <div className="px-6 font-bold text-white uppercase bg-blue-500 w-fit">
+                                            Nuevo
+                                        </div>}
 
-                                {product.discount > 0 &&
-                                    <div className="px-6 font-bold text-white uppercase bg-green-500 w-fit to-emerald-300">
-                                        <span className="">{product.discount}</span>
-                                        <span className=" uppercase">% descuento</span>
-                                    </div>}
+                                    {product.discount > 0 &&
+                                        <div className="px-6 font-bold text-white uppercase bg-green-500 w-fit to-emerald-300">
+                                            <span className="">{product.discount}</span>
+                                            <span className=" uppercase">% descuento</span>
+                                        </div>}
 
-                                {(product.stock_quantity < 1) &&
-                                    <div className="px-6 font-bold text-white uppercase bg-gray-400 w-fit">
-                                        Sin Stock
-                                    </div>}
-                            </div>
-
-                            {product.description && (
-                                <div className="mb-8 prose prose-lg">
-                                    {/* Agregamos la clase aquí */}
-                                    <p className="whitespace-pre-wrap">{product.description}</p>
+                                    {(product.stock_quantity < 1) &&
+                                        <div className="px-6 font-bold text-white uppercase bg-gray-400 w-fit">
+                                            Sin Stock
+                                        </div>}
                                 </div>
-                            )}
 
-                            <div className="flex justify-around mb-8 text-2xl font-bold">
-                                {product.diameter && (
-                                    <div className="flex flex-col items-center">
-                                        <span>{product.diameter} CM</span>
-                                        <span className="text-sm">Diámetro</span>
+                                {product.description && (
+                                    <div className="mb-8 prose prose-lg">
+                                        {/* Agregamos la clase aquí */}
+                                        <p className="whitespace-pre-wrap">{product.description}</p>
                                     </div>
                                 )}
 
-                                {product.capacity && (
-                                    <div className="flex flex-col items-center">
-                                        <span>{product.capacity} L</span>
-                                        <span className="text-sm">Capacidad</span>
-                                    </div>
-                                )}
+                                <div className="flex justify-around mb-8 text-2xl font-bold">
+                                    {product.diameter && (
+                                        <div className="flex flex-col items-center">
+                                            <span>{product.diameter} CM</span>
+                                            <span className="text-sm">Diámetro</span>
+                                        </div>
+                                    )}
 
-                                {product.guests && (
-                                    <div className="flex flex-col items-center">
-                                        <span>{product.guests}</span>
-                                        <span className="text-sm">Comensales</span>
-                                    </div>
+                                    {product.capacity && (
+                                        <div className="flex flex-col items-center">
+                                            <span>{product.capacity} L</span>
+                                            <span className="text-sm">Capacidad</span>
+                                        </div>
+                                    )}
+
+                                    {product.guests && (
+                                        <div className="flex flex-col items-center">
+                                            <span>{product.guests}</span>
+                                            <span className="text-sm">Comensales</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col items-center justify-center">
+                                {product.stock_quantity < 1 ? (
+                                    <button
+                                        className="w-full rounded-lg px-5 py-2.5 text-sm font-medium bg-gray-400 text-white cursor-not-allowed"
+                                        disabled
+                                    >
+                                        No disponible
+                                    </button>
+                                ) : (
+                                    <BtnWpp message={`Hola, quiero averiguar por "${product.name}"`} />
                                 )}
                             </div>
-                        </div>
-
-                        <div className="flex flex-col items-center justify-center">
-                            {product.stock_quantity < 1 ? (
-                                <button
-                                    className="w-full rounded-lg px-5 py-2.5 text-sm font-medium bg-gray-400 text-white cursor-not-allowed"
-                                    disabled
-                                >
-                                    No disponible
-                                </button>
-                            ) : (
-                                <BtnWpp message={`Hola, quiero averiguar por "${product.name}"`} />
-                            )}
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <Promotions />
-        </div>
+                <Promotions />
+            </div>
+        </>
     );
 }

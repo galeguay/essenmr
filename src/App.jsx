@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import RootLayout from "./routes/RootLayout";
 
 import Login from "./pages/admin/Login";
@@ -25,30 +26,32 @@ export default function App() {
     }, []);
 
     return (
-        <Routes>
-            <Route element={<RootLayout />}>
+        <HelmetProvider>
+            <Routes>
+                <Route element={<RootLayout />}>
 
-                {/* RUTAS PÚBLICAS */}
-                <Route path="/" element={<Home />} />
-                <Route path="/catalogo" element={<Catalog />} />
-                <Route path="/producto/:essen_id" element={<ProductDetail />} />
-                <Route path="/faq" element={<FaqList />} />
-                <Route path="/about_me" element={<AboutMe />} />
+                    {/* RUTAS PÚBLICAS */}
+                    <Route path="/" element={<Home />} />
+                    <Route path="/catalogo" element={<Catalog />} />
+                    <Route path="/producto/:essen_id" element={<ProductDetail />} />
+                    <Route path="/faq" element={<FaqList />} />
+                    <Route path="/about_me" element={<AboutMe />} />
 
-                {/* RUTAS ADMIN */}
-                <Route path="/admin/*" element={<div className="text-4xl">Panel Admin</div>} />
-                <Route path="/admin/login" element={<Login />} />
-                <Route path="/admin/products" element={<Products />} />
-                <Route path="/admin/promotions" element={<PromotionsForm />} />
-                <Route path="/admin/faq" element={<FaqForm />} />
-                <Route path="/admin/products/new" element={<ProductForm />} />
-                <Route path="/admin/products/:id" element={<ProductForm />} />
-                <Route path="/admin/productLines" element={<ProductLines />} />
-                <Route path="/admin/productLines/new" element={<ProductLineForm />} />
-                <Route path="/admin/productLines/:id" element={<ProductLineForm />} />
-                <Route path="/admin/settings" element={<Settings />} />
+                    {/* RUTAS ADMIN */}
+                    <Route path="/admin/*" element={<div className="text-4xl">Panel Admin</div>} />
+                    <Route path="/admin/login" element={<Login />} />
+                    <Route path="/admin/products" element={<Products />} />
+                    <Route path="/admin/promotions" element={<PromotionsForm />} />
+                    <Route path="/admin/faq" element={<FaqForm />} />
+                    <Route path="/admin/products/new" element={<ProductForm />} />
+                    <Route path="/admin/products/:id" element={<ProductForm />} />
+                    <Route path="/admin/productLines" element={<ProductLines />} />
+                    <Route path="/admin/productLines/new" element={<ProductLineForm />} />
+                    <Route path="/admin/productLines/:id" element={<ProductLineForm />} />
+                    <Route path="/admin/settings" element={<Settings />} />
 
-            </Route>
-        </Routes>
+                </Route>
+            </Routes>
+        </HelmetProvider>
     );
 }

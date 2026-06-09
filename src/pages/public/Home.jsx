@@ -10,6 +10,7 @@ import AnnouncementBanner from '../../components/public/AnnouncementBanner';
 import DoubleImageBanner from '../../components/public/DoubleImageBanner';
 import Title from '../../components/public/Title';
 import HeroFusionBanner from '../../components/public/HeroFusionBanner';
+import Seo from '../../components/public/Seo';
 
 export default function Home() {
 
@@ -120,11 +121,18 @@ export default function Home() {
     };
 
     return (
-        <div className="">
+        <>
+            <Seo
+                title="EssenMR - Ofertas y novedades en productos de cocina Essen"
+                description="Encontrá combos, promociones y nuevos lanzamientos de productos Essen en Mar del Plata con envío a todo el país."
+                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje.webp"
+                keywords="Essen, productos Essen, ollas, sartenes, Mar del Plata, promociones, combos"
+            />
+            <div className="">
 
-            {loading ? "" : ""}
+                {loading ? "" : ""}
 
-            <HeroFusionBanner
+                <HeroFusionBanner
                 title="Combos Mundiales 🇦🇷"
                 titleColor="text-white"
                 text="Con la compra de productos seleccionados podés acceder a la SARTÉN 18 CM ARGENTINA mundial."
@@ -223,5 +231,6 @@ export default function Home() {
             </div>
 
         </div >
+        </>
     );
 }
