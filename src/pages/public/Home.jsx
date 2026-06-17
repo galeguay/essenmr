@@ -145,7 +145,8 @@ export default function Home() {
                 </HeroFusionBanner>
 
                 <AnnouncementBanner
-                    titleClassName="text-[#493f51]"
+                title="Recorda que para este día del Padre..."
+                    titleClassName="text-white"
                     titleTop="true"
                     image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/promo_modo1.webp"
                     expirationDate="00:00 22-06-2026"
