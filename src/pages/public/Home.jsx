@@ -65,9 +65,7 @@ export default function Home() {
                 .select(`*, product_line (*)`)
                 .eq('is_new', true)
                 .eq('is_visible', true);
-
             if (error) throw error;
-
             setNewProducts(data);
         } catch (err) {
             console.error('Error fetching new products:', err);
@@ -133,104 +131,112 @@ export default function Home() {
                 {loading ? "" : ""}
 
                 <HeroFusionBanner
-                title="Combos Mundiales 🇦🇷"
-                titleColor="text-white"
-                text="Con la compra de productos seleccionados podés acceder a la SARTÉN 18 CM ARGENTINA mundial."
-                textColor="text-white"
-                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/sarten_18_arg.webp"
-                link="/producto/38651903"
-                backgroundColor="bg-sky-500"
-            >
-                <BtnWpp
-                    message="¡Hola! Vi el anuncio del HOT ESSEN en la página y quiero saber más."
+                    title="Combos Mundiales 🇦🇷"
+                    titleColor="text-white"
+                    text="Con la compra de productos seleccionados podés acceder a la SARTÉN 18 CM ARGENTINA mundial."
+                    textColor="text-white"
+                    image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/sarten_18_arg.webp"
+                    link="/producto/38651903"
+                    backgroundColor="bg-sky-500"
+                >
+                    <BtnWpp
+                        message="¡Hola! Vi el anuncio del HOT ESSEN en la página y quiero saber más."
+                    />
+                </HeroFusionBanner>
+
+                <AnnouncementBanner
+                    titleClassName="text-[#493f51]"
+                    titleTop="true"
+                    image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/promo_modo1.webp"
+                    expirationDate="00:00 22-06-2026"
+                    bgColor='#050810'
                 />
-            </HeroFusionBanner>
 
-            <AnnouncementBanner
-                image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje.webp"
-                className="pt-9 pb-8"
-            />
+                <AnnouncementBanner
+                    image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje.webp"
+                    className="pt-9 pb-8"
+                />
 
-            <section className="flex flex-col items-center justify-center w-full py-12 bg-green-200">
-                <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
-                    {discounts.map((product) => (
-                        <ProductCard
-                            key={product.id}
-                            product={product}
-                        />
-                    ))}
-                </div>
-            </section>
-
-            <section className="flex flex-col items-center py-12">
-                <Title className="mb-1">
-                    Lineas de productos
-                </Title>
-                <div className="flex w-full justify-center bg-gray-100 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)]">
-                    <div className="container lg:flex lg:justify-center ">
-                        <div
-                            className="flex justify-around gap-2 py-6 overflow-x-auto lg:overflow-x-visible xl:w-full"
-                        >
-                            {productLines.map((line) => (
-                                <div key={line.id} className="min-w-[40%] sm:min-w-[35%] md:min-w-[18%] lg:min-w-0">
-                                    <ProductLineCard productLine={line} />
-                                </div>
-                            ))}
-                        </div>
+                <section className="flex flex-col items-center justify-center w-full py-12 bg-green-200">
+                    <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
+                        {discounts.map((product) => (
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                            />
+                        ))}
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <section className="flex flex-wrap items-center justify-center pt-4 pb-16 space-y-2 md:space-y-0 md:space-x-6">
-                <div className="flex flex-wrap items-center justify-center mb-5 md:mb-0">
-                    <i className="text-2xl bi bi-credit-card me-2"></i>
-                    Aceptamos todos los medios de pagos.
-                    <a href="#promociones"
-                        className="flex underline ps-1 me-3"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            document.getElementById('promociones')?.scrollIntoView({
-                                behavior: 'smooth'
-                            });
-                        }}>
-                        Ver promociones financieras
-                    </a>
-                </div>
-
-                <div className="flex items-center">
-                    <i className="text-2xl bi bi-box-seam me-2"></i>
-                    Envíos a todo el país
-                </div>
-            </section>
-
-            {newProducts.length > 0 ? (
-                <section className="py-12 bg-black">
-                    <div className="text-4xl font-bold text-center text-white mb-10">
-                        Nuevos productos
-                    </div>
-                    <div className="container mx-auto">
-                        {/* Contenedor flex en columna y centrado */}
-                        <div className="flex flex-col items-center gap-8 px-6">
-                            {newProducts.map((np) => (
-                                <NewReleaseCard
-                                    key={np.essen_id}
-                                    productId={np.essen_id}
-                                    title={np.name}
-                                    image={np.image}
-                                    description={np.description}
-                                />
-                            ))}
+                <section className="flex flex-col items-center py-12">
+                    <Title className="mb-1">
+                        Lineas de productos
+                    </Title>
+                    <div className="flex w-full justify-center bg-gray-100 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)]">
+                        <div className="container lg:flex lg:justify-center ">
+                            <div
+                                className="flex justify-around gap-2 py-6 overflow-x-auto lg:overflow-x-visible xl:w-full"
+                            >
+                                {productLines.map((line) => (
+                                    <div key={line.id} className="min-w-[40%] sm:min-w-[35%] md:min-w-[18%] lg:min-w-0">
+                                        <ProductLineCard productLine={line} />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </section>
-            ) : ""}
 
-            {/* ID actualizado a 'promociones' para coincidir con el Navbar */}
-            <div id="promociones" className="my-12">
-                <Promotions />
-            </div>
+                <section className="flex flex-wrap items-center justify-center pt-4 pb-16 space-y-2 md:space-y-0 md:space-x-6">
+                    <div className="flex flex-wrap items-center justify-center mb-5 md:mb-0">
+                        <i className="text-2xl bi bi-credit-card me-2"></i>
+                        Aceptamos todos los medios de pagos.
+                        <a href="#promociones"
+                            className="flex underline ps-1 me-3"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                document.getElementById('promociones')?.scrollIntoView({
+                                    behavior: 'smooth'
+                                });
+                            }}>
+                            Ver promociones financieras
+                        </a>
+                    </div>
 
-        </div >
+                    <div className="flex items-center">
+                        <i className="text-2xl bi bi-box-seam me-2"></i>
+                        Envíos a todo el país
+                    </div>
+                </section>
+
+                {newProducts.length > 0 ? (
+                    <section className="py-12 bg-black">
+                        <div className="text-4xl font-bold text-center text-white mb-10">
+                            Nuevos productos
+                        </div>
+                        <div className="container mx-auto">
+                            {/* Contenedor flex en columna y centrado */}
+                            <div className="flex flex-col items-center gap-8 px-6">
+                                {newProducts.map((np) => (
+                                    <NewReleaseCard
+                                        key={np.essen_id}
+                                        productId={np.essen_id}
+                                        title={np.name}
+                                        image={np.image}
+                                        description={np.description}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+                ) : ""}
+
+                {/* ID actualizado a 'promociones' para coincidir con el Navbar */}
+                <div id="promociones" className="my-12">
+                    <Promotions />
+                </div>
+
+            </div >
         </>
     );
 }
