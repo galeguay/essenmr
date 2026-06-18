@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { typography } from '../styles/typography';
 
 export default function AnnouncementBanner({
     image,
@@ -81,9 +82,9 @@ export default function AnnouncementBanner({
                 {!onlyImage && (
                     <div className={textWrapperClass}>
                         {title && (
-                            <h3 className={`font-bold text-4xl md:text-5xl ${titleClassName}`}>
+                            <h2 className={`${typography.sectionTitle} ${titleClassName}`}>
                                 {title}
-                            </h3>
+                            </h2>
                         )}
                         {text && (
                             <p className={`text-lg md:text-xl`}>

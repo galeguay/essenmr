@@ -1,3 +1,4 @@
+import { typography } from "../styles/typography";
 import Title from "./Title";
 
 export default function Promotions() {
@@ -6,9 +7,9 @@ export default function Promotions() {
 
     return (
         <div id="promociones" className="container flex flex-col md:mx-auto">
-            <Title className="text-center mb-1">
+            <h2 className={`${typography.sectionTitle} text-center mb-1`}>
                 Promociones financieras en {currentMonth.toUpperCase()}
-            </Title>
+            </h2>
             <div className="flex justify-center">
                 <div className="w-fit md:bg-gray-100 p-3 md:shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35),inset_10px_10px_10px_-10px_rgba(0,0,0,0.35),inset_-10px_10px_10px_-10px_rgba(0,0,0,0.35)]">
                     <img

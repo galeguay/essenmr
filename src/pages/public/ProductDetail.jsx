@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import Seo from '../../components/public/Seo';
-import BtnWpp from '../../components/public/BtnWpp';
+import Seo from '../../components/Seo';
+import BtnWpp from '../../components/BtnWpp';
 import { supabase } from '../../lib/supabase';
-import Promotions from '../../components/public/Promotions';
+import Promotions from '../../components/Promotions';
 
 export default function ProductDetail() {
     const { essen_id } = useParams();

@@ -17,6 +17,7 @@ import Catalog from "./pages/public/Catalog";
 import FaqList from "./pages/public/FaqList";
 import Settings from "./pages/admin/Settings";
 import AboutMe from "./pages/public/AboutMe";
+import AdminAnnouncements from './pages/admin/AdminAnnouncements';
 
 
 export default function App() {
@@ -49,6 +50,7 @@ export default function App() {
                     <Route path="/admin/productLines/new" element={<ProductLineForm />} />
                     <Route path="/admin/productLines/:id" element={<ProductLineForm />} />
                     <Route path="/admin/settings" element={<Settings />} />
+                    <Route path="/admin/announcements" element={<AdminAnnouncements />} />
 
                 </Route>
             </Routes>

@@ -1,3 +1,5 @@
+import { typography } from "../styles/typography";
+
 export default function HeroFusionBanner({ 
     title, 
     text, 
@@ -16,9 +18,9 @@ export default function HeroFusionBanner({
                 {/* Contenido Izquierdo */}
                 <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-16 lg:p-24 z-10 bg-transparent">
                     {title && (
-                        <h3 className={`text-3xl md:text-5xl font-black ${titleColor} mb-6 leading-tight`}>
+                        <h2 className={`${typography.sectionTitle} ${titleColor} mb-6 leading-tight`}>
                             {title}
-                        </h3>
+                        </h2>
                     )}
                     {text && (
                         <p className={`text-lg md:text-xl ${textColor} mb-10 leading-relaxed`}>

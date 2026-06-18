@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Seo from "../../components/public/Seo";
+import Seo from "../../components/Seo";
 import { supabase } from "../../lib/supabase";
-import PageTitle from "../../components/public/PageTitle";
+import PageTitle from "../../components/PageTitle";
 
 export default function FaqList() {
     const [faqs, setFaqs] = useState([]);

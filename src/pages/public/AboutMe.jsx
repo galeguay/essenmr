@@ -1,5 +1,5 @@
-import Seo from '../../components/public/Seo';
-import BtnLink from '../../components/public/BtnLink';
+import Seo from '../../components/Seo';
+import BtnLink from '../../components/BtnLink';
 
 export default function AboutMe() {
     return (

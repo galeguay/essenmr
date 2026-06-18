@@ -12,6 +12,7 @@ export default function Sidebar({
         { text: 'Líneas de productos', to: '/admin/productLines', icon: 'bi-boxes' },
         { text: 'Promociones financieras', to: '/admin/promotions', icon: 'bi-credit-card' },
         { text: 'Preguntas Frecuentes', to: '/admin/faq', icon: 'bi-question-circle' },
+        { text: 'Anuncios', to: '/admin/announcements', icon: 'bi-credit-card' },
     ];
 
     async function handleLogout() {

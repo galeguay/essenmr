@@ -1,23 +1,70 @@
 import { useState, useEffect } from 'react';
-import NewDiscountCard from "../../components/public/NewDiscountCard";
-import ProductLineCard from '../../components/public/ProductLineCard';
-import Promotions from '../../components/public/Promotions';
+import ProductLineCard from '../../components/ProductLineCard';
+import Promotions from '../../components/Promotions';
 import { supabase } from '../../lib/supabase';
-import BtnWpp from '../../components/public/BtnWpp';
-import NewReleaseCard from '../../components/public/NewReleaseCard';
-import ProductCard from '../../components/public/ProductCard';
-import AnnouncementBanner from '../../components/public/AnnouncementBanner';
-import DoubleImageBanner from '../../components/public/DoubleImageBanner';
-import Title from '../../components/public/Title';
-import HeroFusionBanner from '../../components/public/HeroFusionBanner';
-import Seo from '../../components/public/Seo';
+import BtnWpp from '../../components/BtnWpp';
+import NewReleaseCard from '../../components/NewReleaseCard';
+import ProductCard from '../../components/ProductCard';
+import AnnouncementBanner from '../../components/AnnouncementBanner';
+import Title from '../../components/Title';
+import HeroFusionBanner from '../../components/HeroFusionBanner';
+import Seo from '../../components/Seo';
+import { typography } from '../../styles/typography';
+
+const formatExpirationDateForBanner = (dateString) => {
+    if (!dateString) return undefined;
+
+    const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) return undefined;
+
+    const pad = (value) => String(value).padStart(2, '0');
+
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const day = pad(date.getDate());
+    const month = pad(date.getMonth() + 1);
+    const year = date.getFullYear();
+
+    return `${hours}:${minutes} ${day}-${month}-${year}`;
+};
 
 export default function Home() {
 
     const [productLines, setProductLines] = useState([]);
     const [discounts, setDiscounts] = useState([]);
     const [newProducts, setNewProducts] = useState([]);
+    const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const fetchAnnouncements = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('announcements')
+                .select('*')
+                .eq('is_active', true)
+                .order('sort_order', { ascending: true })
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            const now = new Date();
+
+            const activeAnnouncements = (data || []).filter((announcement) => {
+                const startsAtIsValid =
+                    !announcement.starts_at || new Date(announcement.starts_at) <= now;
+
+                const expirationDateIsValid =
+                    !announcement.expiration_date || new Date(announcement.expiration_date) > now;
+
+                return startsAtIsValid && expirationDateIsValid;
+            });
+
+            setAnnouncements(activeAnnouncements);
+        } catch (err) {
+            console.error('Error fetching announcements:', err);
+        }
+    };
 
     const fetchDiscounts = async () => {
         try {
@@ -65,8 +112,10 @@ export default function Home() {
                 .select(`*, product_line (*)`)
                 .eq('is_new', true)
                 .eq('is_visible', true);
+
             if (error) throw error;
-            setNewProducts(data);
+
+            setNewProducts(data || []);
         } catch (err) {
             console.error('Error fetching new products:', err);
         }
@@ -82,34 +131,39 @@ export default function Home() {
 
             if (error) throw error;
 
-            setProductLines(data);
+            setProductLines(data || []);
         } catch (err) {
             console.error('Error fetching product lines:', err);
             alert('Error al cargar las líneas de productos');
         }
     };
 
-    // 1. Manejo de carga inicial de datos
     useEffect(() => {
         setLoading(true);
-        Promise.all([fetchProductLines(), fetchNewProducts(), fetchDiscounts()])
-            .finally(() => setLoading(false));
+
+        Promise.all([
+            fetchProductLines(),
+            fetchNewProducts(),
+            fetchDiscounts(),
+            fetchAnnouncements()
+        ]).finally(() => setLoading(false));
     }, []);
 
-    // 2. Ejecutar el scroll SOLO cuando la carga haya terminado
     useEffect(() => {
         if (!loading) {
             const hash = window.location.hash;
+
             if (hash) {
                 setTimeout(() => {
                     const element = document.querySelector(hash);
+
                     if (element) {
                         element.scrollIntoView({ behavior: "smooth" });
                     }
-                }, 300); // Mantenemos un pequeño delay para el render final de imágenes
+                }, 300);
             }
         }
-    }, [loading]); // Agregamos 'loading' como dependencia
+    }, [loading]);
 
     const getGridClasses = (length) => {
         if (length === 1) return "grid-cols-1";
@@ -126,9 +180,8 @@ export default function Home() {
                 image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje.webp"
                 keywords="Essen, productos Essen, ollas, sartenes, Mar del Plata, promociones, combos"
             />
-            <div className="">
 
-                {loading ? "" : ""}
+            <div className="">
 
                 <HeroFusionBanner
                     title="Combos Mundiales 🇦🇷"
@@ -144,19 +197,18 @@ export default function Home() {
                     />
                 </HeroFusionBanner>
 
-                <AnnouncementBanner
-                title="Recorda que para este día del Padre..."
-                    titleClassName="text-white"
-                    titleTop="true"
-                    image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/promo_modo1.webp"
-                    expirationDate="00:00 22-06-2026"
-                    bgColor='#050810'
-                />
-
-                <AnnouncementBanner
-                    image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/plan_canje.webp"
-                    className="pt-9 pb-8"
-                />
+                {announcements.map((announcement) => (
+                    <AnnouncementBanner
+                        key={announcement.id}
+                        title={announcement.title || undefined}
+                        titleClassName={announcement.title_class_name || undefined}
+                        titleTop={announcement.title_top ? "true" : undefined}
+                        image={announcement.image_url}
+                        expirationDate={formatExpirationDateForBanner(announcement.expiration_date)}
+                        bgColor={announcement.bg_color || undefined}
+                        className={announcement.class_name || undefined}
+                    />
+                ))}
 
                 <section className="flex flex-col items-center justify-center w-full py-12 bg-green-200">
                     <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
@@ -170,14 +222,13 @@ export default function Home() {
                 </section>
 
                 <section className="flex flex-col items-center py-12">
-                    <Title className="mb-1">
+                    <h2 className={`${typography.sectionTitle} mb-10`}>
                         Lineas de productos
-                    </Title>
+                    </h2>
+
                     <div className="flex w-full justify-center bg-gray-100 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)]">
                         <div className="container lg:flex lg:justify-center ">
-                            <div
-                                className="flex justify-around gap-2 py-6 overflow-x-auto lg:overflow-x-visible xl:w-full"
-                            >
+                            <div className="flex justify-around gap-2 py-6 overflow-x-auto lg:overflow-x-visible xl:w-full">
                                 {productLines.map((line) => (
                                     <div key={line.id} className="min-w-[40%] sm:min-w-[35%] md:min-w-[18%] lg:min-w-0">
                                         <ProductLineCard productLine={line} />
@@ -192,14 +243,18 @@ export default function Home() {
                     <div className="flex flex-wrap items-center justify-center mb-5 md:mb-0">
                         <i className="text-2xl bi bi-credit-card me-2"></i>
                         Aceptamos todos los medios de pagos.
-                        <a href="#promociones"
+
+                        <a
+                            href="#promociones"
                             className="flex underline ps-1 me-3"
                             onClick={(e) => {
                                 e.preventDefault();
+
                                 document.getElementById('promociones')?.scrollIntoView({
                                     behavior: 'smooth'
                                 });
-                            }}>
+                            }}
+                        >
                             Ver promociones financieras
                         </a>
                     </div>
@@ -212,11 +267,11 @@ export default function Home() {
 
                 {newProducts.length > 0 ? (
                     <section className="py-12 bg-black">
-                        <div className="text-4xl font-bold text-center text-white mb-10">
+                        <h2 className={`${typography.sectionTitle} text-center text-white mb-10`}>
                             Nuevos productos
-                        </div>
+                        </h2>
+
                         <div className="container mx-auto">
-                            {/* Contenedor flex en columna y centrado */}
                             <div className="flex flex-col items-center gap-8 px-6">
                                 {newProducts.map((np) => (
                                     <NewReleaseCard
@@ -232,12 +287,11 @@ export default function Home() {
                     </section>
                 ) : ""}
 
-                {/* ID actualizado a 'promociones' para coincidir con el Navbar */}
                 <div id="promociones" className="my-12">
                     <Promotions />
                 </div>
 
-            </div >
+            </div>
         </>
     );
 }

@@ -1,9 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from "react-router-dom";
-import ProductCard from '../../components/public/ProductCard';
-import Seo from '../../components/public/Seo';
+import ProductCard from '../../components/ProductCard';
+import Seo from '../../components/Seo';
 import { supabase } from '../../lib/supabase';
-import PageTitle from '../../components/public/PageTitle';
+import PageTitle from '../../components/PageTitle';
 
 /* Debounce Hook */
 function useDebounce(value, delay) {

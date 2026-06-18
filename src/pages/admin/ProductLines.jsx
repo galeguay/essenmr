@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import Text from '../../components/public/Text';
+import Text from '../../components/Text';
 
 export default function ProductLines() {
 
