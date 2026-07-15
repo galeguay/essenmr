@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import RootLayout from "./routes/RootLayout";
-
+import GoogleAnalytics from "./utils/GoogleAnalytics";
 import Login from "./pages/admin/Login";
 import Products from "./pages/admin/Products";
 import ProductLineForm from "./pages/admin/ProductLineForm";
@@ -28,6 +28,8 @@ export default function App() {
 
     return (
         <HelmetProvider>
+            <GoogleAnalytics /> 
+            
             <Routes>
                 <Route element={<RootLayout />}>
 
