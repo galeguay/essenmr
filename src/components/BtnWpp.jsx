@@ -1,3 +1,5 @@
+import ReactGA from "react-ga4";
+
 export default function BtnWpp({ message }) {
     const phone = "5492235012258";
     const msg = encodeURIComponent(message);
@@ -6,14 +8,18 @@ export default function BtnWpp({ message }) {
     const handleWhatsAppClick = (e) => {
         e.preventDefault();
 
-        // 1. Disparamos el evento de conversión hacia Google Ads
         if (typeof window !== 'undefined' && window.gtag) {
             window.gtag('event', 'conversion', {
                 'send_to': 'AW-612922958/mGdmCO-TmdAcEM7soaQC', 
             });
         }
 
-        // 2. Redirigimos a WhatsApp en una pestaña nueva para no perder la navegación en la tienda
+        ReactGA.event({
+            category: "Contacto",
+            action: "Clic_WhatsApp",
+            label: message 
+        });
+
         window.open(url, '_blank', 'noopener,noreferrer');
     };
 
