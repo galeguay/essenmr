@@ -183,20 +183,6 @@ export default function Home() {
 
             <div className="">
 
-                <HeroFusionBanner
-                    title="Combos Mundiales 🇦🇷"
-                    titleColor="text-white"
-                    text="Con la compra de productos seleccionados podés acceder a la SARTÉN 18 CM ARGENTINA mundial."
-                    textColor="text-white"
-                    image="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/images/sarten_18_arg.webp"
-                    link="/producto/38651903"
-                    backgroundColor="bg-sky-500"
-                >
-                    <BtnWpp
-                        message="¡Hola! Vi el anuncio del HOT ESSEN en la página y quiero saber más."
-                    />
-                </HeroFusionBanner>
-
                 {announcements.map((announcement) => (
                     <AnnouncementBanner
                         key={announcement.id}
