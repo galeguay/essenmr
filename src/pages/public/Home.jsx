@@ -168,6 +168,8 @@ export default function Home() {
         if (length === 1) return "grid-cols-1";
         if (length === 2) return "grid-cols-1 md:grid-cols-2";
         if (length === 3) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+        if (length === 4) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
+        if (length === 5) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-5";
         return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
     };
 
