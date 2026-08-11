@@ -253,7 +253,7 @@ export default function Home() {
                 {newProducts.length > 0 ? (
                     <section className="py-12 bg-black">
                         <h2 className={`${typography.sectionTitle} text-center text-white mb-10`}>
-                            Nuevos productos
+                            Novedades del mes
                         </h2>
 
                         <div className="container mx-auto">
