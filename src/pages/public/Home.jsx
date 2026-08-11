@@ -198,6 +198,9 @@ export default function Home() {
                 ))}
 
                 <section className="flex flex-col items-center justify-center w-full py-12 bg-green-200">
+                    <h2 className={`${typography.sectionTitle} text-white mb-10`}>
+                        Descuentos
+                    </h2>
                     <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
                         {discounts.map((product) => (
                             <ProductCard
@@ -210,7 +213,7 @@ export default function Home() {
 
                 {newProducts.length > 0 ? (
                     <section className="py-12 bg-black">
-                        <h2 className={`${typography.sectionTitle} text-center text-white mb-10`}>
+                        <h2 className={`${typography.sectionTitle} text-white mb-10`}>
                             Novedades del mes
                         </h2>
 
