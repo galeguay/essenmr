@@ -206,6 +206,28 @@ export default function Home() {
                     </div>
                 </section>
 
+                {newProducts.length > 0 ? (
+                    <section className="py-12 bg-black">
+                        <h2 className={`${typography.sectionTitle} text-center text-white mb-10`}>
+                            Novedades del mes
+                        </h2>
+
+                        <div className="container mx-auto">
+                            <div className="flex flex-col items-center gap-8 px-6">
+                                {newProducts.map((np) => (
+                                    <NewReleaseCard
+                                        key={np.essen_id}
+                                        productId={np.essen_id}
+                                        title={np.name}
+                                        image={np.image}
+                                        description={np.description}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+                ) : ""}
+
                 <section className="flex flex-col items-center py-12">
                     <h2 className={`${typography.sectionTitle} mb-10`}>
                         Lineas de productos
@@ -249,28 +271,6 @@ export default function Home() {
                         Envíos a todo el país
                     </div>
                 </section>
-
-                {newProducts.length > 0 ? (
-                    <section className="py-12 bg-black">
-                        <h2 className={`${typography.sectionTitle} text-center text-white mb-10`}>
-                            Novedades del mes
-                        </h2>
-
-                        <div className="container mx-auto">
-                            <div className="flex flex-col items-center gap-8 px-6">
-                                {newProducts.map((np) => (
-                                    <NewReleaseCard
-                                        key={np.essen_id}
-                                        productId={np.essen_id}
-                                        title={np.name}
-                                        image={np.image}
-                                        description={np.description}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-                ) : ""}
 
                 <div id="promociones" className="my-12">
                     <Promotions />
