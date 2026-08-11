@@ -68,12 +68,28 @@ export default function Home() {
 
     const fetchDiscounts = async () => {
         try {
-            const queryDiscounts = supabase
+            const { data, error } = await supabase
                 .from('products')
                 .select(`*, product_line (*)`)
                 .gt('discount', 0)
                 .eq('is_visible', true)
                 .order('discount', { ascending: false });
+
+            if (error) throw error;
+            setDiscounts(data || []);
+
+        } catch (err) {
+            console.error('Error fetching discounts:', err);
+        }
+    };
+
+    const fetchNewProducts = async () => {
+        try {
+            const queryNew = supabase
+                .from('products')
+                .select(`*, product_line (*)`)
+                .eq('is_new', true)
+                .eq('is_visible', true);
 
             const queryCombos = supabase
                 .from('products')
@@ -81,15 +97,15 @@ export default function Home() {
                 .eq('is_visible', true)
                 .ilike('product_line.name', '%Combos%');
 
-            const [resDiscounts, resCombos] = await Promise.all([queryDiscounts, queryCombos]);
+            const [resNew, resCombos] = await Promise.all([queryNew, queryCombos]);
 
-            if (resDiscounts.error) throw resDiscounts.error;
+            if (resNew.error) throw resNew.error;
             if (resCombos.error) throw resCombos.error;
 
-            const discountsData = resDiscounts.data || [];
+            const newData = resNew.data || [];
             const combosData = resCombos.data || [];
 
-            const combined = [...discountsData];
+            const combined = [...newData];
             const existingIds = new Set(combined.map(p => p.id));
 
             combosData.forEach(p => {
@@ -98,26 +114,9 @@ export default function Home() {
                 }
             });
 
-            setDiscounts(combined);
-
+            setNewProducts(combined);
         } catch (err) {
-            console.error('Error fetching discounts/combos:', err);
-        }
-    };
-
-    const fetchNewProducts = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('products')
-                .select(`*, product_line (*)`)
-                .eq('is_new', true)
-                .eq('is_visible', true);
-
-            if (error) throw error;
-
-            setNewProducts(data || []);
-        } catch (err) {
-            console.error('Error fetching new products:', err);
+            console.error('Error fetching new products/combos:', err);
         }
     };
 
