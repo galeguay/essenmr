@@ -165,9 +165,9 @@ export default function Home() {
     }, [loading]);
 
     const getGridClasses = (length) => {
-        if (length === 1) return "grid-cols-1";
-        if (length === 2) return "grid-cols-1 md:grid-cols-2";
-        if (length === 3) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+        if (length === 1) return "grid-cols-1 max-w-md mx-auto w-full";
+        if (length === 2) return "grid-cols-1 md:grid-cols-2 max-w-3xl mx-auto";
+        if (length === 3) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto";
         if (length === 4) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
         if (length === 5) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-5";
         return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
