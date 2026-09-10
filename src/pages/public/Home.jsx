@@ -170,6 +170,7 @@ export default function Home() {
         if (length === 3) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto";
         if (length === 4) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
         if (length === 5) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-5";
+        if (length === 6) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
         return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
     };
 
