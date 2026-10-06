@@ -1,3 +1,4 @@
+import { toTitleCase } from "../../utils/toTitleCase";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Seo from '../../components/Seo';
@@ -113,8 +114,8 @@ export default function ProductDetail() {
                                     </p>
                                 )}
 
-                                <h3 className="capitalize mb-3 font-bold text-gray-900 text-2xl lg:text-4xl">
-                                    {product.name.toLowerCase()}
+                                <h3 className="mb-3 font-bold text-gray-900 text-2xl lg:text-4xl">
+                                    {toTitleCase(product.name)}
                                 </h3>
 
                                 {/* Badges (Etiquetas) */}

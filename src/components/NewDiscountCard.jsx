@@ -1,3 +1,4 @@
+import { toTitleCase } from "../utils/toTitleCase";
 import BtnWpp from "./BtnWpp";
 
 export default function NewDiscountCard({
@@ -35,7 +36,7 @@ export default function NewDiscountCard({
 
             <div className="gap-4 p-5 pt-0 card-body">
                 <p className="text-lg font-semibold leading-tight text-center text-gray-500">
-                    {text || productName}
+                    {text || toTitleCase(productName)}
                 </p>
 
                 <div className="relative z-10 flex justify-center card-actions">

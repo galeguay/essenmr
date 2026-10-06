@@ -1,3 +1,4 @@
+import { toTitleCase } from "../utils/toTitleCase";
 import { Link } from 'react-router-dom';
 import BtnWpp from "./BtnWpp";
 
@@ -64,7 +65,7 @@ export default function ProductCard({
             {/* Contenido - Se eliminó z-10 para que el enlace lo pueda cubrir */}
             <div className="px-6 md:px-4 pb-4 pt-0 card-body gap-0">
                 <div>
-                    <div className="normal-case font-semibold text-gray-900 card-title">{product.name}</div>
+                    <div className="normal-case font-semibold text-gray-900 card-title">{toTitleCase(product.name)}</div>
                 </div>
                 <p className="text-lg text-gray-400">
                     {productLine ? `${productLine}` : ""}

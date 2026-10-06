@@ -1,3 +1,5 @@
+import { toTitleCase } from "../utils/toTitleCase";
+
 export default function NewReleaseCard({ productId, title, image, description }) {
     return (
         <a 
@@ -16,8 +18,8 @@ export default function NewReleaseCard({ productId, title, image, description })
             {/* Contenedor del Texto */}
             <div className="w-full sm:w-3/5 p-6 flex flex-col justify-center">
                 {/* Título posicionado encima de la descripción, manteniendo el estilo capitalize de tu versión anterior */}
-                <h3 className="text-2xl font-bold text-gray-900 mb-3 capitalize">
-                    {title.toLowerCase()}
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    {toTitleCase(title)}
                 </h3>
                 
                 <p className="text-gray-600 text-sm leading-relaxed line-clamp-4">
