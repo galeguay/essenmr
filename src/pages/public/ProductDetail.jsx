@@ -5,8 +5,8 @@ import Seo from '../../components/Seo';
 import BtnWpp from '../../components/BtnWpp';
 import { supabase } from '../../lib/supabase';
 import Promotions from '../../components/Promotions';
+import ProductGallery from '../../components/ProductGallery';
 import LaunchShowcase from '../../components/LaunchShowcase';
-import { hasLaunchMedia } from '../../utils/launchMedia';
 import { typography } from '../../styles/typography';
 
 export default function ProductDetail() {
@@ -97,17 +97,7 @@ export default function ProductDetail() {
 
                     <div className="grid grid-cols-1 gap-1 lg:grid-cols-2">
 
-                        <figure className="relative aspect-square lg:aspect-auto">
-                            <img
-                                loading="lazy"
-                                src={product.image || "../../cacerola.webp"}
-                                alt={product.name}
-                                className="object-contain w-full h-full"
-                                onError={(e) => {
-                                    e.currentTarget.src = "../../cacerola.webp";
-                                }}
-                            />
-                        </figure>
+                        <ProductGallery product={product} />
 
                         <div className="flex flex-col justify-between p-6 lg:p-12">
                             <div>
@@ -187,10 +177,10 @@ export default function ProductDetail() {
                         </div>
                     </div>
 
-                    {hasLaunchMedia(product) && (
+                    {product.info_pdf && (
                         <section className="pt-12 mt-12 border-t md:mt-20 border-stone-200">
                             <h2 className={`${typography.sectionTitle} mb-8`}>Conocelo en detalle</h2>
-                            <LaunchShowcase product={product} compact />
+                            <LaunchShowcase product={product} />
                         </section>
                     )}
                 </div>

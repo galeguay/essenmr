@@ -15,6 +15,7 @@ export default function ProductForm({
     const [imageVersion, setImageVersion] = useState(Date.now());
     const [pdfFile, setPdfFile] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
+    const [extraFiles, setExtraFiles] = useState([]);
 
     const [product, setProduct] = useState({
         name: initialData?.name || "",
@@ -29,6 +30,7 @@ export default function ProductForm({
         image: initialData?.image || null,
         info_pdf: initialData?.info_pdf || "",
         video_url: initialData?.video_url || "",
+        images: initialData?.images || [],
     });
 
     const [lineas, setLineas] = useState([]);
@@ -68,7 +70,8 @@ export default function ProductForm({
             setProduct({
                 ...data,
                 // Aseguramos que sea string para que coincida con el <select>
-                product_line: String(data.product_line)
+                product_line: String(data.product_line),
+                images: data.images || []
             });
         } catch (error) {
             console.error("Error cargando producto:", error);
@@ -130,6 +133,13 @@ export default function ProductForm({
             if (videoFile) {
                 videoUrl = await uploadImage("products", videoFile, `${baseId}_video_${dateSuffix}`);
             }
+
+            // Fotos adicionales: se conservan las existentes y se suben las nuevas
+            const extraUrls = [...(product.images || [])];
+            for (const [i, file] of extraFiles.entries()) {
+                extraUrls.push(await uploadImage("products", file, `${baseId}_extra_${dateSuffix}_${Date.now()}_${i}`));
+            }
+
             const normalizeNumber = (value) =>
                 value === "" || value === undefined || value === null
                     ? null
@@ -140,6 +150,7 @@ export default function ProductForm({
                 image: imageUrl,
                 info_pdf: pdfUrl,
                 video_url: videoUrl,
+                images: extraUrls,
                 diameter: product.diameter === "" ? null : product.diameter, // Ya no se pasa por normalizeNumber
                 capacity: normalizeNumber(product.capacity),
                 discount: normalizeNumber(product.discount),
@@ -186,7 +197,9 @@ export default function ProductForm({
                     image: null,
                     info_pdf: "",
                     video_url: "",
+                    images: [],
                 });
+                setExtraFiles([]);
                 setPdfFile(null);
                 setVideoFile(null);
             }
@@ -371,7 +384,39 @@ export default function ProductForm({
                 </fieldset>
             </div>
 
-            {/* Contenido de lanzamiento: se ve en /lanzamientos y en la ficha del producto */}
+            {/* Fotos adicionales */}
+            <div>
+                <span className="text-sm">Fotos adicionales</span>
+                {product.images?.length > 0 && (
+                    <ul className="grid grid-cols-3 gap-2 my-2">
+                        {product.images.map((url) => (
+                            <li key={url} className="relative overflow-hidden border border-gray-200 rounded-lg aspect-square">
+                                <img src={url} alt="" className="object-cover w-full h-full" />
+                                <button
+                                    type="button"
+                                    onClick={() => setProduct(prev => ({ ...prev, images: prev.images.filter(u => u !== url) }))}
+                                    className="absolute px-2 text-sm font-bold text-white bg-red-600 rounded-full top-1 right-1"
+                                    aria-label="Quitar foto"
+                                >
+                                    ×
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => setExtraFiles(Array.from(e.target.files))}
+                    className="w-full file-input file-input-md"
+                />
+                <div className="mt-1 text-xs text-gray-500">
+                    Podés elegir varias a la vez. {extraFiles.length > 0 && `${extraFiles.length} nueva(s) para subir al guardar.`}
+                </div>
+            </div>
+
+            {/* Contenido de lanzamiento: ficha PDF y video, se ven en la página del producto */}
             <fieldset className="p-4 space-y-5 border border-orange-200 rounded-lg bg-orange-50/50">
                 <legend className="px-2 text-sm font-semibold text-orange-800">Contenido de lanzamiento</legend>
 
@@ -402,14 +447,14 @@ export default function ProductForm({
 
                 {/* Video 9:16 */}
                 <div>
-                    <span className="block mb-1 text-sm">Video vertical (9:16)</span>
+                    <span className="block mb-1 text-sm">Video (YouTube, reel o archivo, vertical u horizontal)</span>
                     <input
                         type="url"
                         name="video_url"
                         value={product.video_url || ""}
                         onChange={handleChange}
                         disabled={!!videoFile}
-                        placeholder="Link de YouTube Shorts, Instagram, TikTok o .mp4"
+                        placeholder="Link de YouTube, YouTube Shorts, Instagram, TikTok o .mp4"
                         className="w-full mb-2 input"
                         autoComplete="off"
                     />

@@ -1,6 +1,6 @@
 // Detecta de dónde viene un video y devuelve cómo mostrarlo.
 // Soporta archivos directos (mp4/webm/mov subidos a Supabase), YouTube (incluye Shorts),
-// Instagram (reels/posts) y TikTok.
+// Instagram (reels/posts) y TikTok. `vertical` indica si el video es 9:16 o horizontal 16:9.
 export function getVideoSource(url) {
     if (!url) return null;
 
@@ -8,7 +8,7 @@ export function getVideoSource(url) {
     try {
         parsed = new URL(url);
     } catch {
-        return { type: "file", src: url };
+        return { type: "file", vertical: true, src: url };
     }
 
     const host = parsed.hostname.replace(/^www\.|^m\./, "");
@@ -23,6 +23,7 @@ export function getVideoSource(url) {
         if (id) {
             return {
                 type: "embed",
+                vertical: parsed.pathname.startsWith("/shorts/"),
                 src: `https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1&modestbranding=1`,
             };
         }
@@ -32,14 +33,14 @@ export function getVideoSource(url) {
         const match = parsed.pathname.match(/^\/(reel|reels|p|tv)\/([^/]+)/);
         if (match) {
             const kind = match[1] === "reels" ? "reel" : match[1];
-            return { type: "embed", src: `https://www.instagram.com/${kind}/${match[2]}/embed` };
+            return { type: "embed", vertical: true, src: `https://www.instagram.com/${kind}/${match[2]}/embed` };
         }
     }
 
     if (host === "tiktok.com") {
         const match = parsed.pathname.match(/\/video\/(\d+)/);
-        if (match) return { type: "embed", src: `https://www.tiktok.com/embed/v2/${match[1]}` };
+        if (match) return { type: "embed", vertical: true, src: `https://www.tiktok.com/embed/v2/${match[1]}` };
     }
 
-    return { type: "file", src: url };
+    return { type: "file", vertical: true, src: url };
 }

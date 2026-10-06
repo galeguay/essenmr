@@ -17,7 +17,7 @@ import Catalog from "./pages/public/Catalog";
 import FaqList from "./pages/public/FaqList";
 import Settings from "./pages/admin/Settings";
 import AboutMe from "./pages/public/AboutMe";
-import Launches from "./pages/public/Launches";
+import ProductLine from "./pages/public/ProductLine";
 import AdminAnnouncements from './pages/admin/AdminAnnouncements';
 
 
@@ -37,9 +37,8 @@ export default function App() {
                     {/* RUTAS PÚBLICAS */}
                     <Route path="/" element={<Home />} />
                     <Route path="/catalogo" element={<Catalog />} />
+                    <Route path="/linea/:string_id" element={<ProductLine />} />
                     <Route path="/producto/:essen_id" element={<ProductDetail />} />
-                    <Route path="/lanzamientos" element={<Launches />} />
-                    <Route path="/lanzamientos/:essen_id" element={<Launches />} />
                     <Route path="/faq" element={<FaqList />} />
                     <Route path="/about_me" element={<AboutMe />} />
 

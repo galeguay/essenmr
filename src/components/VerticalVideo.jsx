@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { getVideoSource } from "../utils/videoEmbed";
 
-// Video vertical 9:16 estilo "reel". Los archivos propios se reproducen en silencio
+// Video estilo "reel". Los archivos propios se reproducen en silencio
 // cuando están en pantalla y se pausan al salir; los links externos se embeben.
+// Los verticales (Shorts, reels, TikTok) usan marco 9:16; un video común de YouTube usa 16:9.
 export default function VerticalVideo({ url, title, poster }) {
     const source = getVideoSource(url);
     const frameRef = useRef(null);
@@ -10,6 +11,8 @@ export default function VerticalVideo({ url, title, poster }) {
     const [inView, setInView] = useState(false);
     const [muted, setMuted] = useState(true);
     const [embedLoaded, setEmbedLoaded] = useState(false);
+    // Para archivos propios la orientación se detecta al cargar los metadatos del video
+    const [fileVertical, setFileVertical] = useState(true);
 
     useEffect(() => {
         const el = frameRef.current;
@@ -43,10 +46,16 @@ export default function VerticalVideo({ url, title, poster }) {
 
     if (!source) return null;
 
+    const vertical = source.type === "file" ? fileVertical : source.vertical;
+    const frameClass = vertical
+        ? "max-w-[min(360px,calc(78svh*9/16))] aspect-[9/16] border-[6px] rounded-[28px]"
+        : "max-w-2xl aspect-video border-[6px] rounded-2xl";
+    const innerRadius = vertical ? "rounded-[22px]" : "rounded-xl";
+
     return (
         <div
             ref={frameRef}
-            className="relative w-full max-w-[min(360px,calc(78svh*9/16))] aspect-[9/16] mx-auto overflow-hidden bg-stone-900 border-[6px] border-stone-900 rounded-[28px] shadow-2xl"
+            className={`relative w-full mx-auto overflow-hidden bg-stone-900 border-stone-900 shadow-2xl ${frameClass}`}
         >
             {source.type === "file" ? (
                 <>
@@ -54,12 +63,13 @@ export default function VerticalVideo({ url, title, poster }) {
                         ref={videoRef}
                         src={`${source.src}#t=0.1`}
                         poster={poster || undefined}
-                        className="object-cover w-full h-full rounded-[22px]"
+                        className={`${vertical ? "object-cover" : "object-contain"} w-full h-full ${innerRadius}`}
                         muted
                         loop
                         playsInline
                         controls
                         preload="metadata"
+                        onLoadedMetadata={(e) => setFileVertical(e.currentTarget.videoHeight >= e.currentTarget.videoWidth)}
                         onVolumeChange={(e) => setMuted(e.currentTarget.muted)}
                         aria-label={title ? `Video de ${title}` : "Video del producto"}
                     />
@@ -78,7 +88,7 @@ export default function VerticalVideo({ url, title, poster }) {
                     <iframe
                         src={source.src}
                         title={title ? `Video de ${title}` : "Video del producto"}
-                        className="w-full h-full rounded-[22px] bg-black"
+                        className={`w-full h-full bg-black ${innerRadius}`}
                         allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                         allowFullScreen
                         loading="lazy"

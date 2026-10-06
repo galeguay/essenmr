@@ -10,7 +10,6 @@ import Title from '../../components/Title';
 import HeroFusionBanner from '../../components/HeroFusionBanner';
 import Seo from '../../components/Seo';
 import { typography } from '../../styles/typography';
-import { hasLaunchMedia } from '../../utils/launchMedia';
 
 const formatExpirationDateForBanner = (dateString) => {
     if (!dateString) return undefined;
@@ -216,20 +215,9 @@ export default function Home() {
                 {newProducts.length > 0 ? (
                     <section className="py-12 bg-orange-50">
 
-                        <div className="container flex flex-wrap items-end justify-between gap-4 px-6 mx-auto mb-10 md:px-16">
-                            <h2 className={`${typography.sectionTitle} text-orange-800`}>
-                                Novedades del mes
-                            </h2>
-                            {newProducts.some(hasLaunchMedia) && (
-                                <a
-                                    href="/lanzamientos"
-                                    className="inline-flex items-center gap-2 px-4 py-2 font-semibold text-white bg-orange-600 shadow hover:bg-orange-700"
-                                >
-                                    <i className="bi bi-play-btn-fill"></i>
-                                    Ver videos y fichas
-                                </a>
-                            )}
-                        </div>
+                        <h2 className={`${typography.sectionTitle} text-orange-800 container mx-auto px-6 md:px-16 mb-10`}>
+                            Novedades del mes
+                        </h2>
 
                         <div className="container mx-auto">
                             <div className="flex flex-col items-center gap-8 px-6">
