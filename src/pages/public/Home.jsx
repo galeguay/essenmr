@@ -199,7 +199,7 @@ export default function Home() {
                 ))}
 
                 <section className="flex flex-col items-center justify-center py-12 bg-stone-50">
-                    <h2 className={`${typography.sectionTitle} w-full text-dark mb-10 px-5 lg:px-70`}>
+                    <h2 className={`${typography.sectionTitle} text-dark container mx-auto px-6 md:px-16 mb-10`}>
                         Descuentos
                     </h2>
                     <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
@@ -215,7 +215,7 @@ export default function Home() {
                 {newProducts.length > 0 ? (
                     <section className="py-12 bg-orange-50">
 
-                        <h2 className={`${typography.sectionTitle} w-full text-orange-800 mb-10 px-5 lg:px-70`}>
+                        <h2 className={`${typography.sectionTitle} text-orange-800 container mx-auto px-6 md:px-16 mb-10`}>
                             Novedades del mes
                         </h2>
 
@@ -239,7 +239,7 @@ export default function Home() {
                 ) : ""}
 
                 <section className="flex flex-col items-center py-12">
-                    <h2 className={`${typography.sectionTitle} mb-10`}>
+                    <h2 className={`${typography.sectionTitle} container mx-auto px-6 md:px-16 mb-10`}>
                         Lineas de productos
                     </h2>
 

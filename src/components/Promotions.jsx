@@ -7,7 +7,7 @@ export default function Promotions() {
 
     return (
         <div id="promociones" className="container flex flex-col md:mx-auto">
-            <h2 className={`${typography.sectionTitle} text-center mb-1`}>
+            <h2 className={`${typography.sectionTitle} px-6 md:px-16 mb-10`}>
                 Promociones financieras en {currentMonth.toUpperCase()}
             </h2>
             <div className="flex justify-center">
