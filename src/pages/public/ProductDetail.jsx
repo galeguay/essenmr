@@ -5,6 +5,9 @@ import Seo from '../../components/Seo';
 import BtnWpp from '../../components/BtnWpp';
 import { supabase } from '../../lib/supabase';
 import Promotions from '../../components/Promotions';
+import LaunchShowcase from '../../components/LaunchShowcase';
+import { hasLaunchMedia } from '../../utils/launchMedia';
+import { typography } from '../../styles/typography';
 
 export default function ProductDetail() {
     const { essen_id } = useParams();
@@ -183,6 +186,13 @@ export default function ProductDetail() {
                             </div>
                         </div>
                     </div>
+
+                    {hasLaunchMedia(product) && (
+                        <section className="pt-12 mt-12 border-t md:mt-20 border-stone-200">
+                            <h2 className={`${typography.sectionTitle} mb-8`}>Conocelo en detalle</h2>
+                            <LaunchShowcase product={product} compact />
+                        </section>
+                    )}
                 </div>
 
                 <Promotions />

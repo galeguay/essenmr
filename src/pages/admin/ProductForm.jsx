@@ -13,6 +13,8 @@ export default function ProductForm({
     const isEdit = !!id;
     const [imageFile, setImageFile] = useState(null);
     const [imageVersion, setImageVersion] = useState(Date.now());
+    const [pdfFile, setPdfFile] = useState(null);
+    const [videoFile, setVideoFile] = useState(null);
 
     const [product, setProduct] = useState({
         name: initialData?.name || "",
@@ -25,6 +27,8 @@ export default function ProductForm({
         is_new: initialData?.is_new ?? false,
         discount: initialData?.discount || "",
         image: initialData?.image || null,
+        info_pdf: initialData?.info_pdf || "",
+        video_url: initialData?.video_url || "",
     });
 
     const [lineas, setLineas] = useState([]);
@@ -94,27 +98,37 @@ export default function ProductForm({
 
         try {
             let imageUrl = product.image || null;
+            let pdfUrl = product.info_pdf || null;
+            let videoUrl = product.video_url?.trim() || null;
+
+            // 1. Obtener la fecha actual
+            const hoy = new Date();
+
+            // 2. Extraer Año (últimos 2), Mes (0-11, sumamos 1) y Día, asegurando 2 dígitos
+            const yy = String(hoy.getFullYear()).slice(-2);
+            const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            const dd = String(hoy.getDate()).padStart(2, '0');
+
+            // 3. Crear el string con el formato YYMMDD (Ej: 260306)
+            const dateSuffix = `${yy}${mm}${dd}`;
+
+            // 4. Combinar el ID de Essen con la fecha (ej: 12345_260306)
+            // Agregamos un fallback a "nuevo" por si el usuario no ingresó un essen_id
+            const baseId = product.essen_id || 'nuevo';
 
             // Si el usuario seleccionó una imagen nueva, se sube
             if (imageFile) {
-                // 1. Obtener la fecha actual
-                const hoy = new Date();
+                imageUrl = await uploadImage("products", imageFile, `${baseId}_${dateSuffix}`);
+            }
 
-                // 2. Extraer Año (últimos 2), Mes (0-11, sumamos 1) y Día, asegurando 2 dígitos
-                const yy = String(hoy.getFullYear()).slice(-2);
-                const mm = String(hoy.getMonth() + 1).padStart(2, '0');
-                const dd = String(hoy.getDate()).padStart(2, '0');
+            // Ficha / infografía en PDF (ej: 12345_ficha_260306.pdf)
+            if (pdfFile) {
+                pdfUrl = await uploadImage("products", pdfFile, `${baseId}_ficha_${dateSuffix}`);
+            }
 
-                // 3. Crear el string con el formato YYMMDD (Ej: 260306)
-                const dateSuffix = `${yy}${mm}${dd}`;
-
-                // 4. Combinar el ID de Essen con la fecha (ej: 12345_260306)
-                // Agregamos un fallback a "nuevo" por si el usuario no ingresó un essen_id
-                const baseId = product.essen_id || 'nuevo';
-                const newFileName = `${baseId}_${dateSuffix}`;
-
-                // 5. Subir la imagen usando el nuevo nombre
-                imageUrl = await uploadImage("products", imageFile, newFileName);
+            // Video vertical 9:16 (ej: 12345_video_260306.mp4)
+            if (videoFile) {
+                videoUrl = await uploadImage("products", videoFile, `${baseId}_video_${dateSuffix}`);
             }
             const normalizeNumber = (value) =>
                 value === "" || value === undefined || value === null
@@ -124,6 +138,8 @@ export default function ProductForm({
             const productDataToSave = {
                 ...product,
                 image: imageUrl,
+                info_pdf: pdfUrl,
+                video_url: videoUrl,
                 diameter: product.diameter === "" ? null : product.diameter, // Ya no se pasa por normalizeNumber
                 capacity: normalizeNumber(product.capacity),
                 discount: normalizeNumber(product.discount),
@@ -168,7 +184,11 @@ export default function ProductForm({
                     is_new: false,
                     discount: "",
                     image: null,
+                    info_pdf: "",
+                    video_url: "",
                 });
+                setPdfFile(null);
+                setVideoFile(null);
             }
 
             navigate("/admin/products");
@@ -350,6 +370,60 @@ export default function ProductForm({
                     />
                 </fieldset>
             </div>
+
+            {/* Contenido de lanzamiento: se ve en /lanzamientos y en la ficha del producto */}
+            <fieldset className="p-4 space-y-5 border border-orange-200 rounded-lg bg-orange-50/50">
+                <legend className="px-2 text-sm font-semibold text-orange-800">Contenido de lanzamiento</legend>
+
+                {/* Ficha PDF */}
+                <div>
+                    <span className="block mb-1 text-sm">Ficha / infografía (PDF)</span>
+                    {product.info_pdf && !pdfFile && (
+                        <div className="flex items-center justify-between gap-2 mb-2 text-sm">
+                            <a href={product.info_pdf} target="_blank" rel="noopener noreferrer" className="text-orange-700 underline truncate">
+                                <i className="bi bi-file-earmark-pdf me-1"></i>Ver ficha actual
+                            </a>
+                            <button
+                                type="button"
+                                onClick={() => setProduct(prev => ({ ...prev, info_pdf: "" }))}
+                                className="text-red-600 hover:underline shrink-0"
+                            >
+                                Quitar
+                            </button>
+                        </div>
+                    )}
+                    <input
+                        type="file"
+                        accept="application/pdf"
+                        onChange={(e) => setPdfFile(e.target.files[0] || null)}
+                        className="w-full file-input file-input-md"
+                    />
+                </div>
+
+                {/* Video 9:16 */}
+                <div>
+                    <span className="block mb-1 text-sm">Video vertical (9:16)</span>
+                    <input
+                        type="url"
+                        name="video_url"
+                        value={product.video_url || ""}
+                        onChange={handleChange}
+                        disabled={!!videoFile}
+                        placeholder="Link de YouTube Shorts, Instagram, TikTok o .mp4"
+                        className="w-full mb-2 input"
+                        autoComplete="off"
+                    />
+                    <input
+                        type="file"
+                        accept="video/mp4,video/webm,video/quicktime"
+                        onChange={(e) => setVideoFile(e.target.files[0] || null)}
+                        className="w-full file-input file-input-md"
+                    />
+                    <div className="mt-1 text-xs text-gray-500">
+                        Pegá un link o subí el archivo (MP4 recomendado, idealmente menos de 50 MB). Si subís un archivo, reemplaza al link.
+                    </div>
+                </div>
+            </fieldset>
 
             {/* Botones */}
             <div className="flex gap-3">

@@ -35,6 +35,7 @@
 - `src/pages/public/ProductDetail.jsx`
 - `src/pages/public/FaqList.jsx`
 - `src/pages/public/AboutMe.jsx`
+- `src/pages/public/Launches.jsx` (lanzamientos: video 9:16 + ficha PDF por producto)
 
 ## Páginas admin
 - `src/pages/admin/Login.jsx`
@@ -52,6 +53,7 @@
 - `/producto/:essen_id` → `ProductDetail`
 - `/faq` → `FaqList`
 - `/about_me` → `AboutMe`
+- `/lanzamientos` y `/lanzamientos/:essen_id` → `Launches`
 - `/admin/login` → `Login`
 - `/admin/products` → `Products`
 - `/admin/productLines` → `ProductLines`
@@ -70,6 +72,7 @@
 - `npm run lint` → ejecuta ESLint.
 
 ## Notas importantes
+- Contenido de lanzamiento: columnas `products.info_pdf` y `products.video_url` (ver `sql/`). El PDF se renderiza con `pdfjs-dist` cargado bajo demanda.
 - La app usa `document.documentElement.setAttribute("data-theme", "light")` al inicio para fijar tema claro.
 - Las rutas admin se renderizan con `AdminLayout`, mientras el resto se muestra con `PublicLayout`.
 - `src/lib/pocketbase.js` guarda token y usuario en `localStorage` y sincroniza auth state.

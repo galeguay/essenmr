@@ -108,6 +108,10 @@ export default function Catalog() {
             );
         }
 
+        /* Orden: primero nuevos, luego con descuento, después el resto (sort estable: mantiene el orden por essen_id dentro de cada grupo) */
+        const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
+        filtered.sort((a, b) => priority(a) - priority(b));
+
         setProducts(filtered);
     }, [debouncedSearchTerm, selectedLine, allProducts]);
 
