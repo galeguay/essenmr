@@ -14,7 +14,7 @@ export default function Navbar() {
                     </a>
 
                     {/* Menú Desktop */}
-                    <div className="items-center hidden gap-8 text-lg md:py-2 md:flex md:self-end">
+                    <div className="items-center hidden gap-4 text-base md:py-2 md:flex md:self-end lg:gap-8 lg:text-lg">
                         <a href="/" className="font-medium transition hover:text-orange-200">
                             Inicio
                         </a>
@@ -29,6 +29,14 @@ export default function Navbar() {
                         </a>
                         <a href="/about_me" className="font-medium transition hover:text-orange-200">
                             Sobre mi
+                        </a>
+                        <a
+                            href="https://wa.me/5492235012258"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-1.5 text-base font-semibold text-white transition bg-green-500 rounded-lg shadow hover:bg-green-600"
+                        >
+                            <i className="bi bi-whatsapp me-1"></i>WhatsApp
                         </a>
                     </div>
 

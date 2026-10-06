@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ProductLineCard from '../../components/ProductLineCard';
+import { Link } from 'react-router-dom';
 import Promotions from '../../components/Promotions';
 import { supabase } from '../../lib/supabase';
 import BtnWpp from '../../components/BtnWpp';
@@ -31,7 +31,6 @@ const formatExpirationDateForBanner = (dateString) => {
 
 export default function Home() {
 
-    const [productLines, setProductLines] = useState([]);
     const [discounts, setDiscounts] = useState([]);
     const [newProducts, setNewProducts] = useState([]);
     const [announcements, setAnnouncements] = useState([]);
@@ -120,29 +119,10 @@ export default function Home() {
         }
     };
 
-    const fetchProductLines = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('product_lines')
-                .select('*')
-                .eq('is_visible', true)
-                .order('priority', { ascending: true })
-                .order('name', { ascending: true });
-
-            if (error) throw error;
-
-            setProductLines(data || []);
-        } catch (err) {
-            console.error('Error fetching product lines:', err);
-            alert('Error al cargar las líneas de productos');
-        }
-    };
-
     useEffect(() => {
         setLoading(true);
 
         Promise.all([
-            fetchProductLines(),
             fetchNewProducts(),
             fetchDiscounts(),
             fetchAnnouncements()
@@ -239,20 +219,24 @@ export default function Home() {
                     </section>
                 ) : ""}
 
-                <section className="flex flex-col items-center py-12">
-                    <h2 className={`${typography.sectionTitle} container mx-auto px-6 md:px-16 mb-10`}>
-                        Lineas de productos
-                    </h2>
-
-                    <div className="flex w-full justify-center bg-stone-100 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)]">
-                        <div className="container lg:flex lg:justify-center ">
-                            <div className="flex gap-3 px-4 pt-6 pb-4 overflow-x-auto scrollbar-visible md:justify-around md:gap-2 md:px-0 lg:overflow-x-visible xl:w-full">
-                                {productLines.map((line) => (
-                                    <div key={line.id} className="shrink-0 md:min-w-[18%] lg:min-w-0">
-                                        <ProductLineCard productLine={line} />
-                                    </div>
-                                ))}
+                <section className="py-12">
+                    <div className="container px-6 mx-auto md:px-16">
+                        <div className="flex flex-col items-center gap-6 px-6 py-10 text-center text-white bg-orange-600 shadow-lg rounded-2xl md:flex-row md:justify-between md:text-left md:px-12">
+                            <div className="max-w-2xl">
+                                <h2 className="text-3xl font-bold leading-tight md:text-4xl">
+                                    Conocé nuestros productos
+                                </h2>
+                                <p className="mt-3 text-lg leading-relaxed text-white/90">
+                                    Cada línea Essen tiene su propio estilo y prestaciones. Recorré el catálogo y
+                                    encontrá la ideal para tu cocina.
+                                </p>
                             </div>
+                            <Link
+                                to="/catalogo"
+                                className="px-6 py-3 text-lg font-semibold text-orange-700 transition bg-white rounded-lg shadow shrink-0 hover:bg-orange-50"
+                            >
+                                Ver el catálogo <span aria-hidden="true">→</span>
+                            </Link>
                         </div>
                     </div>
                 </section>

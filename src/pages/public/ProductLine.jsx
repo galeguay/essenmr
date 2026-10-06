@@ -7,10 +7,18 @@ import BtnWpp from "../../components/BtnWpp";
 import Seo from "../../components/Seo";
 import VerticalVideo from "../../components/VerticalVideo";
 
+// Posición y giro de cada foto del encabezado para que se solapen
+const HERO_SLOTS = [
+    "left-0 top-0 -rotate-6 z-10",
+    "right-0 top-4 md:top-8 rotate-6 z-10",
+    "left-1/2 -translate-x-1/2 bottom-0 rotate-2 z-0",
+];
+
 export default function ProductLine() {
     const { string_id } = useParams();
     const [line, setLine] = useState(null);
     const [products, setProducts] = useState([]);
+    const [heroProducts, setHeroProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -39,6 +47,14 @@ export default function ProductLine() {
 
                     const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
                     setProducts([...(productsData || [])].sort((a, b) => priority(a) - priority(b)));
+
+                    // 3 productos al azar (con foto) para el encabezado
+                    const withImage = (productsData || []).filter((p) => p.image);
+                    for (let i = withImage.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [withImage[i], withImage[j]] = [withImage[j], withImage[i]];
+                    }
+                    setHeroProducts(withImage.slice(0, 3));
                 }
             } catch (err) {
                 console.error("Error cargando la línea:", err);
@@ -96,10 +112,6 @@ export default function ProductLine() {
                                 <span>{line.name}</span>
                             </nav>
 
-                            <span className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase rounded-full bg-[var(--line-accent)] text-[var(--line-on-accent)]">
-                                Línea Essen
-                            </span>
-
                             <h1 className="text-4xl font-bold leading-tight md:text-6xl">{line.name}</h1>
 
                             {line.description && (
@@ -123,21 +135,35 @@ export default function ProductLine() {
                                     </span>
                                 )}
                             </div>
-
-                            <div className="mt-8">
-                                <BtnWpp message={`Hola, quiero información sobre la línea ${line.name}`} />
-                            </div>
                         </div>
 
-                        {line.image && (
-                            <div className="flex justify-center">
-                                <img
-                                    src={line.image}
-                                    alt={line.name}
-                                    className="object-cover w-64 h-64 shadow-2xl md:w-96 md:h-96 rounded-3xl ring-4 ring-white/30"
-                                    onError={(e) => (e.currentTarget.style.display = "none")}
-                                />
+                        {heroProducts.length > 0 ? (
+                            <div className="relative w-full max-w-md mx-auto h-72 md:h-96">
+                                {heroProducts.map((product, i) => (
+                                    <div
+                                        key={product.id}
+                                        className={`absolute w-44 h-44 md:w-60 md:h-60 p-2 bg-white shadow-2xl rounded-2xl ring-4 ring-white/30 ${HERO_SLOTS[i]}`}
+                                    >
+                                        <img
+                                            src={product.image}
+                                            alt={product.name}
+                                            className="object-contain w-full h-full"
+                                            onError={(e) => (e.currentTarget.style.display = "none")}
+                                        />
+                                    </div>
+                                ))}
                             </div>
+                        ) : (
+                            line.image && (
+                                <div className="flex justify-center">
+                                    <img
+                                        src={line.image}
+                                        alt={line.name}
+                                        className="object-cover w-64 h-64 shadow-2xl md:w-96 md:h-96 rounded-3xl ring-4 ring-white/30"
+                                        onError={(e) => (e.currentTarget.style.display = "none")}
+                                    />
+                                </div>
+                            )
                         )}
                     </div>
                 </section>

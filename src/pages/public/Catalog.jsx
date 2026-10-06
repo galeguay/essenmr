@@ -110,13 +110,8 @@ export default function Catalog() {
             <div className="min-h-screen bg-stone-50">
                 {/* Introducción */}
                 <header className="px-4 py-12 text-center text-white bg-orange-600 md:py-16">
-                    <div className="mx-auto max-w-3xl">
+                    <div className="max-w-3xl mx-auto">
                         <h1 className="text-3xl font-bold md:text-5xl">Catálogo</h1>
-                        <p className="mt-4 text-lg leading-relaxed text-white/90">
-                            Essen organiza sus productos en <strong>líneas</strong>: cada una tiene su propio estilo,
-                            materiales y prestaciones. Si recién empezás, recorré las líneas, mirá algunos productos de
-                            cada una y entrá a la que más te guste.
-                        </p>
 
                         {visibleLines.length > 1 && (
                             <nav aria-label="Líneas" className="mt-8">
