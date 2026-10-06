@@ -59,7 +59,7 @@ export default function Footer() {
             </BtnLink>
         </div>
       </div>
-      <p className="mt-6 text-left text-gray-400">© 2026 - Todos los derechos reservados</p>
+      <p className="mt-6 text-left text-stone-400">© 2026 - Todos los derechos reservados</p>
     </footer>
   )
 }
