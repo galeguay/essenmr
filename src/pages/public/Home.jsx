@@ -245,9 +245,9 @@ export default function Home() {
 
                     <div className="flex w-full justify-center bg-stone-100 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)]">
                         <div className="container lg:flex lg:justify-center ">
-                            <div className="flex justify-around gap-2 py-6 overflow-x-auto lg:overflow-x-visible xl:w-full">
+                            <div className="flex gap-3 px-4 pt-6 pb-4 overflow-x-auto scrollbar-visible md:justify-around md:gap-2 md:px-0 lg:overflow-x-visible xl:w-full">
                                 {productLines.map((line) => (
-                                    <div key={line.id} className="min-w-[40%] sm:min-w-[35%] md:min-w-[18%] lg:min-w-0">
+                                    <div key={line.id} className="shrink-0 md:min-w-[18%] lg:min-w-0">
                                         <ProductLineCard productLine={line} />
                                     </div>
                                 ))}

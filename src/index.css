@@ -1,2 +1,26 @@
 @import "tailwindcss";
 @plugin "daisyui";
+/* Barra de scroll horizontal siempre visible (en mobile los navegadores la ocultan por defecto) */
+.scrollbar-visible {
+  scrollbar-width: thin;
+  scrollbar-color: #ea580c #e7e5e4;
+}
+.scrollbar-visible::-webkit-scrollbar {
+  height: 6px;
+}
+.scrollbar-visible::-webkit-scrollbar-track {
+  background: #e7e5e4;
+  border-radius: 9999px;
+}
+.scrollbar-visible::-webkit-scrollbar-thumb {
+  background: #ea580c;
+  border-radius: 9999px;
+}
+@media (min-width: 1024px) {
+  .scrollbar-visible {
+    scrollbar-width: none;
+  }
+  .scrollbar-visible::-webkit-scrollbar {
+    display: none;
+  }
+}
