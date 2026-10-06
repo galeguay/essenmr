@@ -282,7 +282,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                <div id="promociones" className="my-12">
+                <div>
                     <Promotions />
                 </div>
 
