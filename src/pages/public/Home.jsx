@@ -221,13 +221,16 @@ export default function Home() {
 
                         <div className="container mx-auto">
                             <div className="flex flex-col items-center gap-8 px-6">
-                                {newProducts.map((np) => (
+                                {newProducts.map((np, index) => (
                                     <NewReleaseCard
                                         key={np.essen_id}
                                         productId={np.essen_id}
                                         title={np.name}
                                         image={np.image}
                                         description={np.description}
+                                        isNew={np.is_new}
+                                        productLine={np.product_line?.name}
+                                        reverse={index % 2 === 1}
                                     />
                                 ))}
                             </div>
