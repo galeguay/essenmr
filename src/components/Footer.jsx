@@ -8,6 +8,7 @@ export default function Footer() {
   const links = [
     { text: 'Inicio', to: '/' },
     { text: 'Catálogo', to: '/catalogo' },
+    { text: 'Productos', to: '/productos' },
     { text: 'Preguntas Frecuentes', to: '/faq' },
     { text: 'Sobre mi', to: '/about_me' },
   ];

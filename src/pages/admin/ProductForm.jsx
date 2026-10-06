@@ -416,16 +416,15 @@ export default function ProductForm({
                 </div>
             </div>
 
-            {/* Contenido de lanzamiento: ficha PDF y video, se ven en la página del producto */}
-            <fieldset className="p-4 space-y-5 border border-orange-200 rounded-lg bg-orange-50/50">
-                <legend className="px-2 text-sm font-semibold text-orange-800">Contenido de lanzamiento</legend>
+            {/* Ficha PDF y video, se ven en la página del producto */}
+            <div className="space-y-5">
 
                 {/* Ficha PDF */}
                 <div>
                     <span className="block mb-1 text-sm">Ficha / infografía (PDF)</span>
                     {product.info_pdf && !pdfFile && (
                         <div className="flex items-center justify-between gap-2 mb-2 text-sm">
-                            <a href={product.info_pdf} target="_blank" rel="noopener noreferrer" className="text-orange-700 underline truncate">
+                            <a href={product.info_pdf} target="_blank" rel="noopener noreferrer" className="text-purple-700 underline truncate">
                                 <i className="bi bi-file-earmark-pdf me-1"></i>Ver ficha actual
                             </a>
                             <button
@@ -468,7 +467,7 @@ export default function ProductForm({
                         Pegá un link o subí el archivo (MP4 recomendado, idealmente menos de 50 MB). Si subís un archivo, reemplaza al link.
                     </div>
                 </div>
-            </fieldset>
+            </div>
 
             {/* Botones */}
             <div className="flex gap-3">

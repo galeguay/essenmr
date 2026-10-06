@@ -5,6 +5,7 @@ import { getLinePalette } from "../../utils/linePalette";
 import ProductCard from "../../components/ProductCard";
 import BtnWpp from "../../components/BtnWpp";
 import Seo from "../../components/Seo";
+import VerticalVideo from "../../components/VerticalVideo";
 
 export default function ProductLine() {
     const { string_id } = useParams();
@@ -63,7 +64,7 @@ export default function ProductLine() {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen gap-4 px-4 text-center bg-stone-50">
                 <p className="text-xl text-gray-600">No encontramos esta línea de productos.</p>
-                <Link to="/catalogo" className="btn btn-neutral">Ver catálogo completo</Link>
+                <Link to="/productos" className="btn btn-neutral">Ver todos los productos</Link>
             </div>
         );
     }
@@ -140,6 +141,19 @@ export default function ProductLine() {
                         )}
                     </div>
                 </section>
+
+                {/* Video de la línea */}
+                {line.video_url && (
+                    <section className="px-4 pt-12 mx-auto max-w-7xl">
+                        <div className="flex items-center gap-3 mb-8">
+                            <span className="w-2 h-8 rounded bg-[var(--line-accent)]"></span>
+                            <h2 className="text-2xl font-bold md:text-3xl text-[var(--line-dark)]">
+                                Conocé la línea
+                            </h2>
+                        </div>
+                        <VerticalVideo url={line.video_url} title={line.name} poster={line.image} />
+                    </section>
+                )}
 
                 {/* Productos */}
                 <section className="px-4 py-12 mx-auto max-w-7xl">

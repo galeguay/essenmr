@@ -18,7 +18,8 @@ export default function ProductLines() {
             let query = supabase
                 .from("product_lines")
                 .select("*", { count: "exact" })
-                .order("created_at", { ascending: false });
+                .order("priority", { ascending: true })
+                .order("name", { ascending: true });
 
             // Filtro por búsqueda
             if (search) {
@@ -124,6 +125,7 @@ export default function ProductLines() {
                                         <th className="px-3 py-2 font-medium tracking-wider"><Text> Nombre </Text></th>
                                         <th className="px-3 py-2 font-medium tracking-wider"><Text> ID </Text></th>
                                         {/* 💡 NUEVA COLUMNA DE COLOR */}
+                                        <th className="px-3 py-2 font-medium tracking-wider"><Text> Prioridad </Text></th>
                                         <th className="px-3 py-2 font-medium tracking-wider"><Text> Color </Text></th>
                                         <th className="px-3 py-2 font-medium tracking-wider"><Text> Visible </Text></th>
                                         <th className="px-3 py-2 font-medium tracking-wider"><Text> Acciones </Text></th>
@@ -152,6 +154,9 @@ export default function ProductLines() {
 
                                             {/* LINEA ID*/}
                                             <td className="px-3 py-2 text-gray-600">{pl.id || '—'}</td>
+
+                                            {/* PRIORIDAD */}
+                                            <td className="px-3 py-2 text-gray-600">{pl.priority ?? '—'}</td>
 
                                             {/* 💡 CELDA DEL COLOR (Círculo + Código) */}
                                             <td className="px-3 py-2">

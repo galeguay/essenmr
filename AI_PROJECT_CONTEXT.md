@@ -31,7 +31,8 @@
 
 ## Páginas públicas
 - `src/pages/public/Home.jsx`
-- `src/pages/public/Catalog.jsx`
+- `src/pages/public/Catalog.jsx` (guía de líneas con productos de muestra)
+- `src/pages/public/ProductsPage.jsx` (listado completo con filtros)
 - `src/pages/public/ProductDetail.jsx`
 - `src/pages/public/FaqList.jsx`
 - `src/pages/public/AboutMe.jsx`
@@ -49,6 +50,7 @@
 ## Rutas principales
 - `/` → `Home`
 - `/catalogo` → `Catalog`
+- `/productos` → `ProductsPage`
 - `/producto/:essen_id` → `ProductDetail`
 - `/faq` → `FaqList`
 - `/about_me` → `AboutMe`

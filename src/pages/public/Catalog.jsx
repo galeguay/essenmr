@@ -1,122 +1,96 @@
-import { useEffect, useState, useMemo } from 'react';
-import { useSearchParams } from "react-router-dom";
-import ProductCard from '../../components/ProductCard';
-import Seo from '../../components/Seo';
-import { supabase } from '../../lib/supabase';
-import PageTitle from '../../components/PageTitle';
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { supabase } from "../../lib/supabase";
+import { getLinePalette } from "../../utils/linePalette";
+import ProductCard from "../../components/ProductCard";
+import BtnWpp from "../../components/BtnWpp";
+import Seo from "../../components/Seo";
 
-/* Debounce Hook */
-function useDebounce(value, delay) {
-    const [debouncedValue, setDebouncedValue] = useState(value);
+const SAMPLES_PER_LINE = 4;
 
-    useEffect(() => {
-        const handler = setTimeout(() => setDebouncedValue(value), delay);
-        return () => clearTimeout(handler);
-    }, [value, delay]);
+// Primero nuevos, luego con descuento, después el resto
+const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
 
-    return debouncedValue;
+function LineSection({ line, products }) {
+    const palette = useMemo(() => getLinePalette(line.color), [line.color]);
+    const samples = useMemo(
+        () => [...products].sort((a, b) => priority(a) - priority(b)).slice(0, SAMPLES_PER_LINE),
+        [products]
+    );
+    const blurb = line.short_description || line.description;
+    const href = line.string_id ? `/linea/${line.string_id}` : `/productos?product_line=${encodeURIComponent(line.name)}`;
+
+    return (
+        <section style={palette} className="bg-[var(--line-tint)]">
+            <div className="px-4 py-12 mx-auto max-w-7xl">
+                <div className="flex flex-col gap-4 mb-8 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <h2 className="text-3xl font-bold md:text-4xl text-[var(--line-dark)]">{line.name}</h2>
+                        <div className="w-20 h-1.5 mt-3 rounded-full bg-[var(--line-accent)]"></div>
+                        {blurb && (
+                            <p className="max-w-2xl mt-4 leading-relaxed text-gray-700 md:text-lg">{blurb}</p>
+                        )}
+                    </div>
+                    <Link
+                        to={href}
+                        className="self-start px-5 py-2.5 font-semibold rounded-lg shrink-0 bg-[var(--line-accent)] text-[var(--line-on-accent)] hover:brightness-110 md:self-auto"
+                    >
+                        Ver toda la línea <span aria-hidden="true">→</span>
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    {samples.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
 }
 
 export default function Catalog() {
-    /* Estados principales */
+    const [lines, setLines] = useState([]);
     const [products, setProducts] = useState([]);
-    const [allProducts, setAllProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [searchParams, setSearchParams] = useSearchParams();
 
-    /* Filtros */
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedLine, setSelectedLine] = useState('');
-    const debouncedSearchTerm = useDebounce(searchTerm, 300);
-
-    /* Cargar filtros iniciales desde la URL */
     useEffect(() => {
-        const urlLine = searchParams.get("product_line") || "";
-        const urlSearch = searchParams.get("search") || "";
-
-        if (urlLine) setSelectedLine(urlLine);
-        if (urlSearch) setSearchTerm(urlSearch);
-    }, []);
-
-    /* Cargar productos al inicio */
-    useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true);
-
+        const load = async () => {
             try {
-                const { data, error } = await supabase
-                    .from('products')
-                    .select(`
-                        *,
-                        product_line (*)
-                    `)
-                    .eq('is_visible', true)
-                    .order('essen_id', { ascending: false });
-
-                if (error) throw error;
-
-                setAllProducts(data);
+                const [linesRes, productsRes] = await Promise.all([
+                    supabase.from("product_lines").select("*").eq("is_visible", true).order("priority", { ascending: true }).order("name", { ascending: true }),
+                    supabase.from("products").select("*, product_line (*)").eq("is_visible", true).order("essen_id", { ascending: false }),
+                ]);
+                if (linesRes.error) throw linesRes.error;
+                if (productsRes.error) throw productsRes.error;
+                setLines(linesRes.data || []);
+                setProducts(productsRes.data || []);
             } catch (err) {
-                console.error('Error fetching discounts:', err);
+                console.error("Error cargando el catálogo:", err);
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchProducts();
+        load();
     }, []);
 
-    /* Obtener líneas únicas */
-    const productLines = useMemo(() => {
-        const lines = new Set();
-
-        allProducts.forEach(p => {
-            const lineName = p.product_line?.name || null;
-            if (lineName) lines.add(lineName);
+    const productsByLine = useMemo(() => {
+        const map = new Map();
+        products.forEach((p) => {
+            const id = p.product_line?.id;
+            if (id == null) return;
+            if (!map.has(id)) map.set(id, []);
+            map.get(id).push(p);
         });
+        return map;
+    }, [products]);
 
-        return Array.from(lines).sort();
-    }, [allProducts]);
+    // Solo se presentan las líneas que tienen al menos un producto visible
+    const visibleLines = useMemo(
+        () => lines.filter((line) => productsByLine.has(line.id)),
+        [lines, productsByLine]
+    );
 
-
-    useEffect(() => {
-        const params = {};
-
-        if (selectedLine) params.product_line = selectedLine;
-        if (searchTerm) params.search = searchTerm;
-
-        setSearchParams(params);
-    }, [selectedLine, searchTerm]);
-
-    /* Aplicar filtros locales */
-    useEffect(() => {
-        let filtered = [...allProducts];
-
-        /* Filtro por texto */
-        if (debouncedSearchTerm.trim()) {
-            const term = debouncedSearchTerm.toLowerCase();
-            filtered = filtered.filter(p =>
-                p.name?.toLowerCase().includes(term) ||
-                p.description?.toLowerCase().includes(term)
-            );
-        }
-
-        /* Filtro por línea */
-        if (selectedLine) {
-            filtered = filtered.filter(p =>
-                p.product_line?.name === selectedLine
-            );
-        }
-
-        /* Orden: primero nuevos, luego con descuento, después el resto (sort estable: mantiene el orden por essen_id dentro de cada grupo) */
-        const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
-        filtered.sort((a, b) => priority(a) - priority(b));
-
-        setProducts(filtered);
-    }, [debouncedSearchTerm, selectedLine, allProducts]);
-
-
-    /* Render */
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
@@ -128,85 +102,61 @@ export default function Catalog() {
     return (
         <>
             <Seo
-                title="Catálogo de productos | EssenMR"
-                description="Explorá el catálogo completo de productos Essen disponibles con envío a todo el país. Filtrá por línea y buscá el producto ideal."
-                keywords="catálogo Essen, productos Essen, sartenes, ollas, batería de cocina, promociones"
+                title="Catálogo de líneas Essen | EssenMR"
+                description="Conocé las líneas de productos Essen, qué las distingue y algunos productos de cada una para ayudarte a elegir."
+                keywords="líneas Essen, catálogo Essen, ollas, sartenes, batería de cocina"
             />
-            <div className="min-h-screen px-4 py-8 bg-stone-50">
-                <div className="mx-auto max-w-7xl">
 
-                    <PageTitle title="Catálogo de Productos" />
+            <div className="min-h-screen bg-stone-50">
+                {/* Introducción */}
+                <header className="px-4 py-12 text-center text-white bg-orange-600 md:py-16">
+                    <div className="mx-auto max-w-3xl">
+                        <h1 className="text-3xl font-bold md:text-5xl">Catálogo</h1>
+                        <p className="mt-4 text-lg leading-relaxed text-white/90">
+                            Essen organiza sus productos en <strong>líneas</strong>: cada una tiene su propio estilo,
+                            materiales y prestaciones. Si recién empezás, recorré las líneas, mirá algunos productos de
+                            cada una y entrá a la que más te guste.
+                        </p>
 
-                    {/* Filtros */}
-                    <div className="p-6 mb-8 bg-white rounded-lg shadow-md">
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-
-                            {/* Buscador */}
-                            <div>
-                                <label className="block mb-1 text-sm font-medium text-gray-700">
-                                    Buscar por nombre
-                                </label>
-                                <input
-                                    type="text"
-                                    value={searchTerm}
-                                    placeholder="Escribe el nombre..."
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                                />
-                            </div>
-
-                            {/* Select línea */}
-                            <div>
-                                <label className="block mb-1 text-sm font-medium text-gray-700">
-                                    Línea de producto
-                                </label>
-                                <select
-                                    value={selectedLine}
-                                    onChange={(e) => setSelectedLine(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500"
-                                >
-                                    <option value="">Todas las líneas</option>
-                                    {productLines.map(line => (
-                                        <option key={line} value={line}>{line}</option>
+                        {visibleLines.length > 1 && (
+                            <nav aria-label="Líneas" className="mt-8">
+                                <ul className="flex flex-wrap justify-center gap-2">
+                                    {visibleLines.map((line) => (
+                                        <li key={line.id}>
+                                            <a
+                                                href={`#linea-${line.id}`}
+                                                className="inline-block px-4 py-1.5 text-sm font-medium text-white border rounded-full border-white/40 bg-white/10 hover:bg-white hover:text-orange-700"
+                                            >
+                                                {line.name}
+                                            </a>
+                                        </li>
                                     ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Botón limpiar */}
-                        {(searchTerm || selectedLine) && (
-                            <div className="mt-4 text-right">
-                                <button
-                                    onClick={() => {
-                                        setSearchTerm('');
-                                        setSelectedLine('');
-                                    }}
-                                    className="text-sm text-orange-700 underline hover:text-orange-900"
-                                >
-                                    Limpiar filtros
-                                </button>
-                            </div>
+                                </ul>
+                            </nav>
                         )}
                     </div>
+                </header>
 
-                    {/* Resultados */}
-                    {products.length === 0 ? (
-                        <div className="py-20 text-center bg-white rounded-lg shadow">
-                            <p className="text-xl text-gray-600">
-                                {allProducts.length === 0
-                                    ? 'No hay productos disponibles por el momento.'
-                                    : 'No se encontraron productos con los filtros seleccionados.'}
-                            </p>
+                {visibleLines.length === 0 ? (
+                    <p className="py-20 text-center text-gray-600">No hay líneas disponibles por el momento.</p>
+                ) : (
+                    visibleLines.map((line) => (
+                        <div key={line.id} id={`linea-${line.id}`} className="scroll-mt-20">
+                            <LineSection line={line} products={productsByLine.get(line.id) || []} />
                         </div>
-                    ) : (
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {products.map(product => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
-                        </div>
-                    )}
+                    ))
+                )}
 
-                </div>
+                {/* Asesoramiento */}
+                <section className="px-4 py-12 mx-auto max-w-7xl">
+                    <div className="flex flex-col items-center gap-4 p-8 text-center text-white rounded-2xl bg-stone-900 md:flex-row md:justify-between md:text-left">
+                        <div>
+                            <h2 className="text-xl font-bold md:text-2xl">¿No sabés por dónde empezar?</h2>
+                            <p className="mt-1 text-white/80">Contanos qué cocinás y te recomendamos la línea ideal.</p>
+                        </div>
+                        <BtnWpp message="Hola, quiero que me ayuden a elegir una línea de productos Essen" />
+                    </div>
+                </section>
             </div>
         </>
     );

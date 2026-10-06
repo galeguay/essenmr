@@ -126,6 +126,7 @@ export default function Home() {
                 .from('product_lines')
                 .select('*')
                 .eq('is_visible', true)
+                .order('priority', { ascending: true })
                 .order('name', { ascending: true });
 
             if (error) throw error;

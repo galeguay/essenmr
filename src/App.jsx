@@ -14,6 +14,7 @@ import FaqForm from "./pages/admin/FaqForm";
 import ProductDetail from "./pages/public/ProductDetail";
 import Home from "./pages/public/Home";
 import Catalog from "./pages/public/Catalog";
+import ProductsPage from "./pages/public/ProductsPage";
 import FaqList from "./pages/public/FaqList";
 import Settings from "./pages/admin/Settings";
 import AboutMe from "./pages/public/AboutMe";
@@ -37,6 +38,7 @@ export default function App() {
                     {/* RUTAS PÚBLICAS */}
                     <Route path="/" element={<Home />} />
                     <Route path="/catalogo" element={<Catalog />} />
+                    <Route path="/productos" element={<ProductsPage />} />
                     <Route path="/linea/:string_id" element={<ProductLine />} />
                     <Route path="/producto/:essen_id" element={<ProductDetail />} />
                     <Route path="/faq" element={<FaqList />} />

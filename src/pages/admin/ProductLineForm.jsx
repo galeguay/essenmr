@@ -13,6 +13,7 @@ export default function ProductLineForm({
     const navigate = useNavigate();
     const isEdit = !!id;
     const [imageFile, setImageFile] = useState(null);
+    const [videoFile, setVideoFile] = useState(null);
 
 
     const [form, setForm] = useState({
@@ -20,8 +21,11 @@ export default function ProductLineForm({
         string_id: initialData?.string_id || "",
         color: initialData?.color || "#8b5cf6",
         is_visible: initialData ? initialData.is_visible !== false : true,
+        short_description: initialData?.short_description || "",
         description: initialData?.description || "",
         image: initialData?.image || null,
+        priority: initialData?.priority ?? 100,
+        video_url: initialData?.video_url || "",
     });
     const [loading, setLoading] = useState(false);
 
@@ -37,7 +41,7 @@ export default function ProductLineForm({
 
             if (error) throw error;
 
-            setForm(data);
+            setForm({ ...data, short_description: data.short_description ?? "", video_url: data.video_url ?? "", priority: data.priority ?? 100 });
         } catch {
             alert("No se pude cargar la línea de producto");
             navigate("/admin/productLines");
@@ -89,9 +93,19 @@ const handleSubmit = async (e) => {
                 imageUrl = await uploadImage("product_lines", imageFile, newFileName);
             }
 
+            // Video: un archivo subido reemplaza al link (ej: clasica_video_261006.mp4)
+            let videoUrl = form.video_url?.trim() || null;
+            if (videoFile) {
+                const hoy = new Date();
+                const dateSuffix = `${String(hoy.getFullYear()).slice(-2)}${String(hoy.getMonth() + 1).padStart(2, '0')}${String(hoy.getDate()).padStart(2, '0')}`;
+                videoUrl = await uploadImage("product_lines", videoFile, `${form.string_id || 'nueva-linea'}_video_${dateSuffix}`);
+            }
+
             const productLineDataToSave = {
                 ...form,
+                priority: form.priority === "" ? 100 : Number(form.priority),
                 image: imageUrl,
+                video_url: videoUrl,
             };
 
             let response;
@@ -132,10 +146,14 @@ const handleSubmit = async (e) => {
                     string_id: responseData.string_id ?? "",
                     color: responseData.color ?? "#8b5cf6",
                     is_visible: responseData.is_visible ?? true,
+                    short_description: responseData.short_description ?? "",
                     description: responseData.description ?? "",
                     image: responseData.image ?? null,
+                    priority: responseData.priority ?? 100,
+                    video_url: responseData.video_url ?? "",
                 });
                 setImageFile(null);
+                setVideoFile(null);
             }
 
             navigate("/admin/productLines");
@@ -211,6 +229,24 @@ const handleSubmit = async (e) => {
                 </div>
             </div>
 
+            {/* Descripción breve */}
+            <label className="block">
+                <span className="block mb-1 text-sm text-gray-600">Descripción breve (opcional)</span>
+                <input
+                    type="text"
+                    name="short_description"
+                    value={form.short_description}
+                    onChange={handleChange}
+                    maxLength={160}
+                    placeholder="Una frase que explique para qué sirve esta línea"
+                    className="w-full input"
+                    autoComplete="off"
+                />
+                <span className="block mt-1 text-xs text-gray-500">
+                    Se muestra en la página de Catálogo. {form.short_description.length}/160
+                </span>
+            </label>
+
             {/* Descripción */}
             <label className="block">
                 <span className="block mb-1 text-sm text-gray-600">Descripción (opcional)</span>
@@ -223,6 +259,25 @@ const handleSubmit = async (e) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
             </label>
+
+            {/* Prioridad */}
+            <div>
+                <label className="floating-label">
+                    <input
+                        type="number"
+                        name="priority"
+                        value={form.priority}
+                        onChange={handleChange}
+                        step="1"
+                        className="input"
+                        placeholder="Prioridad"
+                    />
+                    <span>Prioridad</span>
+                </label>
+                <div className="mt-1 text-xs text-gray-500">
+                    Define el orden en el sitio: el número más bajo aparece primero (1, 2, 3…). Por defecto 100.
+                </div>
+            </div>
 
             {/* Switch: Visible */}
             <div className="flex items-center justify-between w-[60%]">
@@ -264,6 +319,29 @@ const handleSubmit = async (e) => {
                 </fieldset>
             </div>
 
+            {/* Video */}
+            <div>
+                <span className="block mb-1 text-sm">Video de la línea (opcional)</span>
+                <input
+                    type="url"
+                    name="video_url"
+                    value={form.video_url || ""}
+                    onChange={handleChange}
+                    disabled={!!videoFile}
+                    placeholder="Link de YouTube, Shorts, Instagram, TikTok o .mp4"
+                    className="w-full mb-2 input"
+                    autoComplete="off"
+                />
+                <input
+                    type="file"
+                    accept="video/mp4,video/webm,video/quicktime"
+                    onChange={(e) => setVideoFile(e.target.files[0] || null)}
+                    className="w-full file-input file-input-md"
+                />
+                <div className="mt-1 text-xs text-gray-500">
+                    Pegá un link o subí el archivo (MP4 recomendado, idealmente menos de 50 MB). Si subís un archivo, reemplaza al link. Puede ser vertical u horizontal.
+                </div>
+            </div>
 
             {/* Botones */}
             <div className="flex gap-3 pt-4">
