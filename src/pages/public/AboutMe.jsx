@@ -1,20 +1,10 @@
 import Seo from '../../components/Seo';
-import BtnLink from '../../components/BtnLink';
-import ReactGA from "react-ga4";
+import ContactCard from '../../components/ContactCard';
 
 const PHOTO_URL = "https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/public/images/MR.webp";
 
 export default function AboutMe() {
     
-    // Función para registrar los clics en los botones de contacto de esta página
-    const handleContactClick = (method) => {
-        ReactGA.event({
-            category: "Contacto",
-            action: "Clic_Redes_AboutMe",
-            label: method
-        });
-    };
-
     return (
         <>
             <Seo
@@ -33,23 +23,7 @@ export default function AboutMe() {
                         Soy María Rosa, emprendedora oficial Essen EIE 106891, radicada en Mar del Plata, con más de 10 años de experiencia.
                     </div>
 
-                    <div className="flex items-start gap-4 p-5 mb-10 text-left border border-orange-200 rounded-xl bg-orange-50 max-w-[500px]">
-                        <i className="mt-1 text-3xl text-orange-600 bi bi-chat-heart-fill"></i>
-                        <div>
-                            <p className="text-xl font-bold text-orange-900">¿Querés ver los productos o tenés una consulta?</p>
-                            <p className="mt-1 text-gray-700">
-                                Escribime y coordinamos una cita para que veas los productos en persona.
-                                Respondo cualquier duda sobre productos, precios, promociones y formas de pago.
-                            </p>
-                            <BtnLink
-                                href="https://wa.me/5492235012258"
-                                className="mt-4"
-                                onClick={() => handleContactClick('WhatsApp')}
-                            >
-                                <i className="bi bi-whatsapp"></i> Enviar Whatsapp
-                            </BtnLink>
-                        </div>
-                    </div>
+                    <ContactCard gaAction="Clic_Redes_AboutMe" className="mb-10 max-w-[500px]" />
                 </div>
             </div>
         </>

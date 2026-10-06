@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import Promotions from '../../components/Promotions';
 import { supabase } from '../../lib/supabase';
 import BtnWpp from '../../components/BtnWpp';
@@ -9,6 +8,8 @@ import AnnouncementBanner from '../../components/AnnouncementBanner';
 import Title from '../../components/Title';
 import HeroFusionBanner from '../../components/HeroFusionBanner';
 import Seo from '../../components/Seo';
+import ContactCard from '../../components/ContactCard';
+import CtaCard from '../../components/CtaCard';
 import { typography } from '../../styles/typography';
 
 const formatExpirationDateForBanner = (dateString) => {
@@ -220,24 +221,15 @@ export default function Home() {
                 ) : ""}
 
                 <section className="py-12">
-                    <div className="container px-6 mx-auto md:px-16">
-                        <div className="flex flex-col items-center gap-6 px-6 py-10 text-center text-white bg-orange-600 shadow-lg rounded-2xl md:flex-row md:justify-between md:text-left md:px-12">
-                            <div className="max-w-2xl">
-                                <h2 className="text-3xl font-bold leading-tight md:text-4xl">
-                                    Conocé nuestros productos
-                                </h2>
-                                <p className="mt-3 text-lg leading-relaxed text-white/90">
-                                    Cada línea Essen tiene su propio estilo y prestaciones. Recorré el catálogo y
-                                    encontrá la ideal para tu cocina.
-                                </p>
-                            </div>
-                            <Link
-                                to="/catalogo"
-                                className="px-6 py-3 text-lg font-semibold text-orange-700 transition bg-white rounded-lg shadow shrink-0 hover:bg-orange-50"
-                            >
-                                Ver el catálogo <span aria-hidden="true">→</span>
-                            </Link>
-                        </div>
+                    <div className="container grid gap-6 px-6 mx-auto md:grid-cols-2 md:px-16">
+                        <CtaCard
+                            icon="bi-grid-fill"
+                            title="Conocé nuestras líneas de productos"
+                            text="Cada línea Essen tiene su propio estilo y prestaciones. Recorré el catálogo y encontrá la ideal para tu cocina."
+                            buttonLabel="Ver el catálogo →"
+                            to="/catalogo"
+                        />
+                        <ContactCard gaAction="Clic_Contacto_Home" />
                     </div>
                 </section>
 
