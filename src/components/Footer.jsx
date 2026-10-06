@@ -22,7 +22,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="flex flex-col items-center justify-center py-6 text-white bg-gray-900">
+    <footer className="flex flex-col items-center justify-center py-6 text-white bg-stone-900">
       <div className="flex flex-col gap-6 sm:flex-col md:flex-row md:columns-2 md:gap-16">
         <ul className="gap-4 text-left list-none">
           {links.map((link) => (

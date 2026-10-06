@@ -47,15 +47,15 @@ export default function ProductDetail() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-50">
-                <div className="w-16 h-16 border-t-4 border-b-4 border-blue-600 rounded-full animate-spin"></div>
+            <div className="flex items-center justify-center min-h-screen bg-stone-50">
+                <div className="w-16 h-16 border-t-4 border-b-4 border-orange-600 rounded-full animate-spin"></div>
             </div>
         );
     }
 
     if (!product) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-50">
+            <div className="flex items-center justify-center min-h-screen bg-stone-50">
                 <p className="text-2xl text-gray-600">Producto no encontrado</p>
             </div>
         );
@@ -88,7 +88,7 @@ export default function ProductDetail() {
                 keywords={`${product.product_line?.name || "Essen"}, ${product.name}, cocina`}
                 jsonLd={productJsonLd}
             />
-            <div className="min-h-screen px-4 py-8 bg-gray-50">
+            <div className="min-h-screen px-4 py-8 bg-stone-50">
                 <div className="mx-auto mb-20 max-w-7xl md:mb-40">
 
                     <div className="grid grid-cols-1 gap-1 lg:grid-cols-2">
@@ -121,7 +121,7 @@ export default function ProductDetail() {
                                 <div className="flex gap-1 mb-3 items-center text-xl">
 
                                     {product.is_new &&
-                                        <div className="px-6 font-bold text-white uppercase bg-blue-500 w-fit">
+                                        <div className="px-6 font-bold text-white uppercase bg-orange-600 w-fit">
                                             Nuevo
                                         </div>}
 

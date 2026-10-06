@@ -198,7 +198,7 @@ export default function Home() {
                     />
                 ))}
 
-                <section className="flex flex-col items-center justify-center py-12 bg-green-200">
+                <section className="flex flex-col items-center justify-center py-12 bg-stone-50">
                     <h2 className={`${typography.sectionTitle} w-full text-dark mb-10 px-5 lg:px-70`}>
                         Descuentos
                     </h2>
@@ -213,9 +213,9 @@ export default function Home() {
                 </section>
 
                 {newProducts.length > 0 ? (
-                    <section className="py-12 bg-black">
+                    <section className="py-12 bg-orange-50">
 
-                        <h2 className={`${typography.sectionTitle} w-full text-white mb-10 px-5 lg:px-70`}>
+                        <h2 className={`${typography.sectionTitle} w-full text-orange-800 mb-10 px-5 lg:px-70`}>
                             Novedades del mes
                         </h2>
 
@@ -240,7 +240,7 @@ export default function Home() {
                         Lineas de productos
                     </h2>
 
-                    <div className="flex w-full justify-center bg-gray-100 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)]">
+                    <div className="flex w-full justify-center bg-stone-100 shadow-[inset_0_10px_10px_-10px_rgba(0,0,0,0.35),inset_0_-10px_10px_-10px_rgba(0,0,0,0.35)]">
                         <div className="container lg:flex lg:justify-center ">
                             <div className="flex justify-around gap-2 py-6 overflow-x-auto lg:overflow-x-visible xl:w-full">
                                 {productLines.map((line) => (

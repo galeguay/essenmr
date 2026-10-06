@@ -26,7 +26,7 @@ export default function NewDiscountCard({
                     />
                 )}
                 
-                <div className="absolute left-0 flex items-baseline gap-1 px-6 py-1 italic font-bold text-white shadow-lg top-5 bg-gradient-to-r from-green-500 to-emerald-400">
+                <div className="absolute left-0 flex items-baseline gap-1 px-6 py-1 italic font-bold text-white shadow-lg top-5 bg-gradient-to-r from-emerald-600 to-emerald-500">
                     <span className="text-3xl">{discount}</span>
                     <span className="text-sm uppercase">{discountText}</span>
                 </div>

@@ -116,7 +116,7 @@ export default function Catalog() {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="w-12 h-12 border-t-4 border-b-4 border-blue-600 rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-t-4 border-b-4 border-orange-600 rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -128,7 +128,7 @@ export default function Catalog() {
                 description="Explorá el catálogo completo de productos Essen disponibles con envío a todo el país. Filtrá por línea y buscá el producto ideal."
                 keywords="catálogo Essen, productos Essen, sartenes, ollas, batería de cocina, promociones"
             />
-            <div className="min-h-screen px-4 py-8 bg-gray-50">
+            <div className="min-h-screen px-4 py-8 bg-stone-50">
                 <div className="mx-auto max-w-7xl">
 
                     <PageTitle title="Catálogo de Productos" />
@@ -147,7 +147,7 @@ export default function Catalog() {
                                     value={searchTerm}
                                     placeholder="Escribe el nombre..."
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 />
                             </div>
 
@@ -159,7 +159,7 @@ export default function Catalog() {
                                 <select
                                     value={selectedLine}
                                     onChange={(e) => setSelectedLine(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500"
                                 >
                                     <option value="">Todas las líneas</option>
                                     {productLines.map(line => (
@@ -177,7 +177,7 @@ export default function Catalog() {
                                         setSearchTerm('');
                                         setSelectedLine('');
                                     }}
-                                    className="text-sm text-blue-600 underline hover:text-blue-800"
+                                    className="text-sm text-orange-700 underline hover:text-orange-900"
                                 >
                                     Limpiar filtros
                                 </button>

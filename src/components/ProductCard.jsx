@@ -49,7 +49,7 @@ export default function ProductCard({
                         </div>}
 
                     {product.is_new &&
-                        <div className="px-6 text-sm font-bold text-white uppercase bg-blue-500 w-fit">
+                        <div className="px-6 text-sm font-bold text-white uppercase bg-orange-600 w-fit">
                             Nuevo
                         </div>}
 
