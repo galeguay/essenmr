@@ -32,12 +32,12 @@ export default function ProductCard({
             </Link>
 
             {/* Imagen con Badge de DaisyUI */}
-            <figure className="relative p-4 aspect-square">
+            <figure className="relative p-4 overflow-hidden aspect-square">
                 <img
                     loading="lazy"
                     src={product.image || "../../cacerola.webp"}
                     alt={product.name}
-                    className="object-cover w-full h-full transition-transform duration-500 rounded-xl group-hover:scale-108"
+                    className="object-cover w-full h-full min-w-0 max-w-full transition-transform duration-500 rounded-xl group-hover:scale-108"
                     onError={(e) => (e.currentTarget.src = "../../cacerola.webp")}
                 />
 
