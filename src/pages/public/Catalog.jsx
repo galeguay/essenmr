@@ -147,7 +147,7 @@ export default function Catalog() {
                     <div className="flex flex-col items-center gap-4 p-8 text-center text-white rounded-2xl bg-stone-900 md:flex-row md:justify-between md:text-left">
                         <div>
                             <h2 className="text-xl font-bold md:text-2xl">¿No sabés por dónde empezar?</h2>
-                            <p className="mt-1 text-white/80">Contanos qué cocinás y te recomendamos la línea ideal.</p>
+                            <p className="mt-1 text-white/80">Contanos qué cocinás y te recomendamos los productos que se ajustan a vos.</p>
                         </div>
                         <BtnWpp message="Hola, quiero que me ayuden a elegir una línea de productos Essen" />
                     </div>

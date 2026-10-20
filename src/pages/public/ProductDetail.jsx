@@ -92,14 +92,14 @@ export default function ProductDetail() {
                 keywords={`${product.product_line?.name || "Essen"}, ${product.name}, cocina`}
                 jsonLd={productJsonLd}
             />
-            <div className="min-h-screen px-4 py-8 bg-stone-50">
+            <div className="min-h-screen px-4 py-8 overflow-x-clip bg-stone-50">
                 <div className="mx-auto mb-20 max-w-7xl md:mb-40">
 
                     <div className="grid grid-cols-1 gap-1 lg:grid-cols-2">
 
                         <ProductGallery product={product} />
 
-                        <div className="flex flex-col justify-between p-6 lg:p-12">
+                        <div className="flex flex-col justify-between min-w-0 p-6 lg:p-12">
                             <div>
                                 {product.product_line && (
                                     <p className="text-xl lg:text-2xl m-0 tracking-wider text-gray-500">
@@ -134,7 +134,7 @@ export default function ProductDetail() {
                                 {product.description && (
                                     <div className="mb-8 prose prose-lg">
                                         {/* Agregamos la clase aquí */}
-                                        <p className="whitespace-pre-wrap">{product.description}</p>
+                                        <p className="whitespace-pre-wrap wrap-anywhere">{product.description}</p>
                                     </div>
                                 )}
 
