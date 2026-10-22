@@ -15,7 +15,7 @@ export default function ContactCard({ gaAction = "Clic_Contacto_Card", className
         <CtaCard
             icon="bi-chat-heart-fill"
             title="¿Querés ver los productos en persona o tenés una consulta?"
-            text="Escribime y coordinamos una cita para que veas los productos. Respondo cualquier duda sobre productos, precios, promociones y formas de pago."
+            text="Respondo cualquier duda sobre productos y si queŕes coordinamos una cita para que veas los productos."
             buttonLabel="Enviar Whatsapp"
             buttonIcon="bi-whatsapp"
             href="https://wa.me/5492235012258"

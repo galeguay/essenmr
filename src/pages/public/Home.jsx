@@ -10,6 +10,7 @@ import HeroFusionBanner from '../../components/HeroFusionBanner';
 import Seo from '../../components/Seo';
 import ContactCard from '../../components/ContactCard';
 import CtaCard from '../../components/CtaCard';
+import Reveal from '../../components/Reveal';
 import { typography } from '../../styles/typography';
 
 const formatExpirationDateForBanner = (dateString) => {
@@ -181,15 +182,16 @@ export default function Home() {
                 ))}
 
                 <section className="flex flex-col items-center justify-center py-12 bg-stone-50">
-                    <h2 className={`${typography.sectionTitle} text-dark container mx-auto px-6 md:px-16 mb-10`}>
-                        Descuentos
-                    </h2>
+                    <Reveal effect="left" className="container mx-auto">
+                        <h2 className={`${typography.sectionTitle} text-dark px-6 md:px-16 mb-10`}>
+                            Descuentos
+                        </h2>
+                    </Reveal>
                     <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
-                        {discounts.map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                            />
+                        {discounts.map((product, index) => (
+                            <Reveal key={product.id} effect="zoom" delay={(index % 4) * 100} className="h-full">
+                                <ProductCard product={product} className="h-full" />
+                            </Reveal>
                         ))}
                     </div>
                 </section>
@@ -197,23 +199,30 @@ export default function Home() {
                 {newProducts.length > 0 ? (
                     <section className="py-12 bg-orange-50">
 
-                        <h2 className={`${typography.sectionTitle} text-orange-800 container mx-auto px-6 md:px-16 mb-10`}>
-                            Novedades del mes
-                        </h2>
+                        <Reveal effect="left" className="container mx-auto">
+                            <h2 className={`${typography.sectionTitle} text-orange-800 px-6 md:px-16 mb-10`}>
+                                Novedades del mes
+                            </h2>
+                        </Reveal>
 
                         <div className="container mx-auto">
                             <div className="flex flex-col items-center gap-8 px-6">
                                 {newProducts.map((np, index) => (
-                                    <NewReleaseCard
+                                    <Reveal
                                         key={np.essen_id}
-                                        productId={np.essen_id}
-                                        title={np.name}
-                                        image={np.image}
-                                        description={np.description}
-                                        isNew={np.is_new}
-                                        productLine={np.product_line?.name}
-                                        reverse={index % 2 === 1}
-                                    />
+                                        effect={index % 2 === 1 ? "right" : "left"}
+                                        className="flex justify-center w-full"
+                                    >
+                                        <NewReleaseCard
+                                            productId={np.essen_id}
+                                            title={np.name}
+                                            image={np.image}
+                                            description={np.description}
+                                            isNew={np.is_new}
+                                            productLine={np.product_line?.name}
+                                            reverse={index % 2 === 1}
+                                        />
+                                    </Reveal>
                                 ))}
                             </div>
                         </div>
@@ -222,14 +231,19 @@ export default function Home() {
 
                 <section className="py-12">
                     <div className="container grid gap-6 px-6 mx-auto md:grid-cols-2 md:px-16">
+                        <Reveal effect="up" className="h-full">
                         <CtaCard
+                            className="h-full"
                             icon="bi-grid-fill"
                             title="Conocé nuestras líneas de productos"
                             text="Cada línea Essen tiene su propio estilo y prestaciones. Recorré el catálogo y encontrá la ideal para tu cocina."
                             buttonLabel="Ver el catálogo →"
                             to="/catalogo"
                         />
-                        <ContactCard gaAction="Clic_Contacto_Home" />
+                        </Reveal>
+                        <Reveal effect="up" delay={150} className="h-full">
+                            <ContactCard gaAction="Clic_Contacto_Home" className="h-full" />
+                        </Reveal>
                     </div>
                 </section>
 
