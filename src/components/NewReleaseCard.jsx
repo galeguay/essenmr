@@ -7,11 +7,11 @@ export default function NewReleaseCard({ productId, title, image, description, i
             className={`flex flex-col ${reverse ? "sm:flex-row-reverse" : "sm:flex-row"} bg-white overflow-hidden shadow-lg w-full max-w-2xl lg:max-w-5xl border border-orange-200 hover:border-orange-400 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer block group`}
         >
             {/* Contenedor de la Imagen: Ajuste dinámico sin altura fija */}
-            <div className="w-full sm:w-2/5 flex items-center justify-center p-4 sm:p-0 bg-stone-50 overflow-hidden">
+            <div className="w-full sm:w-2/5 aspect-[4/3] sm:aspect-auto sm:min-h-64 flex items-center justify-center p-4 sm:p-0 bg-stone-50 overflow-hidden">
                 <img
                     src={image}
                     alt={title}
-                    className="object-contain w-full h-auto group-hover:scale-[1.03] transition-transform duration-300"
+                    className="object-contain w-full h-full group-hover:scale-[1.03] transition-transform duration-300"
                 />
             </div>
 
