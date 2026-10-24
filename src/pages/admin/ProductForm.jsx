@@ -3,7 +3,8 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from '../../lib/supabase';
 import { uploadImage } from "../../utils/uploadImage";
 import { normalizeProductCode, validateProductCodeFormat } from "../../utils/productCode";
-import { findProductByCode } from "../../lib/products";
+import { findProductByCode, deleteProductWithFiles } from "../../lib/products";
+import DeleteProductDialog from "../../components/admin/DeleteProductDialog";
 
 export default function ProductForm({
     initialData = null,
@@ -40,6 +41,9 @@ export default function ProductForm({
     const [loading, setLoading] = useState(false);
     const [codeError, setCodeError] = useState("");
     const [codeChecking, setCodeChecking] = useState(false);
+    const [savedName, setSavedName] = useState("");
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const fetchLineas = async () => {
         try {
@@ -71,6 +75,7 @@ export default function ProductForm({
 
             if (error) throw error;
 
+            setSavedName(data.name);
             setProduct({
                 ...data,
                 // Aseguramos que sea string para que coincida con el <select>
@@ -124,6 +129,29 @@ export default function ProductForm({
             ...prev,
             [name]: type === "checkbox" ? checked : value
         }));
+    };
+
+    const handleDelete = async () => {
+        if (deleting) return;
+        setDeleting(true);
+
+        try {
+            const { status, failedFiles } = await deleteProductWithFiles(id);
+
+            if (status === "not_found") {
+                alert("Este producto ya no existe. Volvemos al listado.");
+            } else if (failedFiles > 0) {
+                alert("Producto eliminado, pero algunos archivos no pudieron borrarse del almacenamiento.");
+            } else {
+                alert("Producto eliminado");
+            }
+            navigate("/admin/products");
+        } catch (error) {
+            console.error("Error eliminando producto:", error);
+            alert("No pudimos eliminar el producto. Revisá tu conexión o tu sesión e intentá de nuevo.");
+        } finally {
+            setDeleting(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -248,6 +276,20 @@ export default function ProductForm({
 
         } catch (error) {
             console.error("Error guardando producto:", error);
+            if (isEdit && error.code === "PGRST116") {
+                // El update no encontró la fila: puede que otra persona haya eliminado el producto
+                const { data: stillThere } = await supabase
+                    .from("products")
+                    .select("id")
+                    .eq("id", id)
+                    .maybeSingle();
+
+                if (!stillThere) {
+                    alert("Este producto fue eliminado y ya no existe.");
+                    navigate("/admin/products");
+                    return;
+                }
+            }
             if (error.code === "23505") {
                 setCodeError("Este código ya lo usa otro producto.");
                 return;
@@ -260,6 +302,7 @@ export default function ProductForm({
     };
 
     return (
+        <>
         <form
             onSubmit={handleSubmit}
             className="w-full max-w-lg p-8 mx-auto space-y-8 bg-white border border-gray-200 shadow-lg rounded-xl"
@@ -544,6 +587,32 @@ export default function ProductForm({
                     </button>
                 )}
             </div>
+
+            {/* Zona de peligro: solo al editar un producto existente */}
+            {isEdit && (
+                <div className="pt-6 border-t border-gray-200">
+                    <button
+                        type="button"
+                        onClick={() => setShowDeleteDialog(true)}
+                        disabled={loading}
+                        className="w-full gap-2 btn btn-outline btn-error"
+                    >
+                        <i className="bi bi-trash3" aria-hidden="true"></i>
+                        Eliminar producto
+                    </button>
+                </div>
+            )}
+
         </form>
+
+        {/* Fuera del <form>: el diálogo tiene sus propios formularios */}
+        <DeleteProductDialog
+            open={showDeleteDialog}
+            productName={savedName}
+            deleting={deleting}
+            onCancel={() => setShowDeleteDialog(false)}
+            onConfirm={handleDelete}
+        />
+        </>
     );
 }
