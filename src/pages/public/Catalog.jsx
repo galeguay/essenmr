@@ -8,13 +8,13 @@ import Seo from "../../components/Seo";
 
 const SAMPLES_PER_LINE = 4;
 
-// Primero nuevos, luego con descuento, después el resto
+// Primero nuevos, luego con descuento, después el resto; alfabético dentro de cada grupo
 const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
 
 function LineSection({ line, products }) {
     const palette = useMemo(() => getLinePalette(line.color), [line.color]);
     const samples = useMemo(
-        () => [...products].sort((a, b) => priority(a) - priority(b)).slice(0, SAMPLES_PER_LINE),
+        () => [...products].sort((a, b) => priority(a) - priority(b) || (a.name || '').localeCompare(b.name || '', 'es', { sensitivity: 'base' })).slice(0, SAMPLES_PER_LINE),
         [products]
     );
     const blurb = line.short_description || line.description;
