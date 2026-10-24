@@ -46,7 +46,8 @@ export default function ProductLine() {
                     if (prodError) throw prodError;
 
                     const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
-                    setProducts([...(productsData || [])].sort((a, b) => priority(a) - priority(b)));
+                    const byName = (a, b) => (a.name || "").localeCompare(b.name || "", "es", { sensitivity: "base" });
+                    setProducts([...(productsData || [])].sort((a, b) => priority(a) - priority(b) || byName(a, b)));
 
                     // 3 productos al azar (con foto) para el encabezado
                     const withImage = (productsData || []).filter((p) => p.image);
