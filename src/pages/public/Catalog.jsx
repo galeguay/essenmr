@@ -8,8 +8,9 @@ import Seo from "../../components/Seo";
 
 const SAMPLES_PER_LINE = 4;
 
-// Primero nuevos, luego con descuento, después el resto; alfabético dentro de cada grupo
-const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
+// Primero nuevos, luego con descuento, luego combos, después el resto; alfabético dentro de cada grupo
+const isCombo = (p) => /combos/i.test(p.product_line?.name || '');
+const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : isCombo(p) ? 2 : 3);
 
 function LineSection({ line, products }) {
     const palette = useMemo(() => getLinePalette(line.color), [line.color]);
