@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from '../../lib/supabase';
 import { uploadImage } from "../../utils/uploadImage";
+import { normalizeProductCode, validateProductCodeFormat } from "../../utils/productCode";
+import { findProductByCode } from "../../lib/products";
 
 export default function ProductForm({
     initialData = null,
@@ -36,6 +38,8 @@ export default function ProductForm({
     const [lineas, setLineas] = useState([]);
     const [loadingLineas, setLoadingLineas] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [codeError, setCodeError] = useState("");
+    const [codeChecking, setCodeChecking] = useState(false);
 
     const fetchLineas = async () => {
         try {
@@ -87,8 +91,35 @@ export default function ProductForm({
         loadAll();
     }, [id, loadProduct]);
 
+    // Valida formato y duplicado del código. Devuelve el mensaje de error o "".
+    const checkProductCode = async (rawCode) => {
+        const formatError = validateProductCodeFormat(rawCode);
+        if (formatError) return formatError;
+
+        try {
+            const duplicate = await findProductByCode(normalizeProductCode(rawCode), isEdit ? id : null);
+            return duplicate ? `Este código ya lo usa el producto «${duplicate.name}».` : "";
+        } catch (error) {
+            console.error("Error verificando código:", error);
+            return "No pudimos verificar el código. Revisá tu conexión e intentá de nuevo.";
+        }
+    };
+
+    const handleCodeBlur = async () => {
+        const normalized = normalizeProductCode(product.essen_id);
+        if (normalized !== String(product.essen_id ?? "")) {
+            setProduct(prev => ({ ...prev, essen_id: normalized }));
+        }
+
+        setCodeChecking(true);
+        const message = await checkProductCode(normalized);
+        setCodeError(message);
+        setCodeChecking(false);
+    };
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
+        if (name === "essen_id") setCodeError("");
         setProduct(prev => ({
             ...prev,
             [name]: type === "checkbox" ? checked : value
@@ -100,6 +131,15 @@ export default function ProductForm({
         setLoading(true);
 
         try {
+            // El código se verifica antes de subir cualquier archivo
+            const code = normalizeProductCode(product.essen_id);
+            setProduct(prev => ({ ...prev, essen_id: code }));
+            const codeMessage = await checkProductCode(code);
+            if (codeMessage) {
+                setCodeError(codeMessage);
+                return;
+            }
+
             let imageUrl = product.image || null;
             let pdfUrl = product.info_pdf || null;
             let videoUrl = product.video_url?.trim() || null;
@@ -115,9 +155,8 @@ export default function ProductForm({
             // 3. Crear el string con el formato YYMMDD (Ej: 260306)
             const dateSuffix = `${yy}${mm}${dd}`;
 
-            // 4. Combinar el ID de Essen con la fecha (ej: 12345_260306)
-            // Agregamos un fallback a "nuevo" por si el usuario no ingresó un essen_id
-            const baseId = product.essen_id || 'nuevo';
+            // 4. Combinar el código Essen (ya validado y normalizado) con la fecha (ej: 12345_260306)
+            const baseId = code;
 
             // Si el usuario seleccionó una imagen nueva, se sube
             if (imageFile) {
@@ -209,6 +248,10 @@ export default function ProductForm({
 
         } catch (error) {
             console.error("Error guardando producto:", error);
+            if (error.code === "23505") {
+                setCodeError("Este código ya lo usa otro producto.");
+                return;
+            }
             alert("Error: " + (error.message || "Error desconocido al guardar"));
 
         } finally {
@@ -247,12 +290,24 @@ export default function ProductForm({
                     name="essen_id"
                     value={product.essen_id}
                     onChange={handleChange}
-                    className="input"
+                    onBlur={handleCodeBlur}
+                    required
+                    inputMode="numeric"
+                    className={`input ${codeError ? "input-error" : ""}`}
                     placeholder="Código Essen"
                     autoComplete="off"
+                    aria-invalid={!!codeError}
                 />
-                <span>Código Essen</span>
+                <span>Código Essen *</span>
             </label>
+            {codeChecking && (
+                <p className="-mt-6 text-sm text-gray-500">Verificando código…</p>
+            )}
+            {codeError && (
+                <p role="alert" className="-mt-6 text-sm font-medium text-red-600">
+                    ⚠ {codeError}
+                </p>
+            )}
 
             {/* Línea de producto */}
             <label className="select">
@@ -473,7 +528,7 @@ export default function ProductForm({
             <div className="flex gap-3">
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || codeChecking}
                     className="flex-1 py-3 font-bold text-white transition bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-70"
                 >
                     {loading ? "Guardando..." : isEdit ? "Actualizar" : "Guardar producto"}
