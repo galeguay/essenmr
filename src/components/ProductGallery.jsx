@@ -15,8 +15,8 @@ export default function ProductGallery({ product }) {
     const current = items[Math.min(active, items.length - 1)];
 
     return (
-        <div className="flex flex-col gap-3">
-            <figure className="relative flex items-center justify-center aspect-square lg:aspect-auto lg:min-h-[480px]">
+        <div className="flex flex-col min-w-0 gap-3">
+            <figure className="relative flex items-center min-w-0 justify-center aspect-square lg:aspect-auto lg:min-h-[480px]">
                 {current.type === "video" ? (
                     <VerticalVideo url={current.src} title={product.name} poster={product.image} />
                 ) : (
