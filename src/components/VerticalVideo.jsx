@@ -55,7 +55,7 @@ export default function VerticalVideo({ url, title, poster }) {
     return (
         <div
             ref={frameRef}
-            className={`relative w-full mx-auto overflow-hidden bg-stone-900 border-stone-900 shadow-2xl ${frameClass}`}
+            className={`relative w-full min-w-0 mx-auto overflow-hidden bg-stone-900 border-stone-900 shadow-2xl ${frameClass}`}
         >
             {source.type === "file" ? (
                 <>
