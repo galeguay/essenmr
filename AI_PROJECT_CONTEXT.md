@@ -28,9 +28,14 @@
 - `src/lib/pocketbase.js`: instancia de PocketBase y manejo de authStore.
 - `src/lib/supabase.js`: cliente Supabase.
 - `src/utils/uploadImage.js`: utilitario para carga de imágenes.
+- `src/lib/homeData.js`: consultas del home (anuncios, descuentos, novedades) en paralelo y caché de 5 min (memoria + `sessionStorage`).
+- `src/hooks/useHomeLoad.js`: orquesta la carga del home (datos + imágenes de la primera pantalla, tope de 4 s).
+- `src/hooks/useHomeScroll.js`: guarda/restaura el scroll del home y resuelve anclas.
+- `src/components/HomeLoader.jsx`: pantalla de carga (capa fija naranja con logo; el logo aparece a los 300 ms).
+- `src/components/Reveal.jsx`: efectos de entrada; se reinician cuando el componente queda debajo de la pantalla (0,9 s, retraso máx. 400 ms, respeta `prefers-reduced-motion`).
 
 ## Páginas públicas
-- `src/pages/public/Home.jsx`
+- `src/pages/public/Home.jsx` (se muestra detrás de `HomeLoader` hasta que carguen los datos y las imágenes de la primera pantalla; sin caché vigente puede demorar hasta 4 s)
 - `src/pages/public/Catalog.jsx` (guía de líneas con productos de muestra)
 - `src/pages/public/ProductsPage.jsx` (listado completo con filtros)
 - `src/pages/public/ProductDetail.jsx`

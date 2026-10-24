@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Promotions from '../../components/Promotions';
-import { supabase } from '../../lib/supabase';
-import BtnWpp from '../../components/BtnWpp';
+import useHomeLoad from '../../hooks/useHomeLoad';
+import useHomeScroll from '../../hooks/useHomeScroll';
+import HomeLoader from '../../components/HomeLoader';
 import NewReleaseCard from '../../components/NewReleaseCard';
 import ProductCard from '../../components/ProductCard';
 import AnnouncementBanner from '../../components/AnnouncementBanner';
@@ -32,119 +33,20 @@ const formatExpirationDateForBanner = (dateString) => {
 };
 
 export default function Home() {
+    const contentRef = useRef(null);
+    const { data, phase } = useHomeLoad(contentRef);
+    const { announcements, discounts, newProducts } = data;
+    const loading = phase === 'loading';
 
-    const [discounts, setDiscounts] = useState([]);
-    const [newProducts, setNewProducts] = useState([]);
-    const [announcements, setAnnouncements] = useState([]);
-    const [loading, setLoading] = useState(true);
+    useHomeScroll(phase);
 
-    const fetchAnnouncements = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('announcements')
-                .select('*')
-                .eq('is_active', true)
-                .order('sort_order', { ascending: true })
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-
-            const now = new Date();
-
-            const activeAnnouncements = (data || []).filter((announcement) => {
-                const startsAtIsValid =
-                    !announcement.starts_at || new Date(announcement.starts_at) <= now;
-
-                const expirationDateIsValid =
-                    !announcement.expiration_date || new Date(announcement.expiration_date) > now;
-
-                return startsAtIsValid && expirationDateIsValid;
-            });
-
-            setAnnouncements(activeAnnouncements);
-        } catch (err) {
-            console.error('Error fetching announcements:', err);
-        }
-    };
-
-    const fetchDiscounts = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('products')
-                .select(`*, product_line (*)`)
-                .gt('discount', 0)
-                .eq('is_visible', true)
-                .order('discount', { ascending: false });
-
-            if (error) throw error;
-            setDiscounts(data || []);
-
-        } catch (err) {
-            console.error('Error fetching discounts:', err);
-        }
-    };
-
-    const fetchNewProducts = async () => {
-        try {
-            const queryNew = supabase
-                .from('products')
-                .select(`*, product_line (*)`)
-                .eq('is_new', true)
-                .eq('is_visible', true);
-
-            const queryCombos = supabase
-                .from('products')
-                .select(`*, product_line!inner (*)`)
-                .eq('is_visible', true)
-                .ilike('product_line.name', '%Combos%');
-
-            const [resNew, resCombos] = await Promise.all([queryNew, queryCombos]);
-
-            if (resNew.error) throw resNew.error;
-            if (resCombos.error) throw resCombos.error;
-
-            const newData = resNew.data || [];
-            const combosData = resCombos.data || [];
-
-            const combined = [...newData];
-            const existingIds = new Set(combined.map(p => p.id));
-
-            combosData.forEach(p => {
-                if (!existingIds.has(p.id)) {
-                    combined.push(p);
-                }
-            });
-
-            setNewProducts(combined);
-        } catch (err) {
-            console.error('Error fetching new products/combos:', err);
-        }
-    };
-
+    // Mientras la capa de carga está visible no se puede hacer scroll.
     useEffect(() => {
-        setLoading(true);
-
-        Promise.all([
-            fetchNewProducts(),
-            fetchDiscounts(),
-            fetchAnnouncements()
-        ]).finally(() => setLoading(false));
-    }, []);
-
-    useEffect(() => {
-        if (!loading) {
-            const hash = window.location.hash;
-
-            if (hash) {
-                setTimeout(() => {
-                    const element = document.querySelector(hash);
-
-                    if (element) {
-                        element.scrollIntoView({ behavior: "smooth" });
-                    }
-                }, 300);
-            }
-        }
+        if (!loading) return;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = '';
+        };
     }, [loading]);
 
     const getGridClasses = (length) => {
@@ -166,7 +68,9 @@ export default function Home() {
                 keywords="Essen, productos Essen, ollas, sartenes, Mar del Plata, promociones, combos"
             />
 
-            <div className="">
+            <HomeLoader visible={loading} />
+
+            <div ref={contentRef} className={loading ? 'opacity-0' : ''} inert={loading}>
 
                 {announcements.map((announcement) => (
                     <AnnouncementBanner
@@ -189,7 +93,7 @@ export default function Home() {
                     </Reveal>
                     <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
                         {discounts.map((product, index) => (
-                            <Reveal key={product.id} effect="zoom" delay={(index % 4) * 100} className="h-full">
+                            <Reveal key={product.id} effect="zoom" delay={Math.min((index % 4) * 100, 400)} className="h-full">
                                 <ProductCard product={product} className="h-full" />
                             </Reveal>
                         ))}

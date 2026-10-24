@@ -40,6 +40,8 @@ export default function Promotions() {
                         src={PROMO_IMAGE}
                         className="object-contain h-auto w-250 max-w-full md:p-3"
                         alt="Promociones financieras con tarjetas y bancos"
+                        width={1081}
+                        height={2282}
                         loading="lazy"
                     />
                     <span className="absolute px-3 py-1 text-sm font-semibold text-white bg-orange-600 bottom-5 right-5 shadow">
