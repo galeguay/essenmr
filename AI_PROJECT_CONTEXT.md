@@ -79,6 +79,7 @@
 ## Notas importantes
 - Ficha PDF y video 9:16 por producto: columnas `products.info_pdf` y `products.video_url` (ver `sql/`), se muestran en la página del producto. El PDF se renderiza con `pdfjs-dist` cargado bajo demanda.
 - Código de producto (`products.essen_id`): obligatorio, numérico (sin ceros a la izquierda, máx. 15 dígitos) y único. Se valida en `ProductForm` (`src/utils/productCode.js`, `src/lib/products.js`) y en la base con la restricción de `sql/2026-10-24_products_essen_id_unique.sql` (correr antes `sql/2026-10-24_verify_essen_id_before_unique.sql`).
+- Eliminar producto (permanente): botón en la edición de un producto (`ProductForm`), con diálogo `src/components/admin/DeleteProductDialog.jsx` que exige escribir «eliminar producto» (`src/utils/deleteConfirmation.js`). `deleteProductWithFiles` (`src/lib/products.js`) borra primero la fila y después los archivos del bucket `products` registrados en `image`, `info_pdf`, `video_url` e `images` (ignora videos externos y archivos que use otro producto; `src/utils/storagePath.js`). Requiere políticas de borrado para usuarios autenticados: correr `sql/2026-10-24_verify_products_references.sql`, `sql/2026-10-24_verify_products_delete_access.sql` y luego `sql/2026-10-24_products_delete_policies.sql`.
 - La app usa `document.documentElement.setAttribute("data-theme", "light")` al inicio para fijar tema claro.
 - Las rutas admin se renderizan con `AdminLayout`, mientras el resto se muestra con `PublicLayout`.
 - `src/lib/pocketbase.js` guarda token y usuario en `localStorage` y sincroniza auth state.
