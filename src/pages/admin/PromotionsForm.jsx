@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { validateUpload } from "../../utils/uploadImage";
 
 export default function PromotionsForm() {
     const [file, setFile] = useState(null);
@@ -9,6 +10,12 @@ export default function PromotionsForm() {
     const handleUpload = async (e) => {
         e.preventDefault();
         if (!file) return;
+        try {
+            validateUpload("images", file);
+        } catch (err) {
+            alert(err.message);
+            return;
+        }
         setLoading(true);
         const fileName = `tarjetas.webp`;
         const { data, error } = await supabase.storage

@@ -8,7 +8,7 @@ import DeleteProductDialog from "../../components/admin/DeleteProductDialog";
 
 export default function ProductForm({
     initialData = null,
-    onSubmit = (data) => console.log(data),
+    onSubmit = () => {},
     onCancel = null
 }) {
     const { id } = useParams();

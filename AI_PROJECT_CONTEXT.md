@@ -7,7 +7,7 @@
 - Aplicación web front-end construida con React y Vite.
 - Incluye una parte pública para usuarios finales y un panel de administración.
 - Utiliza Tailwind CSS + DaisyUI para estilos.
-- Integra PocketBase para autenticación/datos y Supabase como dependencia presente en el proyecto.
+- Usa Supabase para autenticación, base de datos (RLS) y Storage; no hay backend propio.
 
 ## Stack principal
 - React 19
@@ -15,7 +15,6 @@
 - Tailwind CSS 4
 - DaisyUI
 - React Router DOM 7
-- PocketBase
 - Supabase JS
 - Bootstrap Icons
 
@@ -25,7 +24,6 @@
 - `src/routes/RootLayout.jsx`: selecciona layout público o admin según la ruta.
 - `src/routes/PublicLayout.jsx`: layout para la parte pública.
 - `src/routes/AdminLayout.jsx`: layout para el panel admin.
-- `src/lib/pocketbase.js`: instancia de PocketBase y manejo de authStore.
 - `src/lib/supabase.js`: cliente Supabase.
 - `src/utils/uploadImage.js`: utilitario para carga de imágenes.
 - `src/lib/homeData.js`: consultas del home (anuncios, descuentos, novedades) en paralelo y caché de 5 min (memoria + `sessionStorage`).
@@ -82,5 +80,4 @@
 - Eliminar producto (permanente): botón en la edición de un producto (`ProductForm`), con diálogo `src/components/admin/DeleteProductDialog.jsx` que exige escribir «eliminar producto» (`src/utils/deleteConfirmation.js`). `deleteProductWithFiles` (`src/lib/products.js`) borra primero la fila y después los archivos del bucket `products` registrados en `image`, `info_pdf`, `video_url` e `images` (ignora videos externos y archivos que use otro producto; `src/utils/storagePath.js`). Requiere políticas de borrado para usuarios autenticados: correr `sql/2026-10-24_verify_products_references.sql`, `sql/2026-10-24_verify_products_delete_access.sql` y luego `sql/2026-10-24_products_delete_policies.sql`.
 - La app usa `document.documentElement.setAttribute("data-theme", "light")` al inicio para fijar tema claro.
 - Las rutas admin se renderizan con `AdminLayout`, mientras el resto se muestra con `PublicLayout`.
-- `src/lib/pocketbase.js` guarda token y usuario en `localStorage` y sincroniza auth state.
 - El proyecto es privado (`private: true`) en `package.json`.

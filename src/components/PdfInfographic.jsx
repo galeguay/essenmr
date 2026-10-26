@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { safeUrl } from "../utils/safeUrl";
 
 // pdf.js se carga solo cuando hace falta, para no sumar peso al resto del sitio
 let pdfjsPromise;
@@ -163,7 +164,8 @@ function FullscreenViewer({ pdf, title, url, onClose }) {
 
 // Ficha técnica / infografía en PDF: se ve página por página dentro del sitio,
 // se puede ampliar a pantalla completa con zoom y descargar.
-export default function PdfInfographic({ url, title }) {
+export default function PdfInfographic({ url: rawUrl, title }) {
+    const url = safeUrl(rawUrl);
     const containerRef = useRef(null);
     const width = useElementWidth(containerRef);
     const [visible, setVisible] = useState(false);
