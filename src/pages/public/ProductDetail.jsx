@@ -1,4 +1,6 @@
 import { toTitleCase } from "../../utils/toTitleCase";
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Seo from '../../components/Seo';
@@ -14,6 +16,7 @@ export default function ProductDetail() {
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
+    const showLoader = usePageLoader(loading);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -49,13 +52,7 @@ export default function ProductDetail() {
     }, [essen_id, navigate]);
 
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-stone-50">
-                <div className="w-16 h-16 border-t-4 border-b-4 border-orange-600 rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+    if (loading) return <><PageLoader visible={showLoader} /></>;
 
     if (!product) {
         return (
@@ -84,6 +81,7 @@ export default function ProductDetail() {
 
     return (
         <>
+            <PageLoader visible={showLoader} />
             <Seo
                 title={`${product.name} | EssenMR`}
                 description={product.description || `Producto ${product.name} disponible en EssenMR.`}

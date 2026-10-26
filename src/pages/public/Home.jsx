@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import Promotions from '../../components/Promotions';
 import { supabase } from '../../lib/supabase';
 import BtnWpp from '../../components/BtnWpp';
@@ -36,6 +38,7 @@ export default function Home() {
     const [newProducts, setNewProducts] = useState([]);
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
+    const showLoader = usePageLoader(loading);
 
     const fetchAnnouncements = async () => {
         try {
@@ -158,6 +161,7 @@ export default function Home() {
 
     return (
         <>
+            <PageLoader visible={showLoader} />
             <Seo
                 title="EssenMR - Ofertas y novedades en productos de cocina Essen"
                 description="Encontrá combos, promociones y nuevos lanzamientos de productos Essen en Mar del Plata con envío a todo el país."

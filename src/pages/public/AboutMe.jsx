@@ -1,12 +1,17 @@
 import Seo from '../../components/Seo';
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import ContactCard from '../../components/ContactCard';
 
 const PHOTO_URL = "https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/public/images/MR.webp";
 
 export default function AboutMe() {
     
+    const showLoader = usePageLoader(false);
+
     return (
         <>
+            <PageLoader visible={showLoader} />
             <Seo
                 title="Sobre mí | EssenMR"
                 description="Conocé a María Rosa, emprendedora oficial Essen en Mar del Plata y contactate para consultas sobre productos de cocina Essen."
