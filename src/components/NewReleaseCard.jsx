@@ -4,7 +4,7 @@ export default function NewReleaseCard({ productId, title, image, description, i
     return (
         <a
             href={`/producto/${productId}`}
-            className={`flex flex-col ${reverse ? "sm:flex-row-reverse" : "sm:flex-row"} bg-white overflow-hidden shadow-lg w-full max-w-2xl lg:max-w-5xl border border-orange-200 hover:border-orange-400 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer block group`}
+            className={`flex flex-col ${reverse ? "sm:flex-row-reverse" : "sm:flex-row"} bg-white overflow-hidden shadow-lg w-full max-w-2xl lg:max-w-none lg:w-[calc(100%+(100vw-100%)/2)] ${reverse ? "lg:ml-[calc((100%-100vw)/2)] lg:pl-[calc((100vw-100%)/2)]" : "lg:mr-[calc((100%-100vw)/2)] lg:pr-[calc((100vw-100%)/2)]"} border border-orange-200 hover:border-orange-400 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer block group`}
         >
             {/* Contenedor de la Imagen: Ajuste dinámico sin altura fija */}
             <div className="w-full sm:w-2/5 aspect-[4/3] sm:aspect-auto sm:min-h-64 flex items-center justify-center p-4 sm:p-0 bg-stone-50 overflow-hidden">
