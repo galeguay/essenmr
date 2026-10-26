@@ -2,6 +2,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from '../../lib/supabase';
 import { uploadImage } from "../../utils/uploadImage";
+import { normalizeProductCode, validateProductCodeFormat } from "../../utils/productCode";
+import { findProductByCode, deleteProductWithFiles } from "../../lib/products";
+import DeleteProductDialog from "../../components/admin/DeleteProductDialog";
 
 export default function ProductForm({
     initialData = null,
@@ -36,6 +39,11 @@ export default function ProductForm({
     const [lineas, setLineas] = useState([]);
     const [loadingLineas, setLoadingLineas] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [codeError, setCodeError] = useState("");
+    const [codeChecking, setCodeChecking] = useState(false);
+    const [savedName, setSavedName] = useState("");
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const fetchLineas = async () => {
         try {
@@ -67,6 +75,7 @@ export default function ProductForm({
 
             if (error) throw error;
 
+            setSavedName(data.name);
             setProduct({
                 ...data,
                 // Aseguramos que sea string para que coincida con el <select>
@@ -87,12 +96,62 @@ export default function ProductForm({
         loadAll();
     }, [id, loadProduct]);
 
+    // Valida formato y duplicado del código. Devuelve el mensaje de error o "".
+    const checkProductCode = async (rawCode) => {
+        const formatError = validateProductCodeFormat(rawCode);
+        if (formatError) return formatError;
+
+        try {
+            const duplicate = await findProductByCode(normalizeProductCode(rawCode), isEdit ? id : null);
+            return duplicate ? `Este código ya lo usa el producto «${duplicate.name}».` : "";
+        } catch (error) {
+            console.error("Error verificando código:", error);
+            return "No pudimos verificar el código. Revisá tu conexión e intentá de nuevo.";
+        }
+    };
+
+    const handleCodeBlur = async () => {
+        const normalized = normalizeProductCode(product.essen_id);
+        if (normalized !== String(product.essen_id ?? "")) {
+            setProduct(prev => ({ ...prev, essen_id: normalized }));
+        }
+
+        setCodeChecking(true);
+        const message = await checkProductCode(normalized);
+        setCodeError(message);
+        setCodeChecking(false);
+    };
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
+        if (name === "essen_id") setCodeError("");
         setProduct(prev => ({
             ...prev,
             [name]: type === "checkbox" ? checked : value
         }));
+    };
+
+    const handleDelete = async () => {
+        if (deleting) return;
+        setDeleting(true);
+
+        try {
+            const { status, failedFiles } = await deleteProductWithFiles(id);
+
+            if (status === "not_found") {
+                alert("Este producto ya no existe. Volvemos al listado.");
+            } else if (failedFiles > 0) {
+                alert("Producto eliminado, pero algunos archivos no pudieron borrarse del almacenamiento.");
+            } else {
+                alert("Producto eliminado");
+            }
+            navigate("/admin/products");
+        } catch (error) {
+            console.error("Error eliminando producto:", error);
+            alert("No pudimos eliminar el producto. Revisá tu conexión o tu sesión e intentá de nuevo.");
+        } finally {
+            setDeleting(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -100,6 +159,15 @@ export default function ProductForm({
         setLoading(true);
 
         try {
+            // El código se verifica antes de subir cualquier archivo
+            const code = normalizeProductCode(product.essen_id);
+            setProduct(prev => ({ ...prev, essen_id: code }));
+            const codeMessage = await checkProductCode(code);
+            if (codeMessage) {
+                setCodeError(codeMessage);
+                return;
+            }
+
             let imageUrl = product.image || null;
             let pdfUrl = product.info_pdf || null;
             let videoUrl = product.video_url?.trim() || null;
@@ -115,9 +183,8 @@ export default function ProductForm({
             // 3. Crear el string con el formato YYMMDD (Ej: 260306)
             const dateSuffix = `${yy}${mm}${dd}`;
 
-            // 4. Combinar el ID de Essen con la fecha (ej: 12345_260306)
-            // Agregamos un fallback a "nuevo" por si el usuario no ingresó un essen_id
-            const baseId = product.essen_id || 'nuevo';
+            // 4. Combinar el código Essen (ya validado y normalizado) con la fecha (ej: 12345_260306)
+            const baseId = code;
 
             // Si el usuario seleccionó una imagen nueva, se sube
             if (imageFile) {
@@ -209,6 +276,24 @@ export default function ProductForm({
 
         } catch (error) {
             console.error("Error guardando producto:", error);
+            if (isEdit && error.code === "PGRST116") {
+                // El update no encontró la fila: puede que otra persona haya eliminado el producto
+                const { data: stillThere } = await supabase
+                    .from("products")
+                    .select("id")
+                    .eq("id", id)
+                    .maybeSingle();
+
+                if (!stillThere) {
+                    alert("Este producto fue eliminado y ya no existe.");
+                    navigate("/admin/products");
+                    return;
+                }
+            }
+            if (error.code === "23505") {
+                setCodeError("Este código ya lo usa otro producto.");
+                return;
+            }
             alert("Error: " + (error.message || "Error desconocido al guardar"));
 
         } finally {
@@ -217,6 +302,7 @@ export default function ProductForm({
     };
 
     return (
+        <>
         <form
             onSubmit={handleSubmit}
             className="w-full max-w-lg p-8 mx-auto space-y-8 bg-white border border-gray-200 shadow-lg rounded-xl"
@@ -247,12 +333,24 @@ export default function ProductForm({
                     name="essen_id"
                     value={product.essen_id}
                     onChange={handleChange}
-                    className="input"
+                    onBlur={handleCodeBlur}
+                    required
+                    inputMode="numeric"
+                    className={`input ${codeError ? "input-error" : ""}`}
                     placeholder="Código Essen"
                     autoComplete="off"
+                    aria-invalid={!!codeError}
                 />
-                <span>Código Essen</span>
+                <span>Código Essen *</span>
             </label>
+            {codeChecking && (
+                <p className="-mt-6 text-sm text-gray-500">Verificando código…</p>
+            )}
+            {codeError && (
+                <p role="alert" className="-mt-6 text-sm font-medium text-red-600">
+                    ⚠ {codeError}
+                </p>
+            )}
 
             {/* Línea de producto */}
             <label className="select">
@@ -473,7 +571,7 @@ export default function ProductForm({
             <div className="flex gap-3">
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || codeChecking}
                     className="flex-1 py-3 font-bold text-white transition bg-purple-600 rounded-lg hover:bg-purple-700 disabled:opacity-70"
                 >
                     {loading ? "Guardando..." : isEdit ? "Actualizar" : "Guardar producto"}
@@ -489,6 +587,32 @@ export default function ProductForm({
                     </button>
                 )}
             </div>
+
+            {/* Zona de peligro: solo al editar un producto existente */}
+            {isEdit && (
+                <div className="pt-6 border-t border-gray-200">
+                    <button
+                        type="button"
+                        onClick={() => setShowDeleteDialog(true)}
+                        disabled={loading}
+                        className="w-full gap-2 btn btn-outline btn-error"
+                    >
+                        <i className="bi bi-trash3" aria-hidden="true"></i>
+                        Eliminar producto
+                    </button>
+                </div>
+            )}
+
         </form>
+
+        {/* Fuera del <form>: el diálogo tiene sus propios formularios */}
+        <DeleteProductDialog
+            open={showDeleteDialog}
+            productName={savedName}
+            deleting={deleting}
+            onCancel={() => setShowDeleteDialog(false)}
+            onConfirm={handleDelete}
+        />
+        </>
     );
 }

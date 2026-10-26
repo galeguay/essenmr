@@ -24,3 +24,41 @@
     display: none;
   }
 }
+
+/* Efectos de entrada (componente Reveal) */
+.reveal {
+  opacity: 0;
+  transition: opacity 0.9s ease-out, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal[data-reveal="up"] { transform: translateY(32px); }
+.reveal[data-reveal="left"] { transform: translateX(-48px); }
+.reveal[data-reveal="right"] { transform: translateX(48px); }
+.reveal[data-reveal="zoom"] { transform: scale(0.92); }
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+/* Al ocultarse de nuevo (el componente quedó debajo de la pantalla) no se aplica retraso */
+.reveal[data-visible="false"] {
+  transition-delay: 0ms !important;
+}
+
+/* Pantalla de carga del home */
+@keyframes loader-bar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+.loader-bar {
+  animation: loader-bar 1.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .loader-bar {
+    animation: none;
+  }
+}

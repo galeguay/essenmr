@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { getLinePalette } from "../../utils/linePalette";
@@ -20,6 +22,7 @@ export default function ProductLine() {
     const [products, setProducts] = useState([]);
     const [heroProducts, setHeroProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const showLoader = usePageLoader(loading);
 
     useEffect(() => {
         const load = async () => {
@@ -46,7 +49,8 @@ export default function ProductLine() {
                     if (prodError) throw prodError;
 
                     const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
-                    setProducts([...(productsData || [])].sort((a, b) => priority(a) - priority(b)));
+                    const byName = (a, b) => (a.name || "").localeCompare(b.name || "", "es", { sensitivity: "base" });
+                    setProducts([...(productsData || [])].sort((a, b) => priority(a) - priority(b) || byName(a, b)));
 
                     // 3 productos al azar (con foto) para el encabezado
                     const withImage = (productsData || []).filter((p) => p.image);
@@ -68,13 +72,7 @@ export default function ProductLine() {
 
     const palette = useMemo(() => getLinePalette(line?.color), [line?.color]);
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="w-12 h-12 border-t-4 border-b-4 border-orange-600 rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+    if (loading) return <><PageLoader visible={showLoader} /></>;
 
     if (!line) {
         return (
@@ -90,6 +88,7 @@ export default function ProductLine() {
 
     return (
         <>
+            <PageLoader visible={showLoader} />
             <Seo
                 title={`${line.name} | EssenMR`}
                 description={line.description || `Conocé la línea ${line.name} de Essen y todos sus productos.`}

@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import { useSearchParams } from "react-router-dom";
 import ProductCard from '../../components/ProductCard';
 import Seo from '../../components/Seo';
@@ -22,6 +24,7 @@ export default function ProductsPage() {
     const [products, setProducts] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const showLoader = usePageLoader(loading);
     const [searchParams, setSearchParams] = useSearchParams();
 
     /* Filtros */
@@ -108,25 +111,21 @@ export default function ProductsPage() {
             );
         }
 
-        /* Orden: primero nuevos, luego con descuento, después el resto (sort estable: mantiene el orden por essen_id dentro de cada grupo) */
-        const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
-        filtered.sort((a, b) => priority(a) - priority(b));
+        /* Orden: primero nuevos, luego con descuento, luego combos, después el resto (dentro de cada grupo, alfabético por nombre) */
+        const isCombo = (p) => /combos/i.test(p.product_line?.name || '');
+        const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : isCombo(p) ? 2 : 3);
+        filtered.sort((a, b) => priority(a) - priority(b) || (a.name || '').localeCompare(b.name || '', 'es', { sensitivity: 'base' }));
 
         setProducts(filtered);
     }, [debouncedSearchTerm, selectedLine, allProducts]);
 
 
     /* Render */
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="w-12 h-12 border-t-4 border-b-4 border-orange-600 rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+    if (loading) return <><PageLoader visible={showLoader} /></>;
 
     return (
         <>
+            <PageLoader visible={showLoader} />
             <Seo
                 title="Productos | EssenMR"
                 description="Explorá todos los productos Essen disponibles con envío a todo el país. Filtrá por línea y buscá el producto ideal."

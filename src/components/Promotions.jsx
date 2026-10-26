@@ -7,7 +7,6 @@ const PROMO_IMAGE = "https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/
 export default function Promotions() {
     const [open, setOpen] = useState(false);
 
-    const currentMonth = new Date().toLocaleString('es-ES', { month: 'long' });
 
     useEffect(() => {
         if (!open) return;
@@ -24,7 +23,7 @@ export default function Promotions() {
         <section id="promociones" className="w-full py-12 bg-emerald-50 border-y border-emerald-100">
         <div className="container flex flex-col md:mx-auto">
             <h2 className={`${typography.sectionTitle} px-6 md:px-16 mb-3`}>
-                Promociones financieras en {currentMonth.toUpperCase()}
+                Promociones financieras vigentes
             </h2>
             <p className="px-6 md:px-16 mb-8 text-emerald-900/80 md:text-lg">
                 Elegí tu banco y pagá en cuotas sin interés. Tocá la imagen para verla en grande.
@@ -41,6 +40,8 @@ export default function Promotions() {
                         src={PROMO_IMAGE}
                         className="object-contain h-auto w-250 max-w-full md:p-3"
                         alt="Promociones financieras con tarjetas y bancos"
+                        width={1081}
+                        height={2282}
                         loading="lazy"
                     />
                     <span className="absolute px-3 py-1 text-sm font-semibold text-white bg-orange-600 bottom-5 right-5 shadow">

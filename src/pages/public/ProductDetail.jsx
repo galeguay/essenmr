@@ -1,4 +1,6 @@
 import { toTitleCase } from "../../utils/toTitleCase";
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Seo from '../../components/Seo';
@@ -14,6 +16,7 @@ export default function ProductDetail() {
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
+    const showLoader = usePageLoader(loading);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -49,13 +52,7 @@ export default function ProductDetail() {
     }, [essen_id, navigate]);
 
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-stone-50">
-                <div className="w-16 h-16 border-t-4 border-b-4 border-orange-600 rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+    if (loading) return <><PageLoader visible={showLoader} /></>;
 
     if (!product) {
         return (
@@ -84,6 +81,7 @@ export default function ProductDetail() {
 
     return (
         <>
+            <PageLoader visible={showLoader} />
             <Seo
                 title={`${product.name} | EssenMR`}
                 description={product.description || `Producto ${product.name} disponible en EssenMR.`}
@@ -92,14 +90,14 @@ export default function ProductDetail() {
                 keywords={`${product.product_line?.name || "Essen"}, ${product.name}, cocina`}
                 jsonLd={productJsonLd}
             />
-            <div className="min-h-screen px-4 py-8 bg-stone-50">
+            <div className="min-h-screen px-4 py-8 overflow-x-clip bg-stone-50">
                 <div className="mx-auto mb-20 max-w-7xl md:mb-40">
 
                     <div className="grid grid-cols-1 gap-1 lg:grid-cols-2">
 
                         <ProductGallery product={product} />
 
-                        <div className="flex flex-col justify-between p-6 lg:p-12">
+                        <div className="flex flex-col justify-between min-w-0 p-6 lg:p-12">
                             <div>
                                 {product.product_line && (
                                     <p className="text-xl lg:text-2xl m-0 tracking-wider text-gray-500">
@@ -134,7 +132,7 @@ export default function ProductDetail() {
                                 {product.description && (
                                     <div className="mb-8 prose prose-lg">
                                         {/* Agregamos la clase aquí */}
-                                        <p className="whitespace-pre-wrap">{product.description}</p>
+                                        <p className="whitespace-pre-wrap wrap-anywhere">{product.description}</p>
                                     </div>
                                 )}
 
