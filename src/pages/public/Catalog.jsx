@@ -26,25 +26,25 @@ function LineSection({ line, products }) {
 
     return (
         <section style={palette} className="relative bg-[var(--line-tint)]">
-            <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[var(--line-accent)] via-[var(--line-base)] to-transparent"></div>
             <div className="px-4 py-14 mx-auto max-w-7xl">
-                <Reveal effect="up" className="flex flex-col gap-4 mb-10 md:flex-row md:items-end md:justify-between">
-                    <div>
-                        <p className="mb-1 text-xs font-semibold tracking-widest uppercase text-[var(--line-base)]">
-                            Línea · {products.length} {products.length === 1 ? "producto" : "productos"}
-                        </p>
-                        <h2 className="text-3xl font-bold md:text-4xl text-[var(--line-dark)]">{line.name}</h2>
-                        <div className="w-20 h-1.5 mt-3 rounded-full bg-[var(--line-accent)]"></div>
-                        {blurb && (
-                            <p className="max-w-2xl mt-4 leading-relaxed text-gray-700 md:text-lg">{blurb}</p>
-                        )}
+                <Reveal effect="up" className="mb-10">
+                    <div className="flex flex-col gap-4 px-5 py-4 md:flex-row md:items-center md:justify-between bg-gradient-to-r from-[var(--line-accent)] to-[var(--line-tint)]">
+                        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-[var(--line-on-accent)]">
+                            <h2 className="text-3xl font-bold md:text-4xl">{line.name}</h2>
+                            <p className="text-xs font-semibold tracking-widest uppercase opacity-80">
+                                {products.length} {products.length === 1 ? "producto" : "productos"}
+                            </p>
+                        </div>
+                        <Link
+                            to={href}
+                            className="self-start px-5 py-2.5 font-semibold rounded-lg shrink-0 bg-[var(--line-accent)] text-[var(--line-on-accent)] hover:brightness-110 md:self-auto"
+                        >
+                            Ver toda la línea <span aria-hidden="true">→</span>
+                        </Link>
                     </div>
-                    <Link
-                        to={href}
-                        className="self-start px-5 py-2.5 font-semibold rounded-lg shrink-0 bg-[var(--line-accent)] text-[var(--line-on-accent)] hover:brightness-110 md:self-auto"
-                    >
-                        Ver toda la línea <span aria-hidden="true">→</span>
-                    </Link>
+                    {blurb && (
+                        <p className="max-w-2xl mt-4 leading-relaxed text-gray-700 md:text-lg">{blurb}</p>
+                    )}
                 </Reveal>
 
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
