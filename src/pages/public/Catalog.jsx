@@ -7,6 +7,7 @@ import { getLinePalette } from "../../utils/linePalette";
 import ProductCard from "../../components/ProductCard";
 import BtnWpp from "../../components/BtnWpp";
 import Seo from "../../components/Seo";
+import Reveal from "../../components/Reveal";
 
 const SAMPLES_PER_LINE = 4;
 
@@ -24,10 +25,14 @@ function LineSection({ line, products }) {
     const href = line.string_id ? `/linea/${line.string_id}` : `/productos?product_line=${encodeURIComponent(line.name)}`;
 
     return (
-        <section style={palette} className="bg-[var(--line-tint)]">
-            <div className="px-4 py-12 mx-auto max-w-7xl">
-                <div className="flex flex-col gap-4 mb-8 md:flex-row md:items-end md:justify-between">
+        <section style={palette} className="relative bg-[var(--line-tint)]">
+            <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[var(--line-accent)] via-[var(--line-base)] to-transparent"></div>
+            <div className="px-4 py-14 mx-auto max-w-7xl">
+                <Reveal effect="up" className="flex flex-col gap-4 mb-10 md:flex-row md:items-end md:justify-between">
                     <div>
+                        <p className="mb-1 text-xs font-semibold tracking-widest uppercase text-[var(--line-base)]">
+                            Línea · {products.length} {products.length === 1 ? "producto" : "productos"}
+                        </p>
                         <h2 className="text-3xl font-bold md:text-4xl text-[var(--line-dark)]">{line.name}</h2>
                         <div className="w-20 h-1.5 mt-3 rounded-full bg-[var(--line-accent)]"></div>
                         {blurb && (
@@ -40,11 +45,13 @@ function LineSection({ line, products }) {
                     >
                         Ver toda la línea <span aria-hidden="true">→</span>
                     </Link>
-                </div>
+                </Reveal>
 
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {samples.map((product) => (
-                        <ProductCard key={product.id} product={product} />
+                    {samples.map((product, i) => (
+                        <Reveal key={product.id} effect="up" delay={i * 80}>
+                            <ProductCard product={product} />
+                        </Reveal>
                     ))}
                 </div>
             </div>
@@ -108,9 +115,12 @@ export default function Catalog() {
 
             <div className="min-h-screen bg-stone-50">
                 {/* Introducción */}
-                <header className="px-4 py-12 text-center text-white bg-orange-600 md:py-16">
-                    <div className="max-w-3xl mx-auto">
-                        <h1 className="text-3xl font-bold md:text-5xl">Catálogo</h1>
+                <header className="relative px-4 py-14 overflow-hidden text-center text-white bg-gradient-to-br from-orange-500 via-orange-600 to-orange-800 md:py-20">
+                    <div aria-hidden="true" className="absolute rounded-full -top-24 -right-24 size-72 bg-white/10 blur-2xl"></div>
+                    <div aria-hidden="true" className="absolute rounded-full -bottom-28 -left-20 size-64 bg-orange-300/20 blur-2xl"></div>
+                    <div className="relative max-w-3xl mx-auto">
+                        <h1 className="text-4xl font-bold tracking-tight md:text-6xl">Catálogo</h1>
+                        <p className="mt-3 text-white/85 md:text-lg">Elegí tu línea y encontrá el producto ideal para tu cocina.</p>
 
                         {visibleLines.length > 1 && (
                             <nav aria-label="Líneas" className="mt-8">
