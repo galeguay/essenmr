@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import Promotions from '../../components/Promotions';
 import useHomeLoad from '../../hooks/useHomeLoad';
 import useHomeScroll from '../../hooks/useHomeScroll';
@@ -12,6 +12,7 @@ import HeroFusionBanner from '../../components/HeroFusionBanner';
 import Seo from '../../components/Seo';
 import ContactCard from '../../components/ContactCard';
 import CtaCard from '../../components/CtaCard';
+import DecorPills from '../../components/DecorPills';
 import Reveal from '../../components/Reveal';
 import { typography } from '../../styles/typography';
 
@@ -89,8 +90,13 @@ export default function Home() {
 
                 <section className="flex flex-col items-center justify-center py-12 bg-stone-50">
                     <Reveal effect="left" className="container mx-auto">
-                        <h2 className={`${typography.sectionTitle} text-dark px-6 md:px-16 mb-10`}>
+                        <h2 className={`${typography.sectionTitle} text-dark px-6 md:px-16 mb-10 flex items-center gap-4 lg:gap-6`}>
                             Descuentos
+                            <span className="flex items-center flex-1 gap-2 lg:gap-3" aria-hidden="true">
+                                <span className="h-1.5 lg:h-2 flex-1 rounded-full bg-stone-200"></span>
+                                <span className="w-6 h-1.5 lg:w-10 lg:h-2 rounded-full bg-orange-200"></span>
+                                <span className="w-3 h-1.5 lg:w-4 lg:h-2 rounded-full bg-orange-300"></span>
+                            </span>
                         </h2>
                     </Reveal>
                     <div className={`grid gap-3 px-6 md:px-16 justify-center container ${getGridClasses(discounts.length)}`}>
@@ -103,22 +109,27 @@ export default function Home() {
                 </section>
 
                 {newProducts.length > 0 ? (
-                    <section className="py-12 bg-orange-50">
+                    <section className="py-12 bg-orange-50 overflow-x-clip">
 
                         <Reveal effect="left" className="container mx-auto">
-                            <h2 className={`${typography.sectionTitle} text-orange-800 px-6 md:px-16 mb-10`}>
+                            <h2 className={`${typography.sectionTitle} text-orange-800 px-6 md:px-16 lg:pl-40 mb-10 flex items-center gap-3 lg:gap-4`}>
+                                <span className="hidden lg:block lg:h-2 lg:w-24 shrink-0 rounded-full bg-orange-300" aria-hidden="true"></span>
                                 Novedades del mes
                             </h2>
                         </Reveal>
 
                         <div className="container mx-auto">
-                            <div className="flex flex-col items-center gap-8 px-6">
+                            <div className="flex flex-col items-center gap-4 px-6 lg:px-16 lg:gap-12">
                                 {newProducts.map((np, index) => (
+                                    <Fragment key={np.essen_id}>
                                     <Reveal
-                                        key={np.essen_id}
                                         effect={index % 2 === 1 ? "right" : "left"}
-                                        className="flex justify-center w-full"
+                                        className={`relative flex justify-center w-full ${index % 2 === 1 ? "lg:justify-start" : "lg:justify-end"}`}
                                     >
+                                        <DecorPills
+                                            tone={index % 2 === 1 ? "stone" : "orange"}
+                                            className={`absolute top-1/2 -translate-y-1/2 ${index % 2 === 1 ? "left-full ms-8" : "right-full me-8 items-end"}`}
+                                        />
                                         <NewReleaseCard
                                             productId={np.essen_id}
                                             title={np.name}
@@ -129,6 +140,17 @@ export default function Home() {
                                             reverse={index % 2 === 1}
                                         />
                                     </Reveal>
+                                    {index < newProducts.length - 1 && (
+                                        <div
+                                            className={`flex gap-2 lg:hidden ${index % 2 === 1 ? "self-start" : "self-end"}`}
+                                            aria-hidden="true"
+                                        >
+                                            <span className="w-3 h-1.5 rounded-full bg-orange-300/70"></span>
+                                            <span className="w-10 h-1.5 rounded-full bg-orange-200"></span>
+                                            <span className="w-6 h-1.5 rounded-full bg-orange-100"></span>
+                                        </div>
+                                    )}
+                                    </Fragment>
                                 ))}
                             </div>
                         </div>
@@ -136,19 +158,26 @@ export default function Home() {
                 ) : ""}
 
                 <section className="py-12">
-                    <div className="container grid gap-6 px-6 mx-auto md:grid-cols-2 md:px-16">
+                    <div className="flex items-center justify-center gap-2 px-6 mb-8 lg:gap-3 lg:mb-12" aria-hidden="true">
+                        <span className="w-14 h-1.5 lg:w-40 lg:h-2 rounded-full bg-orange-100"></span>
+                        <span className="w-8 h-1.5 lg:w-16 lg:h-2 rounded-full bg-orange-200"></span>
+                        <span className="w-3 h-1.5 lg:w-4 lg:h-2 rounded-full bg-orange-300"></span>
+                        <span className="w-8 h-1.5 lg:w-16 lg:h-2 rounded-full bg-orange-200"></span>
+                        <span className="w-14 h-1.5 lg:w-40 lg:h-2 rounded-full bg-orange-100"></span>
+                    </div>
+                    <div className="container grid gap-6 px-6 mx-auto md:grid-cols-2 md:px-16 lg:max-w-4xl">
                         <Reveal effect="up" className="h-full">
                         <CtaCard
+                            square
                             className="h-full"
                             icon="bi-grid-fill"
                             title="Conocé nuestras líneas de productos"
-                            text="Cada línea Essen tiene su propio estilo y prestaciones. Recorré el catálogo y encontrá la ideal para tu cocina."
                             buttonLabel="Ver el catálogo →"
                             to="/catalogo"
                         />
                         </Reveal>
                         <Reveal effect="up" delay={150} className="h-full">
-                            <ContactCard gaAction="Clic_Contacto_Home" className="h-full" />
+                            <ContactCard gaAction="Clic_Contacto_Home" text="" square className="h-full" />
                         </Reveal>
                     </div>
                 </section>
