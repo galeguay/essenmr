@@ -15,7 +15,6 @@ export default function ProductForm({
     const navigate = useNavigate();
     const isEdit = !!id;
     const [imageFile, setImageFile] = useState(null);
-    const [imageVersion, setImageVersion] = useState(Date.now());
     const [pdfFile, setPdfFile] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
     const [extraFiles, setExtraFiles] = useState([]);
@@ -259,7 +258,6 @@ export default function ProductForm({
                     isFileUsedByAnotherProduct
                 );
                 savedFilesRef.current = [imageUrl, pdfUrl, videoUrl, ...extraUrls];
-                setImageVersion(Date.now());
                 alert("Producto actualizado correctamente");
             } else {
                 setProduct({
@@ -472,7 +470,7 @@ export default function ProductForm({
                 {isEdit && product.image && !imageFile && (
                     <div className="mb-2">
                         <div className="w-48 h-48 mx-auto overflow-hidden border border-gray-200 rounded-lg shadow-sm">                            <img
-                            src={`${product.image}?v=${imageVersion}`}
+                            src={product.image}
                             alt={`Imagen de ${product.name}`}
                             className="object-cover w-full h-full"
                         />
