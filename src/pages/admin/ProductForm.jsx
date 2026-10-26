@@ -5,7 +5,7 @@ import { uploadImage } from "../../utils/uploadImage";
 
 export default function ProductForm({
     initialData = null,
-    onSubmit = (data) => console.log(data),
+    onSubmit = () => {},
     onCancel = null
 }) {
     const { id } = useParams();

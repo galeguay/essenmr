@@ -11,8 +11,8 @@ export default function ChangePasswordForm() {
         e.preventDefault();
         setMsg(null);
 
-        if (password.length < 6) {
-            setMsg("La contraseña debe tener al menos 6 caracteres.");
+        if (password.length < 12) {
+            setMsg("La contraseña debe tener al menos 12 caracteres.");
             return;
         }
 

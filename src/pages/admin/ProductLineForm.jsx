@@ -6,7 +6,7 @@ import { uploadImage } from "../../utils/uploadImage";
 
 export default function ProductLineForm({
     initialData = null,
-    onSubmit = (data) => console.log(data),
+    onSubmit = () => {},
     onCancel = null
 }) {
     const { id } = useParams();
@@ -70,9 +70,6 @@ export default function ProductLineForm({
 
 const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const { data: userData } = await supabase.auth.getUser();
-        console.log("USER:", userData.user);
 
         setLoading(true);
 

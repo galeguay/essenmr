@@ -2,7 +2,6 @@
 import { Link } from 'react-router-dom';
 import BtnLink from './BtnLink';
 import ReactGA from "react-ga4";
-//import { pb } from '../../lib/pocketbase.js';
 
 export default function Footer() {
   const links = [
