@@ -24,11 +24,7 @@ export default function NewReleaseCard({ productId, title, image, description, i
                 )}
 
                 <h3 className="text-2xl lg:text-4xl font-bold text-gray-900 mb-3 lg:mb-5">
-                    {isNew && (
-                        <span className="mr-2 align-middle px-2 py-0.5 text-sm lg:text-base font-bold uppercase tracking-wide text-white bg-orange-600">
-                            Nuevo
-                        </span>
-                    )}
+                    {isNew && <span className="text-orange-600">Nuevo </span>}
                     {toTitleCase(title)}
                 </h3>
 
