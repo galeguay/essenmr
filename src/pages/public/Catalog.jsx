@@ -30,9 +30,6 @@ function LineSection({ line, products }) {
                     <div>
                         <h2 className="text-3xl font-bold md:text-4xl text-[var(--line-dark)]">{line.name}</h2>
                         <div className="w-20 h-1.5 mt-3 rounded-full bg-[var(--line-accent)]"></div>
-                        {blurb && (
-                            <p className="max-w-2xl mt-4 leading-relaxed text-gray-700 md:text-lg">{blurb}</p>
-                        )}
                     </div>
                     <Link
                         to={href}
@@ -47,6 +44,10 @@ function LineSection({ line, products }) {
                         <ProductCard key={product.id} product={product} />
                     ))}
                 </div>
+
+                {blurb && (
+                    <p className="w-full mt-8 leading-relaxed text-gray-700 md:text-lg">{blurb}</p>
+                )}
             </div>
         </section>
     );
