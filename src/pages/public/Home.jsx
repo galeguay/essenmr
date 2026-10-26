@@ -49,7 +49,7 @@ export default function Home() {
         return () => {
             document.body.style.overflow = '';
         };
-    }, [loading]);
+    }, [showLoader]);
 
     const getGridClasses = (length) => {
         if (length === 1) return "grid-cols-1 max-w-md mx-auto w-full";
