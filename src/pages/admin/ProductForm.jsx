@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from '../../lib/supabase';
-import { uploadImage } from "../../utils/uploadImage";
+import { uploadImage, removeReplacedFiles } from "../../utils/uploadImage";
 import { normalizeProductCode, validateProductCodeFormat } from "../../utils/productCode";
-import { findProductByCode, deleteProductWithFiles } from "../../lib/products";
+import { findProductByCode, deleteProductWithFiles, isFileUsedByAnotherProduct } from "../../lib/products";
 import DeleteProductDialog from "../../components/admin/DeleteProductDialog";
 
 export default function ProductForm({
@@ -15,10 +15,11 @@ export default function ProductForm({
     const navigate = useNavigate();
     const isEdit = !!id;
     const [imageFile, setImageFile] = useState(null);
-    const [imageVersion, setImageVersion] = useState(Date.now());
     const [pdfFile, setPdfFile] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
     const [extraFiles, setExtraFiles] = useState([]);
+    // Archivos guardados en la base al cargar el producto, para borrar los que se reemplacen
+    const savedFilesRef = useRef([]);
 
     const [product, setProduct] = useState({
         name: initialData?.name || "",
@@ -76,6 +77,7 @@ export default function ProductForm({
             if (error) throw error;
 
             setSavedName(data.name);
+            savedFilesRef.current = [data.image, data.info_pdf, data.video_url, ...(data.images || [])];
             setProduct({
                 ...data,
                 // Aseguramos que sea string para que coincida con el <select>
@@ -248,7 +250,14 @@ export default function ProductForm({
             response = data;
 
             if (isEdit) {
-                setImageVersion(Date.now());
+                // El producto ya quedó guardado: se limpian los archivos que dejó de usar
+                await removeReplacedFiles(
+                    "products",
+                    savedFilesRef.current,
+                    [imageUrl, pdfUrl, videoUrl, ...extraUrls],
+                    isFileUsedByAnotherProduct
+                );
+                savedFilesRef.current = [imageUrl, pdfUrl, videoUrl, ...extraUrls];
                 alert("Producto actualizado correctamente");
             } else {
                 setProduct({
@@ -461,7 +470,7 @@ export default function ProductForm({
                 {isEdit && product.image && !imageFile && (
                     <div className="mb-2">
                         <div className="w-48 h-48 mx-auto overflow-hidden border border-gray-200 rounded-lg shadow-sm">                            <img
-                            src={`${product.image}?v=${imageVersion}`}
+                            src={product.image}
                             alt={`Imagen de ${product.name}`}
                             className="object-cover w-full h-full"
                         />

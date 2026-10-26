@@ -21,7 +21,9 @@ export default function PromotionsForm() {
         const { data, error } = await supabase.storage
             .from("images")
             .upload(fileName, file, {
-                upsert: true
+                upsert: true,
+                // Sin caché larga: los navegadores revalidan y ven la imagen nueva al instante
+                cacheControl: "0"
             });
 
         if (error) {
@@ -34,7 +36,7 @@ export default function PromotionsForm() {
             .from("images")
             .getPublicUrl(data.path);
 
-        setUrl(publicUrlData.publicUrl);
+        setUrl(`${publicUrlData.publicUrl}?t=${Date.now()}`);
         setLoading(false);
     };
 
@@ -65,7 +67,7 @@ export default function PromotionsForm() {
             <div className="max-w-2xl mx-auto hadow bg-base-200 rounded-2xl">
                 <div className="w-full">
                     <img
-                        src="https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/public/images/tarjetas.webp"
+                        src={url || "https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/public/images/tarjetas.webp"}
                         className="object-contain w-full h-auto"
                         alt="Promociones"
                     />  
