@@ -29,15 +29,15 @@ function LineSection({ line, products }) {
             <div className="px-4 py-14 mx-auto max-w-7xl">
                 <Reveal effect="up" className="mb-10">
                     <div className="flex flex-col gap-4 px-5 py-4 md:flex-row md:items-center md:justify-between bg-gradient-to-r from-[var(--line-accent)] to-[var(--line-tint)]">
-                        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-[var(--line-on-accent)]">
+                        <div className="flex flex-col gap-y-1 md:flex-row md:flex-wrap md:items-baseline md:gap-x-4 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)]">
                             <h2 className="text-3xl font-bold md:text-4xl">{line.name}</h2>
-                            <p className="text-xs font-semibold tracking-widest uppercase opacity-80">
+                            <p className="text-xs font-semibold tracking-widest uppercase">
                                 {products.length} {products.length === 1 ? "producto" : "productos"}
                             </p>
                         </div>
                         <Link
                             to={href}
-                            className="self-start px-5 py-2.5 font-semibold rounded-lg shrink-0 bg-[var(--line-accent)] text-[var(--line-on-accent)] hover:brightness-110 md:self-auto"
+                            className="self-start px-5 py-2.5 font-semibold rounded-lg shrink-0 bg-[var(--line-accent)] text-white hover:brightness-110 md:self-auto"
                         >
                             Ver toda la línea <span aria-hidden="true">→</span>
                         </Link>
@@ -47,7 +47,28 @@ function LineSection({ line, products }) {
                     )}
                 </Reveal>
 
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {/* Celular: 4 fotos en 2x2 para no perder el contexto de la línea */}
+                <div className="grid grid-cols-2 gap-3 md:hidden">
+                    {samples.map((product) => (
+                        <Link
+                            key={product.id}
+                            to={`/producto/${product.essen_id}`}
+                            aria-label={`Ver producto ${product.name}`}
+                            className="block overflow-hidden bg-white shadow-sm aspect-square ring-1 ring-[var(--line-soft)]"
+                        >
+                            <img
+                                loading="lazy"
+                                src={product.image || "../../cacerola.webp"}
+                                alt={product.name}
+                                className="object-cover w-full h-full"
+                                onError={(e) => (e.currentTarget.src = "../../cacerola.webp")}
+                            />
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Escritorio: tarjetas completas */}
+                <div className="hidden gap-6 md:grid md:grid-cols-2 lg:grid-cols-4">
                     {samples.map((product, i) => (
                         <Reveal key={product.id} effect="up" delay={i * 80}>
                             <ProductCard product={product} />
@@ -123,7 +144,7 @@ export default function Catalog() {
                         <p className="mt-3 text-white/85 md:text-lg">Elegí tu línea y encontrá el producto ideal para tu cocina.</p>
 
                         {visibleLines.length > 1 && (
-                            <nav aria-label="Líneas" className="mt-8">
+                            <nav aria-label="Líneas" className="hidden mt-8 md:block">
                                 <ul className="flex flex-wrap justify-center gap-2">
                                     {visibleLines.map((line) => (
                                         <li key={line.id}>
