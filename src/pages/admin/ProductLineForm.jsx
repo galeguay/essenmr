@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from '../../lib/supabase';
 // ¡Importamos la utilidad de subida de imagen!
 import { uploadImage, removeReplacedFiles } from "../../utils/uploadImage";
@@ -31,29 +31,33 @@ export default function ProductLineForm({
     });
     const [loading, setLoading] = useState(false);
 
-    const loadProductLine = useCallback(async () => {
-        if (!isEdit) return;
-
-        try {
-            const { data, error } = await supabase
-                .from("product_lines")
-                .select("*")
-                .eq("id", id)
-                .single();
-
-            if (error) throw error;
-
-            savedFilesRef.current = [data.image, data.video_url];
-            setForm({ ...data, short_description: data.short_description ?? "", video_url: data.video_url ?? "", priority: data.priority ?? 100 });
-        } catch {
-            alert("No se pude cargar la línea de producto");
-            navigate("/admin/productLines");
-        }
-    }, [isEdit, id, navigate]);
-
     useEffect(() => {
-        if (isEdit) loadProductLine();
-    }, [isEdit, loadProductLine]);
+        if (!isEdit) return;
+        let cancelled = false;
+
+        const loadProductLine = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from("product_lines")
+                    .select("*")
+                    .eq("id", id)
+                    .single();
+
+                if (error) throw error;
+                if (cancelled) return;
+
+                savedFilesRef.current = [data.image, data.video_url];
+                setForm({ ...data, short_description: data.short_description ?? "", video_url: data.video_url ?? "", priority: data.priority ?? 100 });
+            } catch {
+                if (cancelled) return;
+                alert("No se pude cargar la línea de producto");
+                navigate("/admin/productLines");
+            }
+        };
+
+        loadProductLine();
+        return () => { cancelled = true; };
+    }, [isEdit, id, navigate]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
