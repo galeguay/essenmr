@@ -111,9 +111,10 @@ export default function ProductsPage() {
             );
         }
 
-        /* Orden: primero nuevos, luego con descuento, después el resto (sort estable: mantiene el orden por essen_id dentro de cada grupo) */
-        const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
-        filtered.sort((a, b) => priority(a) - priority(b));
+        /* Orden: primero nuevos, luego con descuento, luego combos, después el resto (dentro de cada grupo, alfabético por nombre) */
+        const isCombo = (p) => /combos/i.test(p.product_line?.name || '');
+        const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : isCombo(p) ? 2 : 3);
+        filtered.sort((a, b) => priority(a) - priority(b) || (a.name || '').localeCompare(b.name || '', 'es', { sensitivity: 'base' }));
 
         setProducts(filtered);
     }, [debouncedSearchTerm, selectedLine, allProducts]);

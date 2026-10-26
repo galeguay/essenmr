@@ -10,13 +10,14 @@ import Seo from "../../components/Seo";
 
 const SAMPLES_PER_LINE = 4;
 
-// Primero nuevos, luego con descuento, después el resto
-const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : 2);
+// Primero nuevos, luego con descuento, luego combos, después el resto; alfabético dentro de cada grupo
+const isCombo = (p) => /combos/i.test(p.product_line?.name || '');
+const priority = (p) => (p.is_new ? 0 : p.discount > 0 ? 1 : isCombo(p) ? 2 : 3);
 
 function LineSection({ line, products }) {
     const palette = useMemo(() => getLinePalette(line.color), [line.color]);
     const samples = useMemo(
-        () => [...products].sort((a, b) => priority(a) - priority(b)).slice(0, SAMPLES_PER_LINE),
+        () => [...products].sort((a, b) => priority(a) - priority(b) || (a.name || '').localeCompare(b.name || '', 'es', { sensitivity: 'base' })).slice(0, SAMPLES_PER_LINE),
         [products]
     );
     const blurb = line.short_description || line.description;
@@ -145,7 +146,7 @@ export default function Catalog() {
                     <div className="flex flex-col items-center gap-4 p-8 text-center text-white rounded-2xl bg-stone-900 md:flex-row md:justify-between md:text-left">
                         <div>
                             <h2 className="text-xl font-bold md:text-2xl">¿No sabés por dónde empezar?</h2>
-                            <p className="mt-1 text-white/80">Contanos qué cocinás y te recomendamos la línea ideal.</p>
+                            <p className="mt-1 text-white/80">Contanos qué cocinás y te recomendamos los productos que se ajustan a vos.</p>
                         </div>
                         <BtnWpp message="Hola, quiero que me ayuden a elegir una línea de productos Essen" />
                     </div>
