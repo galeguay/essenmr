@@ -118,10 +118,12 @@ export default function Catalog() {
     }, [products]);
 
     // Solo se presentan las líneas que tienen al menos un producto visible
-    const visibleLines = useMemo(
-        () => lines.filter((line) => productsByLine.has(line.id)),
-        [lines, productsByLine]
-    );
+    // "Combos del mes" siempre va primero, sin importar la prioridad; el resto conserva su orden
+    const visibleLines = useMemo(() => {
+        const withProducts = lines.filter((line) => productsByLine.has(line.id));
+        const isComboLine = (line) => /combos/i.test(line.name || "");
+        return [...withProducts.filter(isComboLine), ...withProducts.filter((line) => !isComboLine(line))];
+    }, [lines, productsByLine]);
 
     if (loading) return <><PageLoader visible={showLoader} /></>;
 
