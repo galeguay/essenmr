@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from '../../lib/supabase';
 // ¡Importamos la utilidad de subida de imagen!
-import { uploadImage } from "../../utils/uploadImage";
+import { uploadImage, removeReplacedFiles } from "../../utils/uploadImage";
 
 export default function ProductLineForm({
     initialData = null,
@@ -14,6 +14,8 @@ export default function ProductLineForm({
     const isEdit = !!id;
     const [imageFile, setImageFile] = useState(null);
     const [videoFile, setVideoFile] = useState(null);
+    // Archivos guardados en la base al cargar la línea, para borrar los que se reemplacen
+    const savedFilesRef = useRef([]);
 
 
     const [form, setForm] = useState({
@@ -41,6 +43,7 @@ export default function ProductLineForm({
 
             if (error) throw error;
 
+            savedFilesRef.current = [data.image, data.video_url];
             setForm({ ...data, short_description: data.short_description ?? "", video_url: data.video_url ?? "", priority: data.priority ?? 100 });
         } catch {
             alert("No se pude cargar la línea de producto");
@@ -134,6 +137,22 @@ const handleSubmit = async (e) => {
             response = responseData;
 
             if (isEdit) {
+                // La línea ya quedó guardada: se borran los archivos que dejó de usar
+                await removeReplacedFiles(
+                    "product_lines",
+                    savedFilesRef.current,
+                    [imageUrl, videoUrl],
+                    async (url) => {
+                        const { data: used, error: usedError } = await supabase
+                            .from("product_lines")
+                            .select("id")
+                            .or(`image.eq."${url}",video_url.eq."${url}"`)
+                            .limit(1);
+                        if (usedError) throw usedError;
+                        return used.length > 0;
+                    }
+                );
+                savedFilesRef.current = [imageUrl, videoUrl];
                 alert("Línea actualizada correctamente");
             } else {
                 alert("Línea creada correctamente");

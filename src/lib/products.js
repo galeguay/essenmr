@@ -19,7 +19,7 @@ export async function findProductByCode(code, excludeId = null) {
 }
 
 // ¿Algún producto usa esta URL en sus campos de archivos? Lanza error si la consulta falla.
-async function isFileUsedByAnotherProduct(url) {
+export async function isFileUsedByAnotherProduct(url) {
     const { data, error } = await supabase
         .from("products")
         .select("id")
