@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import { useSearchParams } from "react-router-dom";
 import ProductCard from '../../components/ProductCard';
 import Seo from '../../components/Seo';
@@ -22,6 +24,7 @@ export default function ProductsPage() {
     const [products, setProducts] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const showLoader = usePageLoader(loading);
     const [searchParams, setSearchParams] = useSearchParams();
 
     /* Filtros */
@@ -118,16 +121,11 @@ export default function ProductsPage() {
 
 
     /* Render */
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="w-12 h-12 border-t-4 border-b-4 border-orange-600 rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+    if (loading) return <><PageLoader visible={showLoader} /></>;
 
     return (
         <>
+            <PageLoader visible={showLoader} />
             <Seo
                 title="Productos | EssenMR"
                 description="Explorá todos los productos Essen disponibles con envío a todo el país. Filtrá por línea y buscá el producto ideal."

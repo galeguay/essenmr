@@ -4,10 +4,10 @@ const LOGO = "https://cgncsclwhqvwxytoibyw.supabase.co/storage/v1/object/public/
 const LOGO_DELAY_MS = 300;
 const FADE_MS = 300;
 
-// Capa que cubre toda la ventana (barra y pie incluidos) mientras el home termina de cargar.
+// Capa que cubre toda la ventana (barra y pie incluidos) mientras la página termina de cargar.
 // Está opaca desde el primer instante; el logo recién aparece a los 300 ms para que, si todo
 // carga rápido, no se vea un parpadeo.
-export default function HomeLoader({ visible }) {
+export default function PageLoader({ visible }) {
     const [mounted, setMounted] = useState(visible);
     const [showLogo, setShowLogo] = useState(false);
 

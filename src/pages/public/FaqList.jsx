@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import Seo from "../../components/Seo";
 import { supabase } from "../../lib/supabase";
 import PageTitle from "../../components/PageTitle";
@@ -6,6 +8,7 @@ import PageTitle from "../../components/PageTitle";
 export default function FaqList() {
     const [faqs, setFaqs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const showLoader = usePageLoader(loading);
 
     useEffect(() => {
         loadFaqs();
@@ -26,10 +29,11 @@ export default function FaqList() {
         setLoading(false);
     };
 
-    if (loading) return <p>Cargando FAQs...</p>;
+    if (loading) return <><PageLoader visible={showLoader} /></>;
 
     return (
         <>
+            <PageLoader visible={showLoader} />
             <Seo
                 title="Preguntas frecuentes | EssenMR"
                 description="Consultá las preguntas más comunes sobre productos Essen, envíos y compras en EssenMR."

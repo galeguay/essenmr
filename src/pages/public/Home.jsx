@@ -2,7 +2,8 @@ import { useEffect, useRef } from 'react';
 import Promotions from '../../components/Promotions';
 import useHomeLoad from '../../hooks/useHomeLoad';
 import useHomeScroll from '../../hooks/useHomeScroll';
-import HomeLoader from '../../components/HomeLoader';
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import NewReleaseCard from '../../components/NewReleaseCard';
 import ProductCard from '../../components/ProductCard';
 import AnnouncementBanner from '../../components/AnnouncementBanner';
@@ -37,12 +38,13 @@ export default function Home() {
     const { data, phase } = useHomeLoad(contentRef);
     const { announcements, discounts, newProducts } = data;
     const loading = phase === 'loading';
+    const showLoader = usePageLoader(loading);
 
     useHomeScroll(phase);
 
     // Mientras la capa de carga está visible no se puede hacer scroll.
     useEffect(() => {
-        if (!loading) return;
+        if (!showLoader) return;
         document.body.style.overflow = 'hidden';
         return () => {
             document.body.style.overflow = '';
@@ -68,7 +70,7 @@ export default function Home() {
                 keywords="Essen, productos Essen, ollas, sartenes, Mar del Plata, promociones, combos"
             />
 
-            <HomeLoader visible={loading} />
+            <PageLoader visible={showLoader} />
 
             <div ref={contentRef} className={loading ? 'opacity-0' : ''} inert={loading}>
 

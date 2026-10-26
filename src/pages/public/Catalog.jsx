@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import PageLoader from '../../components/PageLoader';
+import usePageLoader from '../../hooks/usePageLoader';
 import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { getLinePalette } from "../../utils/linePalette";
@@ -54,6 +56,7 @@ export default function Catalog() {
     const [lines, setLines] = useState([]);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const showLoader = usePageLoader(loading);
 
     useEffect(() => {
         const load = async () => {
@@ -92,16 +95,11 @@ export default function Catalog() {
         [lines, productsByLine]
     );
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="w-12 h-12 border-t-4 border-b-4 border-orange-600 rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+    if (loading) return <><PageLoader visible={showLoader} /></>;
 
     return (
         <>
+            <PageLoader visible={showLoader} />
             <Seo
                 title="Catálogo de líneas Essen | EssenMR"
                 description="Conocé las líneas de productos Essen, qué las distingue y algunos productos de cada una para ayudarte a elegir."
